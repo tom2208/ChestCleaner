@@ -1,0 +1,17 @@
+name: ChestCleaner
+version: 1.6.2
+author: EnderKing
+api-version: 1.13
+
+main: chestcleaner.main.Main
+
+commands:
+  cleaninventory:
+    description: Cleans an inventory of a block.
+    usage: /<command> <x> <y> <z>
+  timer:
+    description: Configuers the timer.
+    usage: /<command> <setActive/setTime>
+  cleaningitem:
+    description: Configuration of the cleaningitem.
+    usage: /<command> <setActive/setItem/setdurability/give/get/rename>
