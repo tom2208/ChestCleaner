@@ -1,4 +1,0 @@
-TabComplete
-setdurability -> setdurabiltyloss 
-means permissions changed
-permission: chestcleaner.cleaningitem.use.owninventory
