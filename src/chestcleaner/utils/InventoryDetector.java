@@ -56,7 +56,26 @@ public class InventoryDetector {
 		return getInventoryFormBlock(world.getBlockAt(location));
 	}
 
+	/**
+	 * <b>Return the main part of the player inventory, that means a list of all
+	 * ItemStacks form the slots with the index 9 (including) to index 35
+	 * (including).</b>That means the hotbar, armor slots or second hand slot are
+	 * getting avoided.
+	 * 
+	 * 
+	 * @param p
+	 *            The owner of the inventory.
+	 * @return A list of all items form the inventory of {@code p} (form index 9
+	 *         (including) to index 35 (including))
+	 * @throws IllegalArgumentException
+	 *             if {@code player} is null.
+	 */
 	public static ArrayList<ItemStack> getPlayerInventoryList(Player p) {
+
+		if (p == null) {
+			throw new IllegalArgumentException();
+		}
+
 		ArrayList<ItemStack> items = new ArrayList<>();
 
 		for (int i = 9; i < 36; i++) {
@@ -66,17 +85,21 @@ public class InventoryDetector {
 
 		return items;
 	}
-	
-	public static ItemStack[] getFullInventory(Inventory inv){
+
+	public static ItemStack[] getFullInventory(Inventory inv) {
 		
-		ItemStack[] items = new ItemStack[36];
-		
-		for(int i = 0; i < items.length; i++){
-			items[i] = inv.getItem(i);
+		if (inv == null) {
+			throw new IllegalArgumentException();
 		}
 		
+		ItemStack[] items = new ItemStack[36];
+
+		for (int i = 0; i < items.length; i++) {
+			items[i] = inv.getItem(i);
+		}
+
 		return items;
-		
+
 	}
 
 }
