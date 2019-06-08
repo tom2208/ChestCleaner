@@ -39,6 +39,9 @@ public class MessageSystem {
 		case MISSING_PERMISSION:
 			out += "§c" + StringTable.getMessage(MessageID.PERMISSON_DENIED) + " ( " + arg + " )";
 			break;
+		case UNHEADED_INFORMATION:
+			out = "§7" + arg;
+			break;
 		default:
 			throw new IllegalArgumentException();
 		}

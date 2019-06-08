@@ -2,8 +2,10 @@ package chestcleaner.config;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -37,7 +39,9 @@ public class Config {
 		}
 
 	}
-
+	
+	/* CLEANINVETORYPERMISSION */
+	
 	public static void setCleanInvPermission(boolean b) {
 		Config.set("cleanInventorypermissionactive", b);
 		save();
@@ -50,7 +54,9 @@ public class Config {
 	public static boolean containsCleanInvPermission() {
 		return Config.contains("cleanInventorypermissionactive");
 	}
-
+	
+	/* TIMER */
+	
 	public static void setTimerPermission(boolean b) {
 		Config.set("timer.active", b);
 		save();
@@ -63,7 +69,9 @@ public class Config {
 	public static boolean containsTimerPermission() {
 		return Config.contains("timer.active");
 	}
-
+	
+	/* TIMER.TIME */
+	
 	public static void setTime(int t) {
 		Config.set("timer.time", t);
 		save();
@@ -77,6 +85,8 @@ public class Config {
 		return Config.contains("timer.time");
 	}
 
+	/* STRINGS */
+	
 	public static void setStrings(List<String> list) {
 		Config.set("Strings", list);
 		save();
@@ -89,7 +99,9 @@ public class Config {
 	public static boolean containsStrings() {
 		return Config.contains("Strings");
 	}
-
+	
+	/* ITEM */
+	
 	public static void setItem(ItemStack is) {
 		Config.set("cleaningItem", is);
 		save();
@@ -99,6 +111,8 @@ public class Config {
 		return Config.getItemStack("cleaningItem");
 	}
 
+	/* ITEM */
+	
 	public static void setItemBoolean(boolean b) {
 		Config.set("active", b);
 		save();
@@ -114,20 +128,24 @@ public class Config {
 		return false;
 	}
 
-	public static void setDurabilityBoolean(boolean b) {
+	/* DURABILITYLOSS */
+	
+	public static void setDurabilityLossBoolean(boolean b) {
 		Config.set("durability", b);
 		save();
 	}
 
-	public static boolean getDurabilityBoolean() {
+	public static boolean getDurabilityLossBoolean() {
 		return Config.getBoolean("durability");
 	}
 
-	public static boolean containsDurabilityBoolean() {
-		if (Config.contains("openinventoryeventmode"))
+	public static boolean containsDurabilityLossBoolean() {
+		if (Config.contains("durability"))
 			return true;
 		return false;
 	}
+	
+	/* MODE */
 
 	public static void setMode(boolean b) {
 		Config.set("openinventoryeventmode", b);
@@ -143,7 +161,9 @@ public class Config {
 			return true;
 		return false;
 	}
-
+	
+	/* CONSUMABLES */
+	
 	public static void setConsumablesRefill(boolean b) {
 		Config.set("consumablesrefill", b);
 		save();
@@ -158,7 +178,9 @@ public class Config {
 			return true;
 		return false;
 	}
-
+	
+	/* BLOCKREFILL */
+	
 	public static void setBlockRefill(boolean b) {
 		Config.set("blockrefill", b);
 		save();
@@ -173,5 +195,45 @@ public class Config {
 			return true;
 		return false;
 	}
+	
+	/* BLACKLIST */
 
+	private static void setStringBlackList(LinkedList<String> list) {
+		Config.set("blacklist", list);
+		save();
+	}
+
+	private static List<String> getStringBlackList() {
+		return Config.getStringList("blacklist");
+	}
+
+	public static boolean containsBlackList() {
+		if (Config.contains("blacklist"))
+			return true;
+		return false;
+	}
+	
+	public static void setBlackList(LinkedList<Material> materials){
+		
+		LinkedList<String> list = new LinkedList<>();
+		
+		for(Material material : materials){
+			list.add(material.name());
+		}
+		setStringBlackList(list);
+	}
+	
+	public static LinkedList<Material> getBlackList() {
+		
+		List<String> list = Config.getStringList("blacklist");
+		LinkedList<Material> materials = new LinkedList<>();
+		
+		for(String name : list){
+			materials.add(Material.getMaterial(name));
+		}
+		
+		return materials;
+	}
+	
+	
 }

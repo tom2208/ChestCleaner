@@ -1,8 +1,8 @@
 package chestcleaner.sorting;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -14,7 +14,9 @@ import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
 
 public class InventorySorter {
-
+	
+	public static LinkedList<Material> blacklist = new LinkedList<>();
+	
 	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
 
 		ArrayList<ItemStack> items = new ArrayList<>();
@@ -24,8 +26,15 @@ public class InventorySorter {
 
 			ItemStack item = list.get(i);
 			int amount = item.getAmount();
+			
 			item.setAmount(1);
 
+			if(blacklist.contains(list.get(i).getType())){
+				items.add(item);
+				amounts.add(amount);
+				continue;
+			}
+			
 			int index = -1;
 			for (int j = 0; j < items.size(); j++) {
 				if (items.get(j).isSimilar(list.get(i))) {
@@ -146,9 +155,7 @@ public class InventorySorter {
 	}
 
 	public static void playSortingSound(Player p) {
-		if (!Bukkit.getVersion().contains("1.8")) {
-			p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
-		}
+		p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
 	}
 
 }

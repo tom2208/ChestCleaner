@@ -233,7 +233,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						if (args[1].equalsIgnoreCase("true"))
 							b = true;
 
-						Config.setDurabilityBoolean(b);
+						Config.setDurabilityLossBoolean(b);
 						Main.durability = b;
 						if (Main.durability) {
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_ACTIVATED, player);

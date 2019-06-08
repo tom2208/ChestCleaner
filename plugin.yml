@@ -15,3 +15,6 @@ commands:
   cleaningitem:
     description: Configuration of the cleaningitem.
     usage: /<command> <setActive/setItem/setdurability/give/get/rename>
+  blacklist:
+    description: Avoiding items to get stacked while sorting.
+    usage: /<command> <list/addMaterial/removeMaterial>

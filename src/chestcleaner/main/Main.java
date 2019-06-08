@@ -5,11 +5,13 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import chestcleaner.commands.BlackListCommand;
 import chestcleaner.commands.CleanInvenotryCommand;
 import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.TimerCommand;
 import chestcleaner.config.Config;
 import chestcleaner.listeners.SortingListener;
+import chestcleaner.sorting.InventorySorter;
 import chestcleaner.listeners.RefillListener;
 import chestcleaner.timer.Counter;
 import chestcleaner.utils.messages.StringTable;
@@ -37,6 +39,7 @@ public class Main extends JavaPlugin {
 		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
 		getCommand("timer").setExecutor(new TimerCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
+		getCommand("blacklist").setExecutor(new BlackListCommand());
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		c.start();
@@ -71,10 +74,10 @@ public class Main extends JavaPlugin {
 			Config.setItemBoolean(true);
 		}
 
-		if (Config.containsDurabilityBoolean()) {
-			durability = Config.getDurabilityBoolean();
+		if (Config.containsDurabilityLossBoolean()) {
+			durability = Config.getDurabilityLossBoolean();
 		} else {
-			Config.setDurabilityBoolean(true);
+			Config.setDurabilityLossBoolean(true);
 		}
 
 		if (Config.containsMode()) {
@@ -100,6 +103,10 @@ public class Main extends JavaPlugin {
 			cleanInvPermission = Config.getCleanInvPermission();
 		} else {
 			Config.setCleanInvPermission(true);
+		}
+		
+		if(Config.containsBlackList()){
+			InventorySorter.blacklist = Config.getBlackList();
 		}
 	}
 
