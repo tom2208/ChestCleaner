@@ -16,7 +16,7 @@ import chestcleaner.utils.InventoryDetector;
 public class RefillListener implements org.bukkit.event.Listener {
 
 	@EventHandler
-	public static void onPlacingBlock(BlockPlaceEvent e) {
+	private void onPlacingBlock(BlockPlaceEvent e) {
 
 		if (Main.blockRefill && !e.isCancelled()) {
 			Player p = e.getPlayer();
@@ -59,7 +59,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	}
 
 	@EventHandler
-	public static void onConsuming(PlayerItemConsumeEvent e) {
+	private void onConsuming(PlayerItemConsumeEvent e) {
 
 		if (Main.consumablesRefill && !e.isCancelled()) {
 
