@@ -26,14 +26,15 @@ public class Quicksort {
 
 		int i = l - 1;
 		int j = r + 1;
+		ItemStack item = items.get((l+r)/2);
 		while (true) {
 			do {
 				i++;
-			} while (Evaluator.isSmallerThan(items.get(i), items.get((l + r) / 2)));
+			} while (Evaluator.isSmallerThan(items.get(i), item));
 
 			do {
 				j--;
-			} while (Evaluator.isGreaterThan(items.get(j), items.get((l + r) / 2)));
+			} while (Evaluator.isGreaterThan(items.get(j), item));
 
 			if (i < j) {
 				ItemStack k = items.get(i);

@@ -21,7 +21,7 @@ public class InventorySorter {
 
 		ArrayList<ItemStack> items = new ArrayList<>();
 		ArrayList<Integer> amounts = new ArrayList<>();
-
+		
 		for (int i = 0; i < list.size(); i++) {
 
 			ItemStack item = list.get(i);
@@ -32,28 +32,29 @@ public class InventorySorter {
 			if(blacklist.contains(list.get(i).getType())){
 				items.add(item);
 				amounts.add(amount);
-				continue;
-			}
+			}else{
 			
-			int index = -1;
-			for (int j = 0; j < items.size(); j++) {
-				if (items.get(j).isSimilar(list.get(i))) {
-					index = j;
-					break;
+				int index = -1;
+				for (int j = 0; j < items.size(); j++) {
+					if (items.get(j).isSimilar(list.get(i))) {
+						index = j;
+						break;
+					}
+				}
+	
+				if (index >= 0) {
+					amounts.set(index, amounts.get(index) + amount);
+				} else {
+					items.add(item);
+					amounts.add(amount);
 				}
 			}
-
-			if (index >= 0) {
-				amounts.set(index, amounts.get(index) + amount);
-			} else {
-				items.add(item);
-				amounts.add(amount);
-			}
-
+			
 		}
 
 		ArrayList<ItemStack> out = new ArrayList<>();
 
+		
 		for (int i = 0; i < items.size(); i++) {
 			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
 			for (int j = 0; j < stacks; j++) {
