@@ -36,10 +36,10 @@ public class StringTable {
 		defaultMessages.add("A new update is available at:§b https://www.spigotmc.org/resources/40313/updates");
 		defaultMessages.add("DurabilityLoss: true");
 		defaultMessages.add("DurabilityLoss: false");
-		defaultMessages.add("The material of the item \"%material\" was set to the blacklist.");
+		defaultMessages.add("The material of the item \"%material\" was added to the blacklist.");
 		defaultMessages.add("The material \"%material\" was removed form the blacklist.");
 		defaultMessages.add("The blacklist does not contains the material \"%material\".");
-		defaultMessages.add("Index is out of bounds, it have to be smaller than -1 and bigger than %biggestindex.");
+		defaultMessages.add("Index is out of bounds, it have to be bigger than -1 and smaller than %biggestindex.");
 		defaultMessages.add("The blacklist is empty.");
 		defaultMessages.add("The BlackList page %page:");
 		defaultMessages.add("For the next entries: /list %nextpage");

@@ -42,7 +42,12 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 		Player p = (Player) sender;
 
 		if (p.hasPermission("chestcleaner.cmd.blacklist")) {
-
+			
+			if(args.length == 0){
+				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/blacklist <addMaterial/removeMaterial/list>", p);
+				return true;
+			}
+			
 			if (!args[0].equalsIgnoreCase(blackListCommands.get(2))) {
 
 				if (args.length == 2) {
