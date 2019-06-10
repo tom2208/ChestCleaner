@@ -203,10 +203,6 @@ public class Config {
 		save();
 	}
 
-	private static List<String> getStringBlackList() {
-		return Config.getStringList("blacklist");
-	}
-
 	public static boolean containsBlackList() {
 		if (Config.contains("blacklist"))
 			return true;

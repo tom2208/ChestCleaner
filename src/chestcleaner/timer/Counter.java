@@ -1,7 +1,7 @@
 package chestcleaner.timer;
 
 public class Counter extends Thread{
-	@Deprecated
+
 	public void run(){
 		
 		 try {
