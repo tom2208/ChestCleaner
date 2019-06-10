@@ -101,27 +101,29 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
-		switch (args.length) {
-		case 0:
-			StringUtil.copyPartialMatches(args[0], timerCommands, completions);
-			break;
-		case 1:
-			StringUtil.copyPartialMatches(args[0], timerCommands, completions);
-			break;
-		case 2:
-			/* SETACTIVE */
-			if (args[0].equalsIgnoreCase(timerCommands.get(0))) {
-
-				ArrayList<String> commands = new ArrayList<>();
-				commands.add("true");
-				commands.add("false");
-
-				StringUtil.copyPartialMatches(args[1], commands, completions);
+		if(args.length == 1){
+			switch (args.length) {
+			case 0:
+				StringUtil.copyPartialMatches(args[0], timerCommands, completions);
+				break;
+			case 1:
+				StringUtil.copyPartialMatches(args[0], timerCommands, completions);
+				break;
+			case 2:
+				/* SETACTIVE */
+				if (args[0].equalsIgnoreCase(timerCommands.get(0))) {
+	
+					ArrayList<String> commands = new ArrayList<>();
+					commands.add("true");
+					commands.add("false");
+	
+					StringUtil.copyPartialMatches(args[1], commands, completions);
+				}
+	
 			}
-
+			
+			Collections.sort(completions);
 		}
-
-		Collections.sort(completions);
 		return completions;
 	}
 

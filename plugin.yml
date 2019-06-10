@@ -17,4 +17,4 @@ commands:
     usage: /<command> <setActive/setItem/setdurability/give/get/rename>
   blacklist:
     description: Avoiding items to get stacked while sorting.
-    usage: /<command> <list/addMaterial/removeMaterial>
+    usage: /<command> <list/clear/addMaterial/removeMaterial>
