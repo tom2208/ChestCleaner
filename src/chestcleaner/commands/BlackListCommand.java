@@ -24,11 +24,12 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 
 	private final List<String> blackListCommands = new ArrayList<>();
 	private final int LIST_LENGTH = 8;
-	
+
 	public BlackListCommand() {
 		blackListCommands.add("addMaterial");
 		blackListCommands.add("removeMaterial");
 		blackListCommands.add("list");
+		blackListCommands.add("clear");
 	}
 
 	@Override
@@ -42,21 +43,30 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 		Player p = (Player) sender;
 
 		if (p.hasPermission("chestcleaner.cmd.blacklist")) {
-			
-			if(args.length == 0){
-				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/blacklist <addMaterial/removeMaterial/list>", p);
+
+			if (args.length == 0) {
+				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+						"/blacklist <addMaterial/removeMaterial/list>", p);
 				return true;
 			}
-			
-			if (!args[0].equalsIgnoreCase(blackListCommands.get(2))) {
+
+			if (args[0].equalsIgnoreCase(blackListCommands.get(0))
+					|| args[0].equalsIgnoreCase(blackListCommands.get(1))) {
 
 				if (args.length == 2) {
 
+					/* ADD MATERIAL WITH NAME */
 					if (args[0].equalsIgnoreCase(blackListCommands.get(0))) {
 
 						Material material = Material.getMaterial(args[1]);
 
 						if (material != null) {
+
+							if (InventorySorter.blacklist.contains(material)) {
+								MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
+										MessageID.IS_ALREADY_ON_BLACKLIST, "%material", material.name()), p);
+								return true;
+							}
 
 							InventorySorter.blacklist.add(material);
 							Config.setBlackList(InventorySorter.blacklist);
@@ -72,7 +82,7 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 							return true;
 						}
 
-						/* REMOVE MATERIAL */
+						/* REMOVE MATERIAL WITH NAME OR ID */
 					} else if (args[0].equalsIgnoreCase(blackListCommands.get(1))) {
 
 						for (int i = 0; i < InventorySorter.blacklist.size(); i++) {
@@ -92,7 +102,7 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 						}
 
 						try {
-							int index = Integer.valueOf(args[1]) -1;
+							int index = Integer.valueOf(args[1]) - 1;
 							if (index > -1 && index < InventorySorter.blacklist.size()) {
 								MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 										StringTable.getMessage(MessageID.REMOVED_FORM_BLACKLIST, "%material",
@@ -127,10 +137,17 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 
 				if (item != null && item.getType() != Material.AIR) {
 
-					/* ADDMATERIAL */
+					/* ADD MATERIAL FORM HAND*/
 					if (args[0].equalsIgnoreCase(blackListCommands.get(0))) {
 
 						if (args.length == 1) {
+							
+							if(InventorySorter.blacklist.contains(item.getType())){
+								MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
+										MessageID.IS_ALREADY_ON_BLACKLIST, "%material", item.getType().name()), p);
+								return true;
+							}
+							
 							InventorySorter.blacklist.add(item.getType());
 							Config.setBlackList(InventorySorter.blacklist);
 
@@ -142,7 +159,7 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 						}
 						return true;
 
-						/* REMOVEMATERIAL */
+						/* REMOVE MATERIAL FORM HAND*/
 					} else if (args[0].equalsIgnoreCase(blackListCommands.get(1))) {
 
 						if (InventorySorter.blacklist.size() == 0) {
@@ -184,7 +201,7 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-			} else {
+			} else if (args[0].equalsIgnoreCase(blackListCommands.get(2))) {
 
 				if (InventorySorter.blacklist.size() == 0) {
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.BLACKLIST_IS_EMPTY, p);
@@ -192,22 +209,23 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 				}
 
 				/* LIST */
-				
+
 				int pageNumber = InventorySorter.blacklist.size() / LIST_LENGTH;
 				if (InventorySorter.blacklist.size() % LIST_LENGTH != 0)
 					pageNumber++;
-				
+
 				if (args.length == 1) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", "1 / " + pageNumber), p);
-					
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
+							StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", "1 / " + pageNumber), p);
+
 					for (int i = 0; i < LIST_LENGTH; i++) {
 
 						if (InventorySorter.blacklist.size() == i) {
 							return true;
 						} else {
 							MessageSystem.sendMessageToPlayer(MessageType.UNHEADED_INFORMATION,
-									(i+1) + ". " + InventorySorter.blacklist.get(i).name(), p);
+									(i + 1) + ". " + InventorySorter.blacklist.get(i).name(), p);
 						}
 
 					}
@@ -225,15 +243,16 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 						int index = Integer.valueOf(args[1]);
 
 						if (index > 0 && index <= pageNumber) {
-							
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", index + " / " + pageNumber), p);
+
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable
+									.getMessage(MessageID.BLACKLIST_TITLE, "%page", index + " / " + pageNumber), p);
 
 							for (int i = (index - 1) * LIST_LENGTH; i < index * LIST_LENGTH; i++) {
 								if (InventorySorter.blacklist.size() == i) {
 									return true;
 								} else {
 									MessageSystem.sendMessageToPlayer(MessageType.UNHEADED_INFORMATION,
-											(i+1) + ". " + InventorySorter.blacklist.get(i).name(), p);
+											(i + 1) + ". " + InventorySorter.blacklist.get(i).name(), p);
 								}
 							}
 
@@ -259,16 +278,27 @@ public class BlackListCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/list <pagenumber>", p);
+					return true;
 				}
 
+				/* CLEAR */
+			} else if (args[0].equalsIgnoreCase(blackListCommands.get(3))) {
+
+				InventorySorter.blacklist.clear();
+				Config.setBlackList(InventorySorter.blacklist);
+				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.BLACKLIST_CLEARED, p);
+				return true;
+
+			} else {
+				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
+						"/blacklist <addMaterial/removeMaterial/list>", p);
+				return true;
 			}
 
 		} else {
 			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.blacklist", p);
 			return true;
 		}
-
-		return true;
 
 	}
 

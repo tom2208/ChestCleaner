@@ -46,6 +46,8 @@ public class StringTable {
 		defaultMessages.add("Invalid input for an integer: %index");
 		defaultMessages.add("Invalid page number (valid  page number range: %range)");
 		defaultMessages.add("There is no Material with the name \"%material\".");
+		defaultMessages.add("The blacklist was successfully cleared.");
+		defaultMessages.add("The material %material is already on the blacklist.");
 		
 		if(list == null){
 			

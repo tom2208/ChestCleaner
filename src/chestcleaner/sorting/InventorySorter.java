@@ -18,9 +18,11 @@ public class InventorySorter {
 	public static LinkedList<Material> blacklist = new LinkedList<>();
 	
 	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
-
+		
 		ArrayList<ItemStack> items = new ArrayList<>();
 		ArrayList<Integer> amounts = new ArrayList<>();
+		
+		boolean blackListedItemUsed = false;
 		
 		for (int i = 0; i < list.size(); i++) {
 
@@ -32,6 +34,7 @@ public class InventorySorter {
 			if(blacklist.contains(list.get(i).getType())){
 				items.add(item);
 				amounts.add(amount);
+				blackListedItemUsed = true;
 			}else{
 			
 				int index = -1;
@@ -53,7 +56,6 @@ public class InventorySorter {
 		}
 
 		ArrayList<ItemStack> out = new ArrayList<>();
-
 		
 		for (int i = 0; i < items.size(); i++) {
 			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
@@ -71,7 +73,12 @@ public class InventorySorter {
 			}
 
 		}
-
+		
+		if(blackListedItemUsed){
+			AmountSorter sorter = new AmountSorter(out);
+			return sorter.sortArray();
+		}
+		
 		return out;
 
 	}
