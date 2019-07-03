@@ -8,9 +8,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.util.BlockIterator;
 
 public class BlockDetector implements Listener {
-	
+
 	private static final int RANGE = 12;
-	
+	private static final Material[] passableBlocks = { Material.AIR, Material.ITEM_FRAME,
+			Material.GRASS, Material.TORCH};
+
 	/**
 	 * Return the first Block the vector of view hits. This method ignores air.
 	 * 
@@ -28,11 +30,9 @@ public class BlockDetector implements Listener {
 		while (iter.hasNext()) {
 
 			lastBlock = iter.next();
-
-			if (lastBlock.getType() == Material.AIR) {
+			if (isBlockPassable(lastBlock) || lastBlock.getType().name().contains("SIGN") || lastBlock.getType().name().contains("CARPET")  || lastBlock.isLiquid()) {
 				continue;
 			}
-
 			break;
 		}
 
@@ -48,6 +48,15 @@ public class BlockDetector implements Listener {
 	 */
 	public static Block getBlockByLocation(Location loc) {
 		return loc.getWorld().getBlockAt(loc);
+	}
+
+	private static boolean isBlockPassable(Block block) {
+		for (Material m : passableBlocks) {
+			if (block.getType().equals(m))
+				return true;
+		}
+
+		return false;
 	}
 
 }

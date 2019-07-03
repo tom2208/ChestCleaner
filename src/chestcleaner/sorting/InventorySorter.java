@@ -1,7 +1,6 @@
 package chestcleaner.sorting;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,7 +14,7 @@ import chestcleaner.utils.InventoryDetector;
 
 public class InventorySorter {
 	
-	public static LinkedList<Material> blacklist = new LinkedList<>();
+	public static ArrayList<Material> blacklist = new ArrayList<>();
 	
 	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
 		

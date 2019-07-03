@@ -1,6 +1,6 @@
 name: ChestCleaner
-version: 1.6.3
-author: EnderKing
+version: 1.6.4
+author: Tom2208
 api-version: 1.13
 
 main: chestcleaner.main.Main
@@ -17,4 +17,4 @@ commands:
     usage: /<command> <setActive/setItem/setdurability/give/get/rename>
   blacklist:
     description: Avoiding items to get stacked while sorting.
-    usage: /<command> <list/clear/addMaterial/removeMaterial>
+    usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>

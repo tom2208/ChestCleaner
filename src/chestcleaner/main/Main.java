@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import chestcleaner.commands.BlackListCommand;
+import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.CleanInvenotryCommand;
 import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.TimerCommand;
@@ -39,7 +39,7 @@ public class Main extends JavaPlugin {
 		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
 		getCommand("timer").setExecutor(new TimerCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
-		getCommand("blacklist").setExecutor(new BlackListCommand());
+		getCommand("blacklist").setExecutor(new BlacklistCommand());
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		c.start();
@@ -60,7 +60,7 @@ public class Main extends JavaPlugin {
 		} else {
 			StringTable.setUpList(null);
 		}
-
+		
 		if (Config.getItem() == null) {
 			item = new ItemStack(Material.IRON_HOE);
 			Config.setItem(item);
@@ -105,9 +105,14 @@ public class Main extends JavaPlugin {
 			Config.setCleanInvPermission(true);
 		}
 		
-		if(Config.containsBlackList()){
-			InventorySorter.blacklist = Config.getBlackList();
+		if(Config.containsSortingBlackList()){
+			InventorySorter.blacklist = Config.getSortingBlackList();
 		}
+		
+		if (Config.containsSortingBlackList()) {
+			BlacklistCommand.inventoryBlacklist = Config.getInventoryBlackList();
+		}
+		
 	}
 
 }

@@ -43,16 +43,21 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
+			Block block = BlockDetector.getTargetBlock(p);
+
+			if(BlacklistCommand.inventoryBlacklist.contains(block.getType())){
+				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
+				return true;
+			}
+			
 			if (Timer.playerCheck(p)) {
-
-				Block block = BlockDetector.getTargetBlock(p);
-
+				
 				// if the block has no inventory
 				if (!InventorySorter.sortPlayerBlock(block, p)) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
 							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
-									"(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ")"),
+									"(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", "+ block.getType().name() +")"),
 							p);
 					return true;
 
@@ -98,10 +103,15 @@ public class CleanInvenotryCommand implements CommandExecutor {
 
 			Block block = BlockDetector.getBlockByLocation(new Location(w, x, y, z));
 
+			if(BlacklistCommand.inventoryBlacklist.contains(block.getType())){
+				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
+				return true;
+			}
+			
 			if (isPlayer && !Timer.playerCheck(p)) {
 				return true;
 			}
-
+			
 			if (!InventorySorter.sortPlayerBlock(block, p)) {
 
 				if (isPlayer) {

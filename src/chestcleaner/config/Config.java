@@ -2,7 +2,7 @@ package chestcleaner.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -196,33 +196,33 @@ public class Config {
 		return false;
 	}
 	
-	/* BLACKLIST */
-
-	private static void setStringBlackList(LinkedList<String> list) {
+	/* BLACKLISTS */
+		/** SortingBlacklist */
+	private static void setStringSortingBlackList(ArrayList<String> list) {
 		Config.set("blacklist", list);
 		save();
 	}
 
-	public static boolean containsBlackList() {
+	public static boolean containsSortingBlackList() {
 		if (Config.contains("blacklist"))
 			return true;
 		return false;
 	}
 	
-	public static void setBlackList(LinkedList<Material> materials){
+	public static void setSortingBlackList(ArrayList<Material> blacklist){
 		
-		LinkedList<String> list = new LinkedList<>();
+		ArrayList<String> list = new ArrayList<>();
 		
-		for(Material material : materials){
+		for(Material material : blacklist){
 			list.add(material.name());
 		}
-		setStringBlackList(list);
+		setStringSortingBlackList(list);
 	}
 	
-	public static LinkedList<Material> getBlackList() {
+	public static ArrayList<Material> getSortingBlackList() {
 		
 		List<String> list = Config.getStringList("blacklist");
-		LinkedList<Material> materials = new LinkedList<>();
+		ArrayList<Material> materials = new ArrayList<>();
 		
 		for(String name : list){
 			materials.add(Material.getMaterial(name));
@@ -231,5 +231,37 @@ public class Config {
 		return materials;
 	}
 	
+		/** SortingBlacklist */
+	private static void setStringInventoryBlackList(ArrayList<String> list) {
+		Config.set("inventoryblacklist", list);
+		save();
+	}
+
+	public static boolean containsInventoryBlackList() {
+		if (Config.contains("inventoryblacklist"))
+			return true;
+		return false;
+	}
 	
+	public static void setInventoryBlackList(ArrayList<Material> blacklist){
+		
+		ArrayList<String> list = new ArrayList<>();
+		
+		for(Material material : blacklist){
+			list.add(material.name());
+		}
+		setStringInventoryBlackList(list);
+	}
+	
+	public static ArrayList<Material> getInventoryBlackList() {
+		
+		List<String> list = Config.getStringList("inventoryblacklist");
+		ArrayList<Material> materials = new ArrayList<>();
+		
+		for(String name : list){
+			materials.add(Material.getMaterial(name));
+		}
+		
+		return materials;
+	}
 }

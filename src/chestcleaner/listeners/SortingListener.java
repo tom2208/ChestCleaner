@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 
+import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.Main;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
@@ -33,14 +34,15 @@ public class SortingListener implements org.bukkit.event.Listener {
 		ItemStack itemOffHand = p.getInventory().getItemInOffHand().clone();
 		itemOffHand.setDurability((short) 0);
 		itemOffHand.setAmount(1);
-		
+
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			
+
 			boolean isMainHand = itemMainHand.equals(Main.item);
 			boolean isOffHand = itemOffHand.equals(Main.item);
-			
-			//TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN SLOTS DAS ITEM HÄLT
-			
+
+			// TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
+			// SLOTS DAS ITEM HÄLT
+
 			if ((isMainHand || isOffHand) && (isMainHand != isOffHand)) {
 
 				if (p.isSneaking()) {
@@ -55,7 +57,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 						InventorySorter.playSortingSound(p);
 
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
-						
+
 						e.setCancelled(true);
 					}
 
@@ -64,6 +66,11 @@ public class SortingListener implements org.bukkit.event.Listener {
 					if (p.hasPermission("chestcleaner.cleaningitem.use")) {
 
 						Block b = BlockDetector.getTargetBlock(p);
+
+						if (BlacklistCommand.inventoryBlacklist.contains(b.getType())) {
+							return;
+						}
+
 						if (!Timer.playerCheck(p)) {
 							return;
 						}
@@ -83,7 +90,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 			}
 
 		}
-		
+
 	}
 
 	/**
@@ -98,23 +105,24 @@ public class SortingListener implements org.bukkit.event.Listener {
 	 *            damaged, in hand.
 	 */
 	private void damageItem(Player player, boolean isHoldingInMainHand) {
-		
+
 		if (Main.durability) {
 
 			ItemStack item;
-			if(isHoldingInMainHand){
+			if (isHoldingInMainHand) {
 				item = player.getInventory().getItemInMainHand();
-			}else{
+			} else {
 				item = player.getInventory().getItemInOffHand();
 			}
-			
-			if(item.getMaxStackSize() == 1) item.setDurability((short) (item.getDurability() + 1));
+
+			if (item.getMaxStackSize() == 1)
+				item.setDurability((short) (item.getDurability() + 1));
 
 			if (item.getDurability() >= item.getType().getMaxDurability()) {
 				item.setAmount(item.getAmount() - 1);
 			}
 		}
-		
+
 	}
 
 	@EventHandler
@@ -133,12 +141,12 @@ public class SortingListener implements org.bukkit.event.Listener {
 				ItemStack itemOffHand = p.getInventory().getItemInOffHand().clone();
 				itemOffHand.setDurability((short) 0);
 				itemOffHand.setAmount(1);
-				
+
 				boolean isMainHand = itemMainHand.equals(Main.item);
 				boolean isOffHand = itemOffHand.equals(Main.item);
-				
-				if (isMainHand || isOffHand) {
 
+				if (isMainHand || isOffHand) {
+					
 					if (!Timer.playerCheck(p))
 						return;
 
