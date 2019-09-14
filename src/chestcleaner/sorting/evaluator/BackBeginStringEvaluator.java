@@ -1,8 +1,8 @@
-package chestcleaner.sorting;
+package chestcleaner.sorting.evaluator;
 
 import org.bukkit.inventory.ItemStack;
 
-public class Evaluator {
+public class BackBeginStringEvaluator implements Evaluator{
 
 	/**
 	 * <b>Checks if the characters of {@code item1} are greater than the
@@ -26,7 +26,7 @@ public class Evaluator {
 	 * @return Returns {@code true} if {@code item1} is greater then
 	 *         {@code item2}.
 	 */
-	public static boolean isGreaterThan(ItemStack item1, ItemStack item2) {
+	public boolean isGreaterThan(ItemStack item1, ItemStack item2) {
 
 		if (item1.getType().equals(item2.getType()))
 			return false;
@@ -44,6 +44,7 @@ public class Evaluator {
 
 		}
 
+		if(name1.length() > name2.length()) return true;
 		return false;
 
 	}
@@ -70,7 +71,7 @@ public class Evaluator {
 	 * @return Returns {@code true} if {@code item1} is smaller then
 	 *         {@code item2}.
 	 */
-	public static boolean isSmallerThan(ItemStack item1, ItemStack item2) {
+	public boolean isSmallerThan(ItemStack item1, ItemStack item2) {
 
 		if (item1.getType().equals(item2.getType()))
 			return false;
@@ -88,6 +89,7 @@ public class Evaluator {
 
 		}
 
+		if(name1.length() < name2.length()) return true;
 		return false;
 
 	}

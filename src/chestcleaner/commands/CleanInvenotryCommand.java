@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import chestcleaner.main.Main;
+import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
@@ -53,7 +54,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			if (Timer.playerCheck(p)) {
 				
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p)) {
+				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
 							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
@@ -112,7 +113,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 			
-			if (!InventorySorter.sortPlayerBlock(block, p)) {
+			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 				if (isPlayer) {
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(

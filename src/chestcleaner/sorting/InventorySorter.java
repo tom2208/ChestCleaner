@@ -9,33 +9,40 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
 
 public class InventorySorter {
-	
+
 	public static ArrayList<Material> blacklist = new ArrayList<>();
-	
+
+	/**
+	 * Returns {@code list} with full stacked items.
+	 * 
+	 * @param list
+	 * @return full stacked {@code list};
+	 */
 	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
-		
+
 		ArrayList<ItemStack> items = new ArrayList<>();
 		ArrayList<Integer> amounts = new ArrayList<>();
-		
+
 		boolean blackListedItemUsed = false;
-		
+
 		for (int i = 0; i < list.size(); i++) {
 
 			ItemStack item = list.get(i);
 			int amount = item.getAmount();
-			
+
 			item.setAmount(1);
 
-			if(blacklist.contains(list.get(i).getType())){
+			if (blacklist.contains(list.get(i).getType())) {
 				items.add(item);
 				amounts.add(amount);
 				blackListedItemUsed = true;
-			}else{
-			
+			} else {
+
 				int index = -1;
 				for (int j = 0; j < items.size(); j++) {
 					if (items.get(j).isSimilar(list.get(i))) {
@@ -43,7 +50,7 @@ public class InventorySorter {
 						break;
 					}
 				}
-	
+
 				if (index >= 0) {
 					amounts.set(index, amounts.get(index) + amount);
 				} else {
@@ -51,11 +58,11 @@ public class InventorySorter {
 					amounts.add(amount);
 				}
 			}
-			
+
 		}
 
 		ArrayList<ItemStack> out = new ArrayList<>();
-		
+
 		for (int i = 0; i < items.size(); i++) {
 			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
 			for (int j = 0; j < stacks; j++) {
@@ -72,12 +79,12 @@ public class InventorySorter {
 			}
 
 		}
-		
-		if(blackListedItemUsed){
+
+		if (blackListedItemUsed) {
 			AmountSorter sorter = new AmountSorter(out);
 			return sorter.sortArray();
 		}
-		
+
 		return out;
 
 	}
@@ -88,20 +95,20 @@ public class InventorySorter {
 	 * @param inv
 	 *            the inventory you want to sort.
 	 */
-	public static void sortInventory(Inventory inv) {
+	public static void sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
 
 		ArrayList<ItemStack> list = InventoryConverter.getArrayListFormInventory(inv);
 		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
 
 		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, list);
+			InventoryConverter.setItemsOfInventory(inv, list, false, pattern);
 		}
-
-		Quicksort sorter = new Quicksort(list);
+		
+		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setItemsOfInventory(inv, out);
+		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
 
 	}
 
@@ -110,22 +117,23 @@ public class InventorySorter {
 	 * index 9 to 35, that means the hotbar, armor slot and the extra item slot
 	 * are not effected.
 	 * 
-	 * @param p The player whose inventory you want to sort.
+	 * @param p
+	 *            The player whose inventory you want to sort.
 	 */
-	public static void sortPlayerInv(Player p) {
+	public static void sortPlayerInv(Player p, SortingPattern pattern, EvaluatorType evaluator) {
 
 		ArrayList<ItemStack> list = InventoryDetector.getPlayerInventoryList(p);
 		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
 
 		if (list.size() <= 1) {
-			InventoryConverter.setPlayerInventory(list, p);
+			InventoryConverter.setPlayerInventory(list, p, pattern);
 		}
 
-		Quicksort sorter = new Quicksort(list);
+		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setPlayerInventory(out, p);
+		InventoryConverter.setPlayerInventory(out, p, pattern);
 	}
 
 	/**
@@ -138,7 +146,7 @@ public class InventorySorter {
 	 *            the player or owner of an enderchest inventory.
 	 * @return returns true if an inventory got sorted, otherwise false.
 	 */
-	public static boolean sortPlayerBlock(Block b, Player p) {
+	public static boolean sortPlayerBlock(Block b, Player p, SortingPattern pattern, EvaluatorType evaluator) {
 
 		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
 
@@ -146,14 +154,14 @@ public class InventorySorter {
 			if (p != null) {
 				playSortingSound(p);
 			}
-			sortInventory(inv);
+			sortInventory(inv, pattern, evaluator);
 			return true;
 		}
 
 		if (p != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
 				playSortingSound(p);
-				sortInventory(p.getEnderChest());
+				sortInventory(p.getEnderChest(), pattern, evaluator);
 				return true;
 			}
 		}

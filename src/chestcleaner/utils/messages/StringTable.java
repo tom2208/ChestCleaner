@@ -49,6 +49,10 @@ public class StringTable {
 		defaultMessages.add("The blacklist was successfully cleared.");
 		defaultMessages.add("The material %material is already on the blacklist.");
 		defaultMessages.add("This Inventory is on the blacklist, you can't sort it.");
+		defaultMessages.add("There is no pattern with this id.");
+		defaultMessages.add("Pattern was set.");
+		defaultMessages.add("There is no evaluator with this id.");
+		defaultMessages.add("Evaluator was set.");
 		
 		if(list == null){
 			

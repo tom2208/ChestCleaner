@@ -29,6 +29,14 @@ public class RefillListener implements org.bukkit.event.Listener {
 					if (p.hasPermission("chestcleaner.autorefill.blocks")) {
 
 						Material material = e.getBlockPlaced().getType();
+
+						if (material.toString().contains("STRIPPED")) {
+							if (p.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
+									|| p.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
+								return;
+							}
+						}
+
 						ItemStack[] items = InventoryDetector.getFullInventory(p.getInventory());
 
 						for (int i = 9; i < 36; i++) {

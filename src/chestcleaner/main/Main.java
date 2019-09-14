@@ -8,10 +8,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.CleanInvenotryCommand;
 import chestcleaner.commands.CleaningItemCommand;
+import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.commands.TimerCommand;
 import chestcleaner.config.Config;
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.sorting.InventorySorter;
+import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
 import chestcleaner.timer.Counter;
 import chestcleaner.utils.messages.StringTable;
@@ -40,8 +42,10 @@ public class Main extends JavaPlugin {
 		getCommand("timer").setExecutor(new TimerCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
 		getCommand("blacklist").setExecutor(new BlacklistCommand());
+		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
+		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
 		c.start();
 		new UpdateChecker(this).checkForUpdate();
 
@@ -54,7 +58,7 @@ public class Main extends JavaPlugin {
 	private void loadConfig() {
 
 		Config.save();
-
+		
 		if (Config.containsStrings()) {
 			StringTable.setUpList(Config.getStrings());
 		} else {

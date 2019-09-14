@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.Main;
+import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
@@ -23,6 +24,8 @@ import chestcleaner.utils.messages.StringTable;
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
+
+	
 	@EventHandler
 	private void onRightClick(PlayerInteractEvent e) {
 
@@ -52,8 +55,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 							return;
 
 						damageItem(p, isMainHand);
-
-						InventorySorter.sortPlayerInv(p);
+						InventorySorter.sortPlayerInv(p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p));
 						InventorySorter.playSortingSound(p);
 
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
@@ -75,7 +77,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 							return;
 						}
 
-						if (InventorySorter.sortPlayerBlock(b, p)) {
+						if (InventorySorter.sortPlayerBlock(b, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 							damageItem(p, isMainHand);
 
@@ -150,7 +152,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 					if (!Timer.playerCheck(p))
 						return;
 
-					InventorySorter.sortInventory(e.getInventory());
+					InventorySorter.sortInventory(e.getInventory(), PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p));
 					InventorySorter.playSortingSound(p);
 
 					damageItem(p, isMainHand);

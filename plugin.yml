@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: 1.6.4
+version: 1.7
 author: Tom2208
 api-version: 1.13
 
@@ -18,3 +18,6 @@ commands:
   blacklist:
     description: Avoiding items to get stacked while sorting.
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
+  sortingconfig:
+    description: Configuration of the sorting algorithm.
+    usage: /<command>

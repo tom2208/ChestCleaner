@@ -4,12 +4,19 @@ import java.util.ArrayList;
 
 import org.bukkit.inventory.ItemStack;
 
+import chestcleaner.sorting.evaluator.BeginBackStringEvaluator;
+import chestcleaner.sorting.evaluator.Evaluator;
+
 public class Quicksort {
-
+	
 	private ArrayList<ItemStack> items;
-
-	public Quicksort(ArrayList<ItemStack> items) {
+	public Evaluator evaluator = new BeginBackStringEvaluator();
+	
+	public Quicksort(ArrayList<ItemStack> items, Evaluator evaluator) {
 		this.items = items;
+		if(evaluator != null){
+			this.evaluator = evaluator;
+		}
 	}
 
 	public ArrayList<ItemStack> sort(int l, int r) {
@@ -30,11 +37,11 @@ public class Quicksort {
 		while (true) {
 			do {
 				i++;
-			} while (Evaluator.isSmallerThan(items.get(i), item));
+			} while (evaluator.isSmallerThan(items.get(i), item));
 
 			do {
 				j--;
-			} while (Evaluator.isGreaterThan(items.get(j), item));
+			} while (evaluator.isGreaterThan(items.get(j), item));
 
 			if (i < j) {
 				ItemStack k = items.get(i);
