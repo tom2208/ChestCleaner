@@ -53,6 +53,10 @@ public class StringTable {
 		defaultMessages.add("Pattern was set.");
 		defaultMessages.add("There is no evaluator with this id.");
 		defaultMessages.add("Evaluator was set.");
+		defaultMessages.add("Autosorting was set to %boolean.");
+		defaultMessages.add("New default sorting pattern was set.");
+		defaultMessages.add("New default evaluator was set.");
+		defaultMessages.add("Default auto sorting was set to %boolean.");
 		
 		if(list == null){
 			

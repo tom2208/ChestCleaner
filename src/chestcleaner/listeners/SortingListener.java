@@ -1,9 +1,11 @@
 package chestcleaner.listeners;
 
 import org.bukkit.block.Block;
+import org.bukkit.block.Chest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
@@ -168,4 +170,27 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 	}
 
+	@EventHandler
+	private void onCloseInventory(InventoryCloseEvent e){
+				
+		if(e.getInventory().getHolder() instanceof Chest){
+			
+			Player p = (Player) e.getPlayer();
+			
+			if(PlayerDataManager.getAutoSortOfPlayer(p)){
+				
+				if(!Timer.playerCheck(p)){
+					return;
+				}
+				
+				InventorySorter.sortInventoryByPlayer(e.getInventory(), p);
+				InventorySorter.playSortingSound(p);
+				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+				
+			}
+			
+		}
+		
+	}
+	
 }

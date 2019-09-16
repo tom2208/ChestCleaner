@@ -10,6 +10,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import chestcleaner.sorting.SortingPattern;
+import chestcleaner.sorting.evaluator.EvaluatorType;
+
 /**
  * This class includes all methods to save and read game data (variables for
  * this plugin).
@@ -38,6 +41,51 @@ public class Config {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/* DEFAULT AUTOSORT */
+	
+	public static void setDefaultAutoSort(boolean b) {
+		Config.set("defaultautosort", b);
+		save();
+	}
+
+	public static boolean getDefaultAutoSort() {
+		return Config.getBoolean("defaultautosort");
+	}
+
+	public static boolean containsDefaultAutoSort() {
+		return Config.contains("defaultautosort");
+	}
+	
+	/* DEFAULT EVALUATOR */
+	
+	public static void setDefaultEvaluator(EvaluatorType e) {
+		Config.set("defaultevaluator", e.name());
+		save();
+	}
+
+	public static EvaluatorType getDefaultEvaluator() {
+		return EvaluatorType.getEvaluatorTypByName(Config.getString("defaultevaluator"));
+	}
+
+	public static boolean containsDefaultEvaluator() {
+		return Config.contains("defaultevaluator");
+	}
+	
+	/* DEFAULT PATTERN*/
+	
+	public static void setDefaultSortingPattern(SortingPattern p) {
+		Config.set("defaultsortingpattern", p.name());
+		save();
+	}
+
+	public static SortingPattern getDefaultSortingPattern() {
+		return SortingPattern.getSortingPatternByName(Config.getString("defaultsortingpattern"));
+	}
+
+	public static boolean containsDefaultSortingPattern() {
+		return Config.contains("defaultsortingpattern");
 	}
 	
 	/* CLEANINVETORYPERMISSION */

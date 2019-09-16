@@ -67,6 +67,15 @@ public class Timer {
 		times.add(new Timer(p, Main.time));
 	}
 
+	/**
+	 * Checks if the player is has sorting cooldown and if sorting is available
+	 * of it. If sorting isn't on cooldown it sets a cooldown for the player and
+	 * returns true. If the sorting is on cooldown it sends a message with the
+	 * remaining time and returns false.
+	 * 
+	 * @param p The player who you want to check if it can sort.
+	 * @return Returns true if the player is allowed to sort and false if it is not.
+	 */
 	public static boolean playerCheck(Player p) {
 		if (Main.timer && !p.hasPermission("chestcleaner.timer.noeffect")) {
 			if (isPlayerOnList(p)) {

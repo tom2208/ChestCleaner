@@ -11,8 +11,6 @@ import chestcleaner.sorting.SortingPattern;
 
 public class InventoryConverter {
 
-	public static SortingPattern defaultPattern = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
-	
 	/**
 	 * <b>Converts an inventory into a ArrayList of ItemStacks and returns
 	 * it.</b> Air will get removed.
@@ -79,7 +77,7 @@ public class InventoryConverter {
 			height--;
 		}
 		
-		if(pattern == null) pattern = defaultPattern;
+		if(pattern == null) pattern = SortingPattern.DEFAULT;
 		
 		switch (pattern) {
 		

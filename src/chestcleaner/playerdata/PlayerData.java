@@ -43,10 +43,6 @@ public class PlayerData {
 	public static SortingPattern getSortingPattern(Player p) {
 		return SortingPattern.getSortingPatternByName(Config.getString(p.getUniqueId() + ".sortingpattern"));
 	}
-
-	public static boolean containsSortingPattern(Player p) {
-		return Config.contains(p.getUniqueId() + ".sortingpattern");
-	}
 	
 	/* EVALUATORTYP */
 	public static void setEvaluatorTyp(EvaluatorType pattern, Player p) {
@@ -57,9 +53,19 @@ public class PlayerData {
 	public static EvaluatorType getEvaluatorType(Player p) {
 		return EvaluatorType.getEvaluatorTypByName(Config.getString(p.getUniqueId() + ".evaluatortyp"));
 	}
-
-	public static boolean containsEvaluatorTyp(Player p) {
-		return Config.contains(p.getUniqueId() + ".evaluatortyp");
+	
+	/* AUTOSORT */
+	public static void setAutoSort(boolean b, Player p) {
+		Config.set(p.getUniqueId() + ".autosort", b);
+		save();
+	}
+	
+	public static boolean containsAutoSort(Player p){
+		return Config.contains(p.getUniqueId() + ".autosort");
+	}
+	
+	public static boolean getAutoSort(Player p) {
+		return Config.getBoolean(p.getUniqueId() + ".autosort");
 	}
 	
 }

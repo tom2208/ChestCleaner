@@ -4,13 +4,14 @@ import java.util.ArrayList;
 
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.sorting.evaluator.BeginBackStringEvaluator;
 import chestcleaner.sorting.evaluator.Evaluator;
+import chestcleaner.sorting.evaluator.EvaluatorType;
 
 public class Quicksort {
 	
 	private ArrayList<ItemStack> items;
-	public Evaluator evaluator = new BeginBackStringEvaluator();
+	//Default Evaluator
+	public Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
 	
 	public Quicksort(ArrayList<ItemStack> items, Evaluator evaluator) {
 		this.items = items;

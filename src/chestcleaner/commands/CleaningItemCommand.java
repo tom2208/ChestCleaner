@@ -200,7 +200,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						Main.itemBoolean = b;
 
 						if (b) {
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,MessageID.ITEM_ACTIVATED, player);
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.ITEM_ACTIVATED, player);
 						} else {
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.ITEM_DEACTIVATED, player);
 						}
@@ -236,9 +236,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						Config.setDurabilityLossBoolean(b);
 						Main.durability = b;
 						if (Main.durability) {
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_ACTIVATED, player);
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_ACTIVATED,
+									player);
 						} else {
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_DEACTIVATED, player);
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_DEACTIVATED,
+									player);
 						}
 						return true;
 
@@ -266,7 +268,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						p2.getInventory().addItem(Main.item);
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", player.getName()),
+									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
 									player);
 						else
 							MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
@@ -274,6 +276,21 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						return true;
 
 					} else {
+
+						if (args[1].equalsIgnoreCase("@a")) {
+
+							Object[] players = Bukkit.getOnlinePlayers().toArray();
+
+							for (Object p : players) {
+								Player pl = (Player) p;
+								pl.getInventory().addItem(Main.item);
+								if (isPlayer)
+									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
+											MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()), player);
+							}
+							return true;
+						}
+
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.ERROR,
 									StringTable.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]), p2);
@@ -334,7 +351,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		return true;
 
 	}
-		
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 

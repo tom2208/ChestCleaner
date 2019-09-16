@@ -12,7 +12,10 @@ import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.commands.TimerCommand;
 import chestcleaner.config.Config;
 import chestcleaner.listeners.SortingListener;
+import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
+import chestcleaner.sorting.SortingPattern;
+import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
 import chestcleaner.timer.Counter;
@@ -48,7 +51,6 @@ public class Main extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
 		c.start();
 		new UpdateChecker(this).checkForUpdate();
-
 	}
 
 	/**
@@ -58,6 +60,24 @@ public class Main extends JavaPlugin {
 	private void loadConfig() {
 
 		Config.save();
+		
+		if(Config.containsDefaultAutoSort()){
+			PlayerDataManager.defaultAutoSort = Config.getDefaultAutoSort();
+		}else{
+			Config.setDefaultAutoSort(PlayerDataManager.defaultAutoSort);
+		}
+		
+		if(Config.containsDefaultEvaluator()){
+			EvaluatorType.DEFAULT = Config.getDefaultEvaluator();
+		}else{
+			Config.setDefaultEvaluator(EvaluatorType.DEFAULT);
+		}
+		
+		if(Config.containsDefaultSortingPattern()){
+			SortingPattern.DEFAULT = Config.getDefaultSortingPattern();
+		}else{
+			Config.setDefaultSortingPattern(SortingPattern.DEFAULT);
+		}
 		
 		if (Config.containsStrings()) {
 			StringTable.setUpList(Config.getStrings());

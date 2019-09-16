@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
@@ -103,13 +104,13 @@ public class InventorySorter {
 		if (list.size() <= 1) {
 			InventoryConverter.setItemsOfInventory(inv, list, false, pattern);
 		}
-		
+
 		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
 		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
-
+		
 	}
 
 	/**
@@ -167,6 +168,26 @@ public class InventorySorter {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Sorts an inventory with the saved patterns of the player selected pattern
+	 * and evaluator, if nothing was selected it takes the default pattern and
+	 * evaluator.
+	 * 
+	 * @param inv
+	 *            The inventory you want to sort.
+	 * @param p
+	 *            the player who is the owner of the sorting pattern and
+	 *            evaluator.
+	 */
+	public static void sortInventoryByPlayer(Inventory inv, Player p) {
+
+		SortingPattern pattern = PlayerDataManager.getSortingPatternOfPlayer(p);
+		EvaluatorType evaluator = PlayerDataManager.getEvaluatorTypOfPlayer(p);
+
+		sortInventory(inv, pattern, evaluator);
+
 	}
 
 	public static void playSortingSound(Player p) {

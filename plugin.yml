@@ -20,4 +20,4 @@ commands:
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
   sortingconfig:
     description: Configuration of the sorting algorithm.
-    usage: /<command>
+    usage: /<command> <pattern/evaluator/setautosort/adminconfig>
