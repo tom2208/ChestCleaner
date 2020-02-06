@@ -2,12 +2,14 @@ package chestcleaner.listeners;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.Chest;
+import org.bukkit.block.DoubleChest;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
@@ -172,8 +174,10 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 	@EventHandler
 	private void onCloseInventory(InventoryCloseEvent e){
-				
-		if(e.getInventory().getHolder() instanceof Chest){
+
+		InventoryHolder holder = e.getInventory().getHolder();
+
+		if(holder instanceof Chest || holder instanceof DoubleChest){
 			
 			Player p = (Player) e.getPlayer();
 			
