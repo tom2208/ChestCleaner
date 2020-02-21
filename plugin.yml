@@ -10,11 +10,11 @@ commands:
     description: Cleans an inventory of a block.
     usage: /<command> <x> <y> <z>
   timer:
-    description: Configuers the timer.
+    description: Configures the timer.
     usage: /<command> <setActive/setTime>
   cleaningitem:
     description: Configuration of the cleaningitem.
-    usage: /<command> <setActive/setItem/setdurability/give/get/rename>
+    usage: /<command> <get/give/rename/setActive/setDurabilityLoss/setEventDetectionMode/setItem/setLore>
   blacklist:
     description: Avoiding items to get stacked while sorting.
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
