@@ -9,6 +9,6 @@ chestcleaner.cmd.cleaningitem.setactive
 chestcleaner.cmd.cleaningitem.durability
 chestcleaner.cleaningitem.use
 
-chestcleaner.timer.noeffect - timer doen't effect that player any more.
+chestcleaner.timer.noeffect - timer doesn't effect that player any more.
 
 Replacements: %location, %time, %worldname
