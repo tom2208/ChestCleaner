@@ -19,11 +19,24 @@ import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
+/**
+ * A command class representing the blacklist command. Blacklist Command
+ * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-blacklist
+ * 
+ * @author Tom2208
+ *
+ */
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
+	// A list of all first argument (index 0) sub-commands (we use this for the
+	// TabCompleter)
 	private final List<String> commandList = new ArrayList<>();
+	// A list of Strings with the types of blacklists.
 	private final List<String> lists = new ArrayList<>();
-	private final int LIST_LENGTH = 8;
+	// The length of a page one the list if it gets displayed in the in game chat.
+	private final int LIST_PAGE_LENGTH = 8;
+	// This List is the global list of blacklisted inventories, it get used in other
+	// classes etc.
 	public static ArrayList<Material> inventoryBlacklist = new ArrayList<>();
 
 	public BlacklistCommand() {
@@ -71,7 +84,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 				/** subCommands */
 
-				/*----- addMaterial -----*/
+				/*--------------- addMaterial ---------------*/
 				if (args[1].equalsIgnoreCase(commandList.get(0))) {
 
 					Material material;
@@ -89,7 +102,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 						// addMaterial with item in hand
 					} else {
-						material = getMaterialStringFormPlayerHand(p);
+						material = getMaterialFormPlayerHand(p);
 
 						if (material.equals(Material.AIR)) {
 							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM, p);
@@ -112,7 +125,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 							StringTable.getMessage(MessageID.SET_TO_BLACKLIST, "%material", material.name()), p);
 					return true;
 
-					/*----- removeMaterial -----*/
+					/*--------------- removeMaterial ---------------*/
 				} else if (args[1].equalsIgnoreCase(commandList.get(1))) {
 
 					Material material;
@@ -150,7 +163,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 						// removeMaterial with item in hand
 					} else {
-						material = getMaterialStringFormPlayerHand(p);
+						material = getMaterialFormPlayerHand(p);
 
 						if (material.equals(Material.AIR)) {
 							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM, p);
@@ -172,7 +185,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 							StringTable.getMessage(MessageID.REMOVED_FORM_BLACKLIST, "%material", material.name()), p);
 					return true;
 
-					/*----- list -----*/
+					/*--------------- list ---------------*/
 				} else if (args[1].equalsIgnoreCase(commandList.get(2))) {
 
 					if (list.size() == 0) {
@@ -181,7 +194,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					}
 
 					int page = 1;
-					int pages = list.size() / LIST_LENGTH + 1;
+					int pages = list.size() / LIST_PAGE_LENGTH + 1;
 
 					if (args.length == 3) {
 
@@ -205,10 +218,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 					}
 
-					MaterialListUtils.sendListPageToPlayer(list, p, page, LIST_LENGTH, pages);
+					MaterialListUtils.sendListPageToPlayer(list, p, page, LIST_PAGE_LENGTH, pages);
 					return true;
 
-					/*----- clear -----*/
+					/*--------------- clear ---------------*/
 				} else if (args[1].equalsIgnoreCase(commandList.get(3))) {
 
 					list.clear();
@@ -232,13 +245,15 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 
 	}
-	
+
 	/**
+	 * Returns the Material of a hand.
 	 * 
-	 * @param p
-	 * @return
+	 * @param p The player of the hand.
+	 * @return It returns the material of you main hand if it is not AIR otherwise
+	 *         the Material of your off hand.
 	 */
-	private Material getMaterialStringFormPlayerHand(Player p) {
+	private Material getMaterialFormPlayerHand(Player p) {
 		if (p.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
 			if (!p.getInventory().getItemInOffHand().getType().equals(Material.AIR)) {
 				return p.getInventory().getItemInOffHand().getType();
@@ -246,18 +261,20 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 		return p.getInventory().getItemInMainHand().getType();
 	}
-	
+
 	/**
-	 * Send the correct syntax the Player {@code p}.
+	 * Sends the correct syntax the Player {@code p}.
+	 * 
 	 * @param p the player how receives the message.
 	 */
 	private void sendSyntaxError(Player p) {
 		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
 				"/blacklist <sorting/inventory> <addMaterial/removeMaterial/list>", p);
 	}
-	
+
 	/**
-	 * Saves the list to the config.
+	 * Saves the list in to the config.yml .
+	 * 
 	 * @param list 0 meaning sortingBlacklist, 1 inventoryBlacklist.
 	 */
 	private void safeList(int list) {

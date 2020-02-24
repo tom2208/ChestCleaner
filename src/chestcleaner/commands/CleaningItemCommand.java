@@ -22,7 +22,11 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 /**
- * @author tom2208
+ * A command class representing the cleaningitem command. Blacklist Command
+ * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-blacklist
+ * 
+ * @author Tom2208
+ *
  */
 public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
