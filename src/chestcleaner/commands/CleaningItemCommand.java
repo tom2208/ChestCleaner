@@ -22,19 +22,19 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 /**
- * A command class representing the cleaningitem command. Blacklist Command
- * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-blacklist
+ * A command class representing the CleaningItem command. CleaningItem Command
+ * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-cleaningitem
  * 
  * @author Tom2208
  *
  */
 public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
+	// possible sub-commands for the first argument of this command
 	private final List<String> cleaningItemCommands = new ArrayList<>();
 
 	public CleaningItemCommand() {
 
-		// possible commands for the first argument of this command
 		cleaningItemCommands.add("rename");
 		cleaningItemCommands.add("setLore");
 		cleaningItemCommands.add("setItem");

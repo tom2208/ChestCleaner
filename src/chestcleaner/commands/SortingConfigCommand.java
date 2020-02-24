@@ -20,6 +20,13 @@ import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
+/**
+ * A command class representing the SortingConfig command. SortingConfig Command
+ * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-sortingconfig
+ * 
+ * @author Tom2208
+ *
+ */
 public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 	private final List<String> commandList = new ArrayList<>();

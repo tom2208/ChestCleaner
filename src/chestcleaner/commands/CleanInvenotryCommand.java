@@ -20,7 +20,11 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 /**
- * @author Tom
+ * A command class representing the cleaninventory command. CleanInventory Command
+ * explained: https://github.com/tom2208/ChestCleaner/wiki/Command--cleaninventory
+ * 
+ * @author Tom2208
+ *
  */
 public class CleanInvenotryCommand implements CommandExecutor {
 
