@@ -24,54 +24,61 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 public class UpdateChecker {
-	
-    private final JavaPlugin javaPlugin;
-    private final String localPluginVersion;
-    private String spigotPluginVersion;
 
-    private static final int ID = 40313;
-    private static final Permission UPDATE_PERM = new Permission("chestcleaner.update", PermissionDefault.TRUE);
-    private static final long CHECK_INTERVAL = 12_000; //In ticks.
+	private final JavaPlugin javaPlugin;
+	private final String localPluginVersion;
+	private String spigotPluginVersion;
 
-    public UpdateChecker(final JavaPlugin javaPlugin) {
-        this.javaPlugin = javaPlugin;
-        this.localPluginVersion = javaPlugin.getDescription().getVersion();
-    }
+	private static final int ID = 40313;
+	private static final Permission UPDATE_PERM = new Permission("chestcleaner.update", PermissionDefault.TRUE);
+	private static final long CHECK_INTERVAL = 12_000; // In ticks.
 
-    public void checkForUpdate() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> {
-                    //Request the current version of your plugin on SpigotMC.
-                    try {
-                        final HttpsURLConnection connection = (HttpsURLConnection) new URL("https://api.spigotmc.org/legacy/update.php?resource=" + ID).openConnection();
-                        connection.setRequestMethod("GET");
-                        spigotPluginVersion = new BufferedReader(new InputStreamReader(connection.getInputStream())).readLine();
-                    } catch (final IOException e) {
-                        e.printStackTrace();
-                        cancel();
-                        return;
-                    }
+	public UpdateChecker(final JavaPlugin javaPlugin) {
+		this.javaPlugin = javaPlugin;
+		this.localPluginVersion = javaPlugin.getDescription().getVersion();
+	}
 
-                    //Check if the requested version is the same as the one in your plugin.yml.
-                    if (localPluginVersion.equals(spigotPluginVersion)) return;
-                    
-                    MessageSystem.sendConsoleMessage(MessageType.SUCCESS, StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
+	public void checkForUpdate() {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				Bukkit.getScheduler().runTaskAsynchronously(javaPlugin, () -> {
+					// Request the current version of your plugin on SpigotMC.
+					try {
+						final HttpsURLConnection connection = (HttpsURLConnection) new URL(
+								"https://api.spigotmc.org/legacy/update.php?resource=" + ID).openConnection();
+						connection.setRequestMethod("GET");
+						spigotPluginVersion = new BufferedReader(new InputStreamReader(connection.getInputStream()))
+								.readLine();
+					} catch (final IOException e) {
+						e.printStackTrace();
+						cancel();
+						return;
+					}
 
-                    //Register the PlayerJoinEvent
-                    Bukkit.getScheduler().runTask(javaPlugin, () -> Bukkit.getPluginManager().registerEvents(new SortingListener() {
-                        @EventHandler(priority = EventPriority.MONITOR)
-                        public void onPlayerJoin(final PlayerJoinEvent event) {
-                            final Player player = event.getPlayer();
-                            if (!player.hasPermission(UPDATE_PERM)) return;
-                            MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
-                        }
-                    }, javaPlugin));
+					// Check if the requested version is the same as the one in your plugin.yml.
+					if (localPluginVersion.equals(spigotPluginVersion))
+						return;
 
-                    cancel(); //Cancel the runnable as an update has been found.
-                });
-            }
-        }.runTaskTimer(javaPlugin, 0, CHECK_INTERVAL);
-    }
+					MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
+							StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
+
+					// Register the PlayerJoinEvent
+					Bukkit.getScheduler().runTask(javaPlugin,
+							() -> Bukkit.getPluginManager().registerEvents(new SortingListener() {
+								@EventHandler(priority = EventPriority.MONITOR)
+								public void onPlayerJoin(final PlayerJoinEvent event) {
+									final Player player = event.getPlayer();
+									if (!player.hasPermission(UPDATE_PERM))
+										return;
+									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
+											StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
+								}
+							}, javaPlugin));
+
+					cancel(); // Cancel the runnable as an update has been found.
+				});
+			}
+		}.runTaskTimer(javaPlugin, 0, CHECK_INTERVAL);
+	}
 }

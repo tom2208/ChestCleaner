@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import chestcleaner.main.Main;
+import chestcleaner.main.ChestCleaner;
 import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
@@ -20,8 +20,9 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 /**
- * A command class representing the cleaninventory command. CleanInventory Command
- * explained: https://github.com/tom2208/ChestCleaner/wiki/Command--cleaninventory
+ * A command class representing the cleaninventory command. CleanInventory
+ * Command explained:
+ * https://github.com/tom2208/ChestCleaner/wiki/Command--cleaninventory
  * 
  * @author Tom2208
  *
@@ -34,7 +35,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		Player p = (Player) cs;
 		boolean isPlayer = cs instanceof Player;
 		if (isPlayer) {
-			if (!p.hasPermission("chestcleaner.cmd.cleaninventory") && Main.cleanInvPermission) {
+			if (!p.hasPermission("chestcleaner.cmd.cleaninventory") && ChestCleaner.cleanInvPermission) {
 				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.cleaninventory", p);
 				return true;
 			}
@@ -50,19 +51,20 @@ public class CleanInvenotryCommand implements CommandExecutor {
 
 			Block block = BlockDetector.getTargetBlock(p);
 
-			if(BlacklistCommand.inventoryBlacklist.contains(block.getType())){
+			if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
 				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
 				return true;
 			}
-			
+
 			if (Timer.playerCheck(p)) {
-				
+
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p),
+						PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location",
-									"(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", "+ block.getType().name() +")"),
+							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location", "(" + block.getX() + " / "
+									+ block.getY() + " / " + block.getZ() + ", " + block.getType().name() + ")"),
 							p);
 					return true;
 
@@ -108,16 +110,17 @@ public class CleanInvenotryCommand implements CommandExecutor {
 
 			Block block = BlockDetector.getBlockByLocation(new Location(w, x, y, z));
 
-			if(BlacklistCommand.inventoryBlacklist.contains(block.getType())){
+			if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
 				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
 				return true;
 			}
-			
+
 			if (isPlayer && !Timer.playerCheck(p)) {
 				return true;
 			}
-			
-			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p), PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+
+			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p),
+					PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
 
 				if (isPlayer) {
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(

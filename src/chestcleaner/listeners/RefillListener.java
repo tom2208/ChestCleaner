@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.main.Main;
+import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.InventoryDetector;
 
 public class RefillListener implements org.bukkit.event.Listener {
@@ -18,7 +18,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onPlacingBlock(BlockPlaceEvent e) {
 
-		if (Main.blockRefill && !e.isCancelled()) {
+		if (ChestCleaner.blockRefill && !e.isCancelled()) {
 			Player p = e.getPlayer();
 
 			if (p.getGameMode().equals(GameMode.SURVIVAL)) {
@@ -69,7 +69,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onConsuming(PlayerItemConsumeEvent e) {
 
-		if (Main.consumablesRefill && !e.isCancelled()) {
+		if (ChestCleaner.consumablesRefill && !e.isCancelled()) {
 
 			if (!Bukkit.getVersion().contains("1.8")) {
 

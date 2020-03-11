@@ -11,7 +11,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
+import chestcleaner.main.ChestCleaner;
+import chestcleaner.main.ChestCleaner.ConfigPath;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.messages.MessageID;
@@ -280,9 +281,9 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private void safeList(int list) {
 
 		if (list == 0) {
-			Config.setSortingBlackList(InventorySorter.blacklist);
+			ChestCleaner.main.getConfig().set(ConfigPath.BLACKLIST.getPath(), InventorySorter.blacklist);
 		} else if (list == 1) {
-			Config.setInventoryBlackList(inventoryBlacklist);
+			ChestCleaner.main.getConfig().set(ConfigPath.INVENTORY_BLACKLIST.getPath(), inventoryBlacklist);
 		}
 
 	}

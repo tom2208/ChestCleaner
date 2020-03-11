@@ -10,7 +10,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
+import chestcleaner.main.ChestCleaner;
+import chestcleaner.main.ChestCleaner.ConfigPath;
 import chestcleaner.playerdata.PlayerData;
 import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.SortingPattern;
@@ -160,7 +161,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					Config.setDefaultSortingPattern(pattern);
+					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
+
 					SortingPattern.DEFAULT = pattern;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_SORTING_PATTERN, p);
 					return true;
@@ -175,7 +177,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					Config.setDefaultEvaluator(evaluator);
+					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
+
 					EvaluatorType.DEFAULT = evaluator;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR, p);
 					return true;
@@ -194,8 +197,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					}
 
 					PlayerDataManager.defaultAutoSort = b;
-					
-					Config.setDefaultAutoSort(b);
+
+					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
+
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.DEFUALT_AUTOSORT, "%boolean", String.valueOf(b)), p);
 					return true;
@@ -244,7 +248,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				StringUtil.copyPartialMatches(args[1], admincontrolSubCMD, completions);
 
 		} else if (args.length == 3) {
-			if(args[0].equalsIgnoreCase(commandList.get(3))){
+			if (args[0].equalsIgnoreCase(commandList.get(3))) {
 				if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(0)))
 					StringUtil.copyPartialMatches(args[2], SortingPattern.getIDList(), completions);
 				else if (args[1].equalsIgnoreCase(admincontrolSubCMD.get(1)))

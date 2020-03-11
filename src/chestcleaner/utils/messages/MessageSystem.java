@@ -2,7 +2,7 @@ package chestcleaner.utils.messages;
 
 import org.bukkit.entity.Player;
 
-import chestcleaner.main.Main;
+import chestcleaner.main.ChestCleaner;
 
 public class MessageSystem {
 	
@@ -15,11 +15,11 @@ public class MessageSystem {
 	}
 	
 	public static void sendConsoleMessage(MessageType type, String arg) {
-		Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
+		ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
 	}
 
 	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
-		Main.main.getServer().getConsoleSender().sendMessage(getMessageString(type, StringTable.getMessage(messageID)));
+		ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, StringTable.getMessage(messageID)));
 	}
 	
 	private static String getMessageString(MessageType type, String arg) {

@@ -14,8 +14,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
-import chestcleaner.main.Main;
+import chestcleaner.main.ChestCleaner;
+import chestcleaner.main.ChestCleaner.ConfigPath;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -77,11 +77,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
 								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
 
-					ItemStack is = Main.item;
+					ItemStack is = ChestCleaner.item;
 					ItemMeta im = is.getItemMeta();
 					im.setDisplayName(newname);
-					Main.item.setItemMeta(im);
-					Config.setItem(Main.item);
+					ChestCleaner.item.setItemMeta(im);
+					ChestCleaner.main.setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
 					if (args.length == 1)
 						return true;
 
@@ -112,11 +112,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					}
 
-					ItemMeta im = Main.item.getItemMeta();
+					ItemMeta im = ChestCleaner.item.getItemMeta();
 					im.setLore(lorelist);
-					Main.item.setItemMeta(im);
-					Config.setItem(Main.item);
-					Config.save();
+					ChestCleaner.item.setItemMeta(im);
+					ChestCleaner.main.setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
 
 					if (isPlayer)
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_ITEM_LORE, player);
@@ -154,8 +153,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					if (item != null) {
 						item.setDurability((short) 0);
 						item.setAmount(1);
-						Config.setItem(item);
-						Main.item = item;
+						ChestCleaner.main.setIntoConfig(ConfigPath.CLEANING_ITEM, item);
+
+						ChestCleaner.item = item;
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 								StringTable.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()), player);
 						return true;
@@ -175,7 +175,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player.hasPermission("chestcleaner.cmd.cleaningitem.get")) {
 
-					player.getInventory().addItem(Main.item);
+					player.getInventory().addItem(ChestCleaner.item);
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.GOT_ITEM, player);
 					return true;
 
@@ -200,8 +200,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						if (args[1].equalsIgnoreCase("true"))
 							b = true;
 
-						Config.setItemBoolean(b);
-						Main.itemBoolean = b;
+						ChestCleaner.main.setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
+						ChestCleaner.itemBoolean = b;
 
 						if (b) {
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.ITEM_ACTIVATED, player);
@@ -237,9 +237,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						if (args[1].equalsIgnoreCase("true"))
 							b = true;
 
-						Config.setDurabilityLossBoolean(b);
-						Main.durability = b;
-						if (Main.durability) {
+						ChestCleaner.main.setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
+						ChestCleaner.durability = b;
+						if (ChestCleaner.durability) {
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_ACTIVATED,
 									player);
 						} else {
@@ -269,7 +269,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					if (p2 != null) {
 
-						p2.getInventory().addItem(Main.item);
+						p2.getInventory().addItem(ChestCleaner.item);
 						if (isPlayer)
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
@@ -287,7 +287,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 							for (Object p : players) {
 								Player pl = (Player) p;
-								pl.getInventory().addItem(Main.item);
+								pl.getInventory().addItem(ChestCleaner.item);
 								if (isPlayer)
 									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
 											MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()), player);
@@ -316,10 +316,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				if (player.hasPermission("chestcleaner.cmd.cleaningitem.seteventdetectionmode")) {
 
 					boolean b = Boolean.parseBoolean(args[1]);
-					Main.eventmode = b;
+					ChestCleaner.eventmode = b;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
 							MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(b)), player);
-					Config.setMode(b);
+					ChestCleaner.main.setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);
+
 					return true;
 
 				} else {

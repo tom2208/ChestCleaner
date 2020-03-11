@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.entity.Player;
 
-import chestcleaner.main.Main;
+import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -35,7 +35,7 @@ public class Timer {
 	static ArrayList<Timer> times = new ArrayList<>();
 
 	public static void update() {
-		if (Main.timer) {
+		if (ChestCleaner.timer) {
 			for (Timer t : times)
 				t.setTime(t.getTime() - 1);
 
@@ -64,7 +64,7 @@ public class Timer {
 	}
 
 	public static void setPlayerOnList(Player p) {
-		times.add(new Timer(p, Main.time));
+		times.add(new Timer(p, ChestCleaner.time));
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class Timer {
 	 * @return Returns true if the player is allowed to sort and false if it is not.
 	 */
 	public static boolean playerCheck(Player p) {
-		if (Main.timer && !p.hasPermission("chestcleaner.timer.noeffect")) {
+		if (ChestCleaner.timer && !p.hasPermission("chestcleaner.timer.noeffect")) {
 			if (isPlayerOnList(p)) {
 				MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
 						.getMessage(MessageID.SORTING_ON_COOLDOWN, "%time", String.valueOf(getPlayerTime(p))), p);

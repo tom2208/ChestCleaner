@@ -3,14 +3,15 @@ package chestcleaner.utils.messages;
 import java.util.ArrayList;
 import java.util.List;
 
-import chestcleaner.config.Config;
+import chestcleaner.main.ChestCleaner;
+import chestcleaner.main.ChestCleaner.ConfigPath;
 
 public class StringTable {
 
 	private static ArrayList<String> messages = new ArrayList<String>();
 	private static ArrayList<String> defaultMessages = new ArrayList<>();
 
-	public static void setUpList(List<String> list){
+	public static void setUpList(List<String> list) {
 
 		defaultMessages.add("Syntax Error");
 		defaultMessages.add("Error");
@@ -58,19 +59,19 @@ public class StringTable {
 		defaultMessages.add("New default evaluator was set.");
 		defaultMessages.add("Default auto sorting was set to %boolean.");
 
-		if(list == null){
+		if (list == null) {
 
 			messages = defaultMessages;
-			Config.setStrings(defaultMessages);
+			ChestCleaner.main.setIntoConfig(ConfigPath.STRINGS, defaultMessages);
 
-		}else if(list.size() >= defaultMessages.size()){
+		} else if (list.size() >= defaultMessages.size()) {
 			messages = (ArrayList<String>) list;
-		}else{
+		} else {
 			messages = (ArrayList<String>) list;
-			for(int i = messages.size() ; i < defaultMessages.size(); i++){
+			for (int i = messages.size(); i < defaultMessages.size(); i++) {
 				messages.add(defaultMessages.get(i));
 			}
-			Config.setStrings(messages);
+			ChestCleaner.main.setIntoConfig(ConfigPath.STRINGS, messages);
 		}
 
 	}
