@@ -39,7 +39,6 @@ public class CooldownManager {
 			}
 			MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(MessageID.SORTING_ON_COOLDOWN,
 					"%time", String.valueOf((cooldown - differnce) / 1000)), p);
-			System.out.println(differnce);
 			return false;
 
 		} else {
