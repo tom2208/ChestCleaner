@@ -16,10 +16,10 @@ import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * A command class representing the blacklist command. Blacklist Command

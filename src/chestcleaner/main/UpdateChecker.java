@@ -18,10 +18,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import chestcleaner.listeners.SortingListener;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 public class UpdateChecker {
 

@@ -15,7 +15,6 @@ import chestcleaner.config.PluginConfig;
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
-import chestcleaner.timer.Counter;
 
 public class ChestCleaner extends JavaPlugin {
 
@@ -31,8 +30,6 @@ public class ChestCleaner extends JavaPlugin {
 
 	public static ChestCleaner main;
 
-	private Counter c = new Counter();
-
 	@Override
 	public void onEnable() {
 		main = this;
@@ -45,7 +42,6 @@ public class ChestCleaner extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
-		c.start();
 		new UpdateChecker(this).checkForUpdate();
 	}
 

@@ -5,10 +5,10 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 public class MaterialListUtils {
 

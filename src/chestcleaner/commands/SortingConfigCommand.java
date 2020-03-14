@@ -16,10 +16,10 @@ import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * A command class representing the SortingConfig command. SortingConfig Command

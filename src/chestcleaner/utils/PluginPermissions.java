@@ -18,7 +18,7 @@ public enum PluginPermissions {
 	CMD_TIMER("chestcleaner.cmd.timer"), REFILL_BLOCKS("chestcleaner.autorefill.blocks"),
 	AUTOFILL_CONSUMABLES("chestcleaner.autorefill.consumables"),
 	CLEANING_ITEM_USE_OWN_INV("chestcleaner.cleaningitem.use.owninventory"),
-	CLEANING_ITEM_USE("chestcleaner.cleaningitem.use");
+	CLEANING_ITEM_USE("chestcleaner.cleaningitem.use"), TIMER_NO_EFFECT("chestcleaner.timer.noeffect");
 
 	private String permission;
 

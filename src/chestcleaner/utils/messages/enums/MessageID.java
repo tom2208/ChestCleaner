@@ -1,4 +1,4 @@
-package chestcleaner.utils.messages;
+package chestcleaner.utils.messages.enums;
 
 public enum MessageID {
 

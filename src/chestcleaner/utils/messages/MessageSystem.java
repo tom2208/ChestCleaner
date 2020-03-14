@@ -3,6 +3,8 @@ package chestcleaner.utils.messages;
 import org.bukkit.entity.Player;
 
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 public class MessageSystem {
 

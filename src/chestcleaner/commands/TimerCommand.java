@@ -15,10 +15,10 @@ import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * A command class representing the Timer command. Timer Command explained:

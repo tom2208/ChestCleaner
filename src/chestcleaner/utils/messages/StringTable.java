@@ -5,6 +5,7 @@ import java.util.List;
 
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
+import chestcleaner.utils.messages.enums.MessageID;
 
 public class StringTable {
 

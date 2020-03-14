@@ -11,14 +11,14 @@ import org.bukkit.entity.Player;
 
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
-import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
+import chestcleaner.utils.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * A command class representing the cleaninventory command. CleanInventory
@@ -58,7 +58,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (Timer.playerCheck(p)) {
+			if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 
 				// if the block has no inventory
 				if (!InventorySorter.sortPlayerBlock(block, p,
@@ -118,7 +118,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (isPlayer && !Timer.playerCheck(p)) {
+			if (isPlayer && !CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 				return true;
 			}
 

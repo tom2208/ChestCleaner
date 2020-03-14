@@ -13,14 +13,14 @@ import org.bukkit.inventory.ItemStack;
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
-import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
+import chestcleaner.utils.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
-import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * @author Tom2208
@@ -52,7 +52,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 				if (p.isSneaking()) {
 
 					if (p.hasPermission(PluginPermissions.CLEANING_ITEM_USE_OWN_INV.getString())) {
-						if (!Timer.playerCheck(p))
+						if (!CooldownManager.getInstance().isPlayerOnCooldown(p))
 							return;
 
 						damageItem(p, isMainHand);
@@ -71,7 +71,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 						Block b = BlockDetector.getTargetBlock(p);
 
-						if (BlacklistCommand.inventoryBlacklist.contains(b.getType()) || !Timer.playerCheck(p)) {
+						if (BlacklistCommand.inventoryBlacklist.contains(b.getType()) || !CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 							return;
 						}
 
@@ -148,7 +148,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				if (isMainHand || isOffHand) {
 
-					if (!Timer.playerCheck(p))
+					if (!CooldownManager.getInstance().isPlayerOnCooldown(p))
 						return;
 
 					InventorySorter.sortInventory(e.getInventory(),
@@ -179,7 +179,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			if (PlayerDataManager.getInstance().getAutoSortOfPlayer(p)) {
 
-				if (!Timer.playerCheck(p)) {
+				if (!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 					return;
 				}
 
