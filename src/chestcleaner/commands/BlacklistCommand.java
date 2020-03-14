@@ -11,6 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
@@ -281,11 +282,25 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private void safeList(int list) {
 
 		if (list == 0) {
-			ChestCleaner.main.getConfig().set(ConfigPath.BLACKLIST.getPath(), InventorySorter.blacklist);
+			Config.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(), getStringListFormMaterialList(InventorySorter.blacklist));
 		} else if (list == 1) {
-			ChestCleaner.main.getConfig().set(ConfigPath.INVENTORY_BLACKLIST.getPath(), inventoryBlacklist);
+			Config.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(), getStringListFormMaterialList(inventoryBlacklist));
 		}
 
+	}
+	
+	/**
+	 * Converts an ArrayList of Materials into an ArrayList of Strings.
+	 * @param materialList a ArrayList of Materials.
+	 * @return a ArrayList of Strings.
+	 */
+	private List<String> getStringListFormMaterialList(List<Material> materialList){
+		List<String> list = new ArrayList<>();
+		
+		for(Material material : materialList) {
+			list.add(material.name());
+		}
+		return list;
 	}
 
 	@Override
