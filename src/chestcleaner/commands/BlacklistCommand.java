@@ -15,6 +15,7 @@ import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
+import chestcleaner.utils.Permissions;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -60,7 +61,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 		Player p = (Player) sender;
 
-		if (p.hasPermission("chestcleaner.cmd.blacklist")) {
+		if (p.hasPermission(Permissions.CMD_BLACKLIST.getString())) {
 
 			if (args.length <= 1) {
 				sendSyntaxError(p);
@@ -241,7 +242,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.blacklist", p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_BLACKLIST.getString(), p);
 			return true;
 		}
 

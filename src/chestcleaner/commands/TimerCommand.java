@@ -14,6 +14,7 @@ import org.bukkit.util.StringUtil;
 import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.utils.Permissions;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -45,7 +46,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 
 		Player p = (Player) cs;
 
-		if (p.hasPermission("chestcleaner.cmd.timer")) {
+		if (p.hasPermission(Permissions.CMD_TIMER.getString())) {
 
 			if (args.length == 2) {
 
@@ -99,7 +100,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, "chestcleaner.cmd.timer", p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_TIMER.getString(), p);
 			return true;
 		}
 

@@ -17,6 +17,7 @@ import org.bukkit.util.StringUtil;
 import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.utils.Permissions;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -58,7 +59,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* RENAME SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.rename") || !isPlayer) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_RENAME.getString()) || !isPlayer) {
 
 					String newname = new String();
 					for (int i = 1; i < args.length; i++) {
@@ -88,7 +89,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.rename", player);
+							Permissions.CMD_CLEANING_ITEM_RENAME.getString(), player);
 					return true;
 				}
 				return true;
@@ -96,7 +97,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				/* SETLORE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(1))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setlore") || !isPlayer) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_SET_LORE.getString()) || !isPlayer) {
 
 					String lore = args[1];
 					for (int i = 2; i < args.length; i++) {
@@ -126,7 +127,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setlore", player);
+							Permissions.CMD_CLEANING_ITEM_SET_LORE.getString(), player);
 					return true;
 				}
 
@@ -148,7 +149,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* SETITEM SUBCOMMAND */
 			else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(2)) && isPlayer) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setitem")) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_SET_ITEM.getString())) {
 
 					ItemStack item = player.getInventory().getItemInMainHand().clone();
 					if (item != null) {
@@ -167,14 +168,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					}
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setitem", player);
+							Permissions.CMD_CLEANING_ITEM_SET_ITEM.getString(), player);
 					return true;
 				}
 
 				/* GET SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(3)) && isPlayer) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.get")) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_GET.getString())) {
 
 					player.getInventory().addItem(ChestCleaner.item);
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.GOT_ITEM, player);
@@ -182,7 +183,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.get", player);
+							Permissions.CMD_CLEANING_ITEM_GET.getString(), player);
 					return true;
 				}
 
@@ -193,7 +194,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* SETACTIVE SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(4))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setactive") || !isPlayer) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString()) || !isPlayer) {
 
 					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
 
@@ -223,14 +224,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.setactive", player);
+							Permissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString(), player);
 					return true;
 				}
 
 				/* SETDURIBILITYLOSS SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(5))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.setdurabilityloss") || !isPlayer) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString()) || !isPlayer) {
 
 					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
 
@@ -257,14 +258,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.durabilityloss", player);
+							Permissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString(), player);
 					return true;
 				}
 
 				/* GIVE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(6))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.give") || !isPlayer) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_GIVE.getString()) || !isPlayer) {
 
 					Player p2 = Bukkit.getPlayer(args[1]);
 
@@ -307,14 +308,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				} else {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.cleaningitem.give", player);
+							Permissions.CMD_CLEANING_ITEM_GIVE.getString(), player);
 					return true;
 				}
 
 				/* SETEVENTDETECTIONMODE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
 
-				if (player.hasPermission("chestcleaner.cmd.cleaningitem.seteventdetectionmode")) {
+				if (player.hasPermission(Permissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
 
 					boolean b = Boolean.parseBoolean(args[1]);
 					ChestCleaner.eventmode = b;
@@ -327,7 +328,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				} else {
 					if (isPlayer)
 						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-								"chestcleaner.cmd.cleaningitem.seteventdetectionmode", player);
+								Permissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString(), player);
 					return true;
 				}
 

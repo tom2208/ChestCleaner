@@ -14,6 +14,7 @@ import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
+import chestcleaner.utils.Permissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
@@ -63,9 +64,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			/* PATTERN */
 			if (args[0].equalsIgnoreCase(commandList.get(0))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.pattern")) {
+				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.pattern");
+							Permissions.CMD_SORTING_CONFIG_PATTERN.getString());
 					return true;
 				}
 
@@ -88,9 +89,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* EVALUATOR */
 			} else if (args[0].equalsIgnoreCase(commandList.get(1))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.evaluator")) {
+				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.evaluator");
+							Permissions.CMD_SORTING_CONFIG_EVALUATOR.getString());
 					return true;
 				}
 
@@ -113,9 +114,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* SETAUTOSORT */
 			} else if (args[0].equalsIgnoreCase(commandList.get(2))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sortingconfig.setautosort")) {
+				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sortingconfig.setautosort");
+							Permissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString());
 					return true;
 				}
 
@@ -144,9 +145,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			/* ADMINCONFIG */
 			if (args[0].equalsIgnoreCase(commandList.get(3))) {
 
-				if (!p.hasPermission("chestcleaner.cmd.sorting.config.admincontrol")) {
+				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							"chestcleaner.cmd.sorting.config.admincontrol", p);
+							Permissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), p);
 					return true;
 				}
 
