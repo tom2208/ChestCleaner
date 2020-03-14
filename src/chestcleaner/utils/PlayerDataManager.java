@@ -47,11 +47,10 @@ public class PlayerDataManager {
 			playerEvaluator.put(p.getUniqueId(), evaluator);
 		}
 
-		if (!Config.getInstance().containsAutoSort(p)) {
-			autosort = isDefaultAutoSort();
+		if (Config.getInstance().containsAutoSort(p)) {
+			playerAutoSort.put(p.getUniqueId(), autosort);
 		}
 
-		playerAutoSort.put(p.getUniqueId(), autosort);
 
 	}
 

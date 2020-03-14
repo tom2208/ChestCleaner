@@ -13,7 +13,6 @@ import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.Config;
 import chestcleaner.config.Config.ConfigPath;
-import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.messages.MessageID;
