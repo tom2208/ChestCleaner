@@ -1,6 +1,6 @@
 package chestcleaner.utils;
 
-public enum Permissions {
+public enum PluginPermissions {
 
 	CMD_BLACKLIST("chestcleaner.cmd.blacklist"), CMD_CLEANING_ITEM_RENAME("chestcleaner.cmd.cleaningitem.rename"),
 	CMD_CLEANING_ITEM_SET_LORE("chestcleaner.cmd.cleaningitem.setlore"),
@@ -22,7 +22,7 @@ public enum Permissions {
 
 	private String permission;
 
-	Permissions(String permission) {
+	PluginPermissions(String permission) {
 		this.permission = permission;
 	}
 

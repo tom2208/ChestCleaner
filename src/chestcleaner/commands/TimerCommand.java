@@ -11,10 +11,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
-import chestcleaner.config.Config.ConfigPath;
+import chestcleaner.config.PluginConfig;
+import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.main.ChestCleaner;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -46,7 +46,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 
 		Player p = (Player) cs;
 
-		if (p.hasPermission(Permissions.CMD_TIMER.getString())) {
+		if (p.hasPermission(PluginPermissions.CMD_TIMER.getString())) {
 
 			if (args.length == 2) {
 
@@ -56,7 +56,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					if (args[1].equalsIgnoreCase("true")) {
 
 						if (!ChestCleaner.timer) {
-							Config.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
+							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
 							ChestCleaner.timer = true;
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED, p);
@@ -65,7 +65,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					} else if (args[1].equalsIgnoreCase("false")) {
 
 						if (ChestCleaner.timer) {
-							Config.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
+							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
 							ChestCleaner.timer = false;
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED, p);
@@ -83,7 +83,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					int time = Integer.valueOf(args[1]);
 					if (ChestCleaner.time != time) {
 						ChestCleaner.time = time;
-						Config.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time);
+						PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time);
 					}
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);
@@ -100,7 +100,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_TIMER.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_TIMER.getString(), p);
 			return true;
 		}
 

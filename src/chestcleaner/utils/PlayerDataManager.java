@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import chestcleaner.config.Config;
+import chestcleaner.config.PluginConfig;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 
@@ -36,9 +36,9 @@ public class PlayerDataManager {
 	 * @param p the player whose data you want to load.
 	 */
 	public void loadPlayerData(Player p) {
-		SortingPattern pattern = Config.getInstance().getSortingPattern(p);
-		EvaluatorType evaluator = Config.getInstance().getEvaluatorType(p);
-		boolean autosort = Config.getInstance().getAutoSort(p);
+		SortingPattern pattern = PluginConfig.getInstance().getSortingPattern(p);
+		EvaluatorType evaluator = PluginConfig.getInstance().getEvaluatorType(p);
+		boolean autosort = PluginConfig.getInstance().getAutoSort(p);
 
 		if (pattern != null) {
 			playerPattern.put(p.getUniqueId(), pattern);
@@ -48,7 +48,7 @@ public class PlayerDataManager {
 			playerEvaluator.put(p.getUniqueId(), evaluator);
 		}
 
-		if (Config.getInstance().containsAutoSort(p)) {
+		if (PluginConfig.getInstance().containsAutoSort(p)) {
 			playerAutoSort.put(p.getUniqueId(), autosort);
 		}
 

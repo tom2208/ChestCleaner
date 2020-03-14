@@ -11,11 +11,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
-import chestcleaner.config.Config.ConfigPath;
+import chestcleaner.config.PluginConfig;
+import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -61,7 +61,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 		Player p = (Player) sender;
 
-		if (p.hasPermission(Permissions.CMD_BLACKLIST.getString())) {
+		if (p.hasPermission(PluginPermissions.CMD_BLACKLIST.getString())) {
 
 			if (args.length <= 1) {
 				sendSyntaxError(p);
@@ -242,7 +242,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_BLACKLIST.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_BLACKLIST.getString(), p);
 			return true;
 		}
 
@@ -282,10 +282,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private void safeList(int list) {
 
 		if (list == 0) {
-			Config.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(),
+			PluginConfig.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(),
 					getStringListFormMaterialList(InventorySorter.blacklist));
 		} else if (list == 1) {
-			Config.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(),
+			PluginConfig.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(),
 					getStringListFormMaterialList(inventoryBlacklist));
 		}
 

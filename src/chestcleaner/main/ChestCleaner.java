@@ -11,7 +11,7 @@ import chestcleaner.commands.CleanInvenotryCommand;
 import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.commands.TimerCommand;
-import chestcleaner.config.Config;
+import chestcleaner.config.PluginConfig;
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
@@ -36,7 +36,7 @@ public class ChestCleaner extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		main = this;
-		Config.getInstance().loadConfig();
+		PluginConfig.getInstance().loadConfig();
 		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
 		getCommand("timer").setExecutor(new TimerCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());

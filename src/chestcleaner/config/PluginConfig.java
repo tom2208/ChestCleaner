@@ -26,16 +26,16 @@ import chestcleaner.utils.messages.StringTable;
  * @author Tom2208
  *
  */
-public class Config {
+public class PluginConfig {
 
-	private static Config instance = null;
+	private static PluginConfig instance = null;
 
 	private File configFile;
 	private FileConfiguration config;
 	private File playerDataConfigFile;
 	private FileConfiguration playerDataConfig;
 
-	protected Config() {
+	protected PluginConfig() {
 		configFile = new File("plugins/" + ChestCleaner.main.getName(), "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
 		playerDataConfigFile = new File("plugins/" + ChestCleaner.main.getName(), "playerdata.yml");
@@ -210,9 +210,9 @@ public class Config {
 	 * 
 	 * @return The Instance of the singleton.
 	 */
-	public static Config getInstance() {
+	public static PluginConfig getInstance() {
 		if (instance == null) {
-			instance = new Config();
+			instance = new PluginConfig();
 		}
 		return instance;
 	}

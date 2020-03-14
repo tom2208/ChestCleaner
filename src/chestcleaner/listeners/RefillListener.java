@@ -12,7 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 
 public class RefillListener implements org.bukkit.event.Listener {
 
@@ -27,7 +27,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getItemInHand();
 				if (item.getAmount() == 1) {
 
-					if (p.hasPermission(Permissions.REFILL_BLOCKS.getString())) {
+					if (p.hasPermission(PluginPermissions.REFILL_BLOCKS.getString())) {
 
 						Material material = e.getBlockPlaced().getType();
 
@@ -80,7 +80,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 					ItemStack item = e.getItem();
 					if (item.getAmount() == 1) {
 
-						if (p.hasPermission(Permissions.AUTOFILL_CONSUMABLES.getString())) {
+						if (p.hasPermission(PluginPermissions.AUTOFILL_CONSUMABLES.getString())) {
 
 							if (item.getMaxStackSize() > 1) {
 								int hand = -1; // -1 = nothing, 0 = hand, 1 =

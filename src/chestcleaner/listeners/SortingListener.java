@@ -15,7 +15,7 @@ import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
@@ -51,7 +51,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				if (p.isSneaking()) {
 
-					if (p.hasPermission(Permissions.CLEANING_ITEM_USE_OWN_INV.getString())) {
+					if (p.hasPermission(PluginPermissions.CLEANING_ITEM_USE_OWN_INV.getString())) {
 						if (!Timer.playerCheck(p))
 							return;
 
@@ -67,7 +67,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				} else if (!ChestCleaner.eventmode) {
 
-					if (p.hasPermission(Permissions.CLEANING_ITEM_USE.getString())) {
+					if (p.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
 						Block b = BlockDetector.getTargetBlock(p);
 
@@ -133,7 +133,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (p.hasPermission(Permissions.CLEANING_ITEM_USE.getString())) {
+			if (p.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
 				ItemStack itemMainHand = p.getInventory().getItemInMainHand().clone();
 				itemMainHand.setDurability((short) 0);

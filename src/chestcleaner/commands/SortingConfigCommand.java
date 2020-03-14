@@ -10,11 +10,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.Config;
-import chestcleaner.config.Config.ConfigPath;
+import chestcleaner.config.PluginConfig;
+import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
@@ -64,9 +64,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			/* PATTERN */
 			if (args[0].equalsIgnoreCase(commandList.get(0))) {
 
-				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
+				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							Permissions.CMD_SORTING_CONFIG_PATTERN.getString());
+							PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString());
 					return true;
 				}
 
@@ -80,7 +80,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				} else {
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET, p);
-					Config.getInstance().setSortingPattern(pattern, p);
+					PluginConfig.getInstance().setSortingPattern(pattern, p);
 					PlayerDataManager.getInstance().loadPlayerData(p);
 					return true;
 
@@ -89,9 +89,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* EVALUATOR */
 			} else if (args[0].equalsIgnoreCase(commandList.get(1))) {
 
-				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
+				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							Permissions.CMD_SORTING_CONFIG_EVALUATOR.getString());
+							PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString());
 					return true;
 				}
 
@@ -105,7 +105,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				} else {
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET, p);
-					Config.getInstance().setEvaluatorTyp(evaluator, p);
+					PluginConfig.getInstance().setEvaluatorTyp(evaluator, p);
 					PlayerDataManager.getInstance().loadPlayerData(p);
 					return true;
 
@@ -114,9 +114,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* SETAUTOSORT */
 			} else if (args[0].equalsIgnoreCase(commandList.get(2))) {
 
-				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
+				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							Permissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString());
+							PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString());
 					return true;
 				}
 
@@ -131,7 +131,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 						StringTable.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)), p);
-				Config.getInstance().setAutoSort(b, p);
+				PluginConfig.getInstance().setAutoSort(b, p);
 				PlayerDataManager.getInstance().loadPlayerData(p);
 				return true;
 
@@ -145,9 +145,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			/* ADMINCONFIG */
 			if (args[0].equalsIgnoreCase(commandList.get(3))) {
 
-				if (!p.hasPermission(Permissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
+				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
 					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							Permissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), p);
+							PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), p);
 					return true;
 				}
 
@@ -161,7 +161,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
+					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
 
 					SortingPattern.DEFAULT = pattern;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_SORTING_PATTERN, p);
@@ -177,7 +177,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
+					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
 
 					EvaluatorType.DEFAULT = evaluator;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR, p);
@@ -198,7 +198,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 					PlayerDataManager.getInstance().setDefaultAutoSort(b);
 
-					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
+					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.DEFUALT_AUTOSORT, "%boolean", String.valueOf(b)), p);

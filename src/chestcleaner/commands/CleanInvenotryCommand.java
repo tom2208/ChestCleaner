@@ -13,7 +13,7 @@ import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
-import chestcleaner.utils.Permissions;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
@@ -36,8 +36,8 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		Player p = (Player) cs;
 		boolean isPlayer = cs instanceof Player;
 		if (isPlayer) {
-			if (!p.hasPermission(Permissions.CMD_INV_CLEAN.getString()) && ChestCleaner.cleanInvPermission) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_INV_CLEAN.getString(),
+			if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString()) && ChestCleaner.cleanInvPermission) {
+				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_INV_CLEAN.getString(),
 						p);
 				return true;
 			}

@@ -3,8 +3,8 @@ package chestcleaner.utils.messages;
 import java.util.ArrayList;
 import java.util.List;
 
-import chestcleaner.config.Config;
-import chestcleaner.config.Config.ConfigPath;
+import chestcleaner.config.PluginConfig;
+import chestcleaner.config.PluginConfig.ConfigPath;
 
 public class StringTable {
 
@@ -62,7 +62,7 @@ public class StringTable {
 		if (list == null) {
 
 			messages = defaultMessages;
-			Config.getInstance().setIntoConfig(ConfigPath.STRINGS, defaultMessages);
+			PluginConfig.getInstance().setIntoConfig(ConfigPath.STRINGS, defaultMessages);
 
 		} else if (list.size() >= defaultMessages.size()) {
 			messages = (ArrayList<String>) list;
@@ -71,7 +71,7 @@ public class StringTable {
 			for (int i = messages.size(); i < defaultMessages.size(); i++) {
 				messages.add(defaultMessages.get(i));
 			}
-			Config.getInstance().setIntoConfig(ConfigPath.STRINGS, messages);
+			PluginConfig.getInstance().setIntoConfig(ConfigPath.STRINGS, messages);
 		}
 
 	}
