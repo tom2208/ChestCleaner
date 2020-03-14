@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.StringTable;
@@ -18,6 +17,7 @@ public class CooldownManager {
 
 	private HashMap<UUID, Long> times;
 	private int cooldown = 5000;
+	private boolean active = true;
 
 	protected CooldownManager() {
 		times = new HashMap<>();
@@ -25,12 +25,11 @@ public class CooldownManager {
 
 	public boolean isPlayerOnCooldown(Player p) {
 
-		if (ChestCleaner.timer && !p.hasPermission(PluginPermissions.TIMER_NO_EFFECT.getString())) {
+		if (!active || !p.hasPermission(PluginPermissions.TIMER_NO_EFFECT.getString())) {
 			return true;
 		}
 
 		if (times.containsKey(p.getUniqueId())) {
-
 			long differnce = System.currentTimeMillis() - times.get(p.getUniqueId());
 
 			if (differnce >= cooldown) {
@@ -52,6 +51,18 @@ public class CooldownManager {
 		this.cooldown = cooldown;
 	}
 
+	public int getCooldown() {
+		return cooldown;
+	}
+	
+	public void setActive(boolean b) {
+		this.active = b;
+	}
+	
+	public boolean isActive() {
+		return active;
+	}
+	
 	public static CooldownManager getInstance() {
 		if (instance == null) {
 			instance = new CooldownManager();

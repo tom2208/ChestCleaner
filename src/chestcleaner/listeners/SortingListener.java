@@ -8,6 +8,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
@@ -15,6 +16,7 @@ import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
+import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
@@ -70,7 +72,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 					if (p.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
 						Block b = BlockDetector.getTargetBlock(p);
-
+						
+						if(!InventoryDetector.hasInventoryHolder(b)) return; 
+						
 						if (BlacklistCommand.inventoryBlacklist.contains(b.getType()) || !CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 							return;
 						}

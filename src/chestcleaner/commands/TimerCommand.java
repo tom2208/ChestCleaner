@@ -13,7 +13,7 @@ import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.main.ChestCleaner;
+import chestcleaner.sorting.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.StringTable;
@@ -55,18 +55,18 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 
 					if (args[1].equalsIgnoreCase("true")) {
 
-						if (!ChestCleaner.timer) {
+						if (!CooldownManager.getInstance().isActive()) {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
-							ChestCleaner.timer = true;
+							CooldownManager.getInstance().setActive(true);
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED, p);
 						return true;
 
 					} else if (args[1].equalsIgnoreCase("false")) {
 
-						if (ChestCleaner.timer) {
+						if (CooldownManager.getInstance().isActive()) {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
-							ChestCleaner.timer = false;
+							CooldownManager.getInstance().setActive(false);
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED, p);
 						return true;
@@ -81,9 +81,9 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 				} else if (args[0].equalsIgnoreCase(timerCommands.get(1))) {
 
 					int time = Integer.valueOf(args[1]);
-					if (ChestCleaner.time != time) {
-						ChestCleaner.time = time;
-						PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time);
+					if (CooldownManager.getInstance().getCooldown() != time) {
+						CooldownManager.getInstance().setCooldown(time * 1000);
+						PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time * 1000);
 					}
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);

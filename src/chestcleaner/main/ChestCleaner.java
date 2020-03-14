@@ -19,8 +19,6 @@ import chestcleaner.listeners.RefillListener;
 public class ChestCleaner extends JavaPlugin {
 
 	public static boolean cleanInvPermission = true;
-	public static boolean timer = true;
-	public static int time = 5;
 	public static ItemStack item = new ItemStack(Material.IRON_HOE);
 	public static boolean durability = true;
 	public static boolean itemBoolean = true;

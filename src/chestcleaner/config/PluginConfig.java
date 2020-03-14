@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
@@ -98,7 +99,15 @@ public class PluginConfig {
 		if (setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
 			ChestCleaner.cleanInvPermission = config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath());
 		}
-
+		
+		if(setIfDoesntContains(ConfigPath.TIMER_ACTIVE, true)) {
+			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.TIMER_ACTIVE.getPath()));
+		}
+		
+		if(config.contains(ConfigPath.TIMER_TIME.getPath())) {
+			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.TIMER_TIME.getPath()));
+		}
+		
 		if (config.contains(ConfigPath.BLACKLIST.getPath())) {
 			List<String> list = config.getStringList(ConfigPath.BLACKLIST.getPath());
 			ArrayList<Material> materials = new ArrayList<>();
