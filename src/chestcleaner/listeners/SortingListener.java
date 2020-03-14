@@ -12,9 +12,9 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
-import chestcleaner.utils.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;

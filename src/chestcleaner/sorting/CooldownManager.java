@@ -1,4 +1,4 @@
-package chestcleaner.utils;
+package chestcleaner.sorting;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -6,24 +6,29 @@ import java.util.UUID;
 import org.bukkit.entity.Player;
 
 import chestcleaner.main.ChestCleaner;
+import chestcleaner.utils.PluginPermissions;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.StringTable;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 public class CooldownManager {
 
 	private static CooldownManager instance = null;
-	
+
 	private HashMap<UUID, Long> times;
 	private int cooldown = 5000;
-	
+
 	protected CooldownManager() {
 		times = new HashMap<>();
 	}
 
 	public boolean isPlayerOnCooldown(Player p) {
-		
+
 		if (ChestCleaner.timer && !p.hasPermission(PluginPermissions.TIMER_NO_EFFECT.getString())) {
 			return true;
 		}
-		
+
 		if (times.containsKey(p.getUniqueId())) {
 
 			long differnce = System.currentTimeMillis() - times.get(p.getUniqueId());
@@ -32,6 +37,9 @@ public class CooldownManager {
 				times.put(p.getUniqueId(), System.currentTimeMillis());
 				return true;
 			}
+			MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(MessageID.SORTING_ON_COOLDOWN,
+					"%time", String.valueOf((cooldown - differnce) / 1000)), p);
+			System.out.println(differnce);
 			return false;
 
 		} else {
@@ -40,16 +48,16 @@ public class CooldownManager {
 		}
 
 	}
-	
+
 	public void setCooldown(int cooldown) {
 		this.cooldown = cooldown;
 	}
-	
+
 	public static CooldownManager getInstance() {
-		if(instance == null) {
+		if (instance == null) {
 			instance = new CooldownManager();
 		}
 		return instance;
 	}
-	
+
 }
