@@ -10,8 +10,7 @@ public enum EvaluatorType {
 	/**
 	 * Returns the enum object if it's is equal to an existing entry.
 	 * 
-	 * @param str
-	 *            the name of the enum entry.
+	 * @param str the name of the enum entry.
 	 * @return the enum entry object or {@code null} if does not exist.
 	 */
 	public static EvaluatorType getEvaluatorTypByName(String str) {

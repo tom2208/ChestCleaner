@@ -75,7 +75,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 							return;
 						}
 
-						if (InventorySorter.sortPlayerBlock(b, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+						if (InventorySorter.sortPlayerBlock(b, p,
+								PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
 								PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
 							damageItem(p, isMainHand);
@@ -150,7 +151,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 					if (!Timer.playerCheck(p))
 						return;
 
-					InventorySorter.sortInventory(e.getInventory(), PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+					InventorySorter.sortInventory(e.getInventory(),
+							PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
 							PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p));
 					InventorySorter.playSortingSound(p);
 
@@ -170,7 +172,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onCloseInventory(InventoryCloseEvent e) {
 
-		if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST) || e.getInventory().getType().equals(InventoryType.CHEST)) {
+		if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST)
+				|| e.getInventory().getType().equals(InventoryType.CHEST)) {
 
 			Player p = (Player) e.getPlayer();
 

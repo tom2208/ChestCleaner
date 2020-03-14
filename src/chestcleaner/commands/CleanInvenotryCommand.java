@@ -37,7 +37,8 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		boolean isPlayer = cs instanceof Player;
 		if (isPlayer) {
 			if (!p.hasPermission(Permissions.CMD_INV_CLEAN.getString()) && ChestCleaner.cleanInvPermission) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_INV_CLEAN.getString(), p);
+				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, Permissions.CMD_INV_CLEAN.getString(),
+						p);
 				return true;
 			}
 		}
@@ -60,7 +61,8 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			if (Timer.playerCheck(p)) {
 
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+				if (!InventorySorter.sortPlayerBlock(block, p,
+						PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
 						PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,

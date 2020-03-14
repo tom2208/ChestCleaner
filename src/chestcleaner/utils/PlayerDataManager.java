@@ -29,9 +29,10 @@ public class PlayerDataManager {
 		playerPattern = new HashMap<>();
 		playerAutoSort = new HashMap<>();
 	}
-	
+
 	/**
 	 * Loads the data of player form the config.
+	 * 
 	 * @param p the player whose data you want to load.
 	 */
 	public void loadPlayerData(Player p) {
@@ -51,7 +52,6 @@ public class PlayerDataManager {
 			playerAutoSort.put(p.getUniqueId(), autosort);
 		}
 
-
 	}
 
 	public void removePlayerDataFormMemory(Player p) {
@@ -61,11 +61,12 @@ public class PlayerDataManager {
 	}
 
 	public EvaluatorType getEvaluatorTypOfPlayer(Player p) {
-		return playerEvaluator.get(p.getUniqueId()) == null ? EvaluatorType.DEFAULT : playerEvaluator.get(p.getUniqueId());
+		return playerEvaluator.get(p.getUniqueId()) == null ? EvaluatorType.DEFAULT
+				: playerEvaluator.get(p.getUniqueId());
 	}
 
 	public SortingPattern getSortingPatternOfPlayer(Player p) {
-		return playerPattern.get(p.getUniqueId()) == null ?  SortingPattern.DEFAULT : playerPattern.get(p.getUniqueId());
+		return playerPattern.get(p.getUniqueId()) == null ? SortingPattern.DEFAULT : playerPattern.get(p.getUniqueId());
 	}
 
 	public boolean getAutoSortOfPlayer(Player p) {

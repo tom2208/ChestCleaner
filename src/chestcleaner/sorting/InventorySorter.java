@@ -93,8 +93,7 @@ public class InventorySorter {
 	/**
 	 * Sorts any kind of inventory.
 	 * 
-	 * @param inv
-	 *            the inventory you want to sort.
+	 * @param inv the inventory you want to sort.
 	 */
 	public static void sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
 
@@ -110,16 +109,15 @@ public class InventorySorter {
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
 		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
-		
+
 	}
 
 	/**
-	 * Sorts a part of the inventory of a player. It sorts the slots with the
-	 * index 9 to 35, that means the hotbar, armor slot and the extra item slot
-	 * are not effected.
+	 * Sorts a part of the inventory of a player. It sorts the slots with the index
+	 * 9 to 35, that means the hotbar, armor slot and the extra item slot are not
+	 * effected.
 	 * 
-	 * @param p
-	 *            The player whose inventory you want to sort.
+	 * @param p The player whose inventory you want to sort.
 	 */
 	public static void sortPlayerInv(Player p, SortingPattern pattern, EvaluatorType evaluator) {
 
@@ -138,13 +136,10 @@ public class InventorySorter {
 	}
 
 	/**
-	 * Checks if the block has an inventory or if it is an enderchest and sorts
-	 * it.
+	 * Checks if the block has an inventory or if it is an enderchest and sorts it.
 	 * 
-	 * @param b
-	 *            Block you want to get sorted.
-	 * @param p
-	 *            the player or owner of an enderchest inventory.
+	 * @param b Block you want to get sorted.
+	 * @param p the player or owner of an enderchest inventory.
 	 * @return returns true if an inventory got sorted, otherwise false.
 	 */
 	public static boolean sortPlayerBlock(Block b, Player p, SortingPattern pattern, EvaluatorType evaluator) {
@@ -171,15 +166,12 @@ public class InventorySorter {
 	}
 
 	/**
-	 * Sorts an inventory with the saved patterns of the player selected pattern
-	 * and evaluator, if nothing was selected it takes the default pattern and
+	 * Sorts an inventory with the saved patterns of the player selected pattern and
+	 * evaluator, if nothing was selected it takes the default pattern and
 	 * evaluator.
 	 * 
-	 * @param inv
-	 *            The inventory you want to sort.
-	 * @param p
-	 *            the player who is the owner of the sorting pattern and
-	 *            evaluator.
+	 * @param inv The inventory you want to sort.
+	 * @param p   the player who is the owner of the sorting pattern and evaluator.
 	 */
 	public static void sortInventoryByPlayer(Inventory inv, Player p) {
 

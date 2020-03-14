@@ -32,7 +32,7 @@ public class ChestCleaner extends JavaPlugin {
 	public static ChestCleaner main;
 
 	private Counter c = new Counter();
-	
+
 	@Override
 	public void onEnable() {
 		main = this;
@@ -48,6 +48,5 @@ public class ChestCleaner extends JavaPlugin {
 		c.start();
 		new UpdateChecker(this).checkForUpdate();
 	}
-
 
 }

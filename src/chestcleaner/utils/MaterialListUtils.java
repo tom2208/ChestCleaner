@@ -11,26 +11,26 @@ import chestcleaner.utils.messages.MessageType;
 import chestcleaner.utils.messages.StringTable;
 
 public class MaterialListUtils {
-	 	
-	public static void sendListPageToPlayer(List<Material> list, Player p, int page, int maxPageLines, int pages){
-		
+
+	public static void sendListPageToPlayer(List<Material> list, Player p, int page, int maxPageLines, int pages) {
+
 		MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 				StringTable.getMessage(MessageID.BLACKLIST_TITLE, "%page", page + " / " + pages), p);
-		
+
 		for (int i = (page - 1) * maxPageLines; i < page * maxPageLines; i++) {
 			if (list.size() == i) {
 				break;
 			} else {
-				MessageSystem.sendMessageToPlayer(MessageType.UNHEADED_INFORMATION,
-						(i + 1) + ". " + list.get(i).name(), p);
+				MessageSystem.sendMessageToPlayer(MessageType.UNHEADED_INFORMATION, (i + 1) + ". " + list.get(i).name(),
+						p);
 			}
 		}
-		
+
 		if (pages > page) {
-			MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable
-					.getMessage(MessageID.NEXT_ENTRIES, "%nextpage", String.valueOf(page + 1)), p);
+			MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
+					StringTable.getMessage(MessageID.NEXT_ENTRIES, "%nextpage", String.valueOf(page + 1)), p);
 		}
-		
+
 	}
-	
+
 }

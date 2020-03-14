@@ -282,22 +282,25 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private void safeList(int list) {
 
 		if (list == 0) {
-			Config.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(), getStringListFormMaterialList(InventorySorter.blacklist));
+			Config.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(),
+					getStringListFormMaterialList(InventorySorter.blacklist));
 		} else if (list == 1) {
-			Config.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(), getStringListFormMaterialList(inventoryBlacklist));
+			Config.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(),
+					getStringListFormMaterialList(inventoryBlacklist));
 		}
 
 	}
-	
+
 	/**
 	 * Converts an ArrayList of Materials into an ArrayList of Strings.
+	 * 
 	 * @param materialList a ArrayList of Materials.
 	 * @return a ArrayList of Strings.
 	 */
-	private List<String> getStringListFormMaterialList(List<Material> materialList){
+	private List<String> getStringListFormMaterialList(List<Material> materialList) {
 		List<String> list = new ArrayList<>();
-		
-		for(Material material : materialList) {
+
+		for (Material material : materialList) {
 			list.add(material.name());
 		}
 		return list;

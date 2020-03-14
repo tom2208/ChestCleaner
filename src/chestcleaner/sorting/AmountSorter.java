@@ -10,13 +10,11 @@ public class AmountSorter {
 	private ArrayList<ItemStack> items;
 
 	/**
-	 * You can use it to sort ArrayLists of ItemStacks by amount in sub-arrays
-	 * of the same material.
+	 * You can use it to sort ArrayLists of ItemStacks by amount in sub-arrays of
+	 * the same material.
 	 * 
-	 * @param list
-	 *            the list you want to get sorted.
-	 * @throws IllegalArgumentException
-	 *             if {@code list} is null;
+	 * @param list the list you want to get sorted.
+	 * @throws IllegalArgumentException if {@code list} is null;
 	 */
 	public AmountSorter(ArrayList<ItemStack> list) {
 		if (list == null)
@@ -41,7 +39,8 @@ public class AmountSorter {
 
 			if (!items.get(i).getType().equals(material)) {
 
-				if(i - beginn > 1) sortSubArray(beginn, i - 1);
+				if (i - beginn > 1)
+					sortSubArray(beginn, i - 1);
 				beginn = i;
 				material = items.get(i).getType();
 
@@ -49,7 +48,7 @@ public class AmountSorter {
 
 		}
 
-		if (beginn != items.size()-1) {
+		if (beginn != items.size() - 1) {
 			sortSubArray(beginn, items.size() - 1);
 		}
 

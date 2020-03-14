@@ -8,14 +8,14 @@ import chestcleaner.sorting.evaluator.Evaluator;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 
 public class Quicksort {
-	
+
 	private ArrayList<ItemStack> items;
-	//Default Evaluator
+	// Default Evaluator
 	public Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
-	
+
 	public Quicksort(ArrayList<ItemStack> items, Evaluator evaluator) {
 		this.items = items;
-		if(evaluator != null){
+		if (evaluator != null) {
 			this.evaluator = evaluator;
 		}
 	}
@@ -34,7 +34,7 @@ public class Quicksort {
 
 		int i = l - 1;
 		int j = r + 1;
-		ItemStack item = items.get((l+r)/2);
+		ItemStack item = items.get((l + r) / 2);
 		while (true) {
 			do {
 				i++;

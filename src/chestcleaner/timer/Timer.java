@@ -68,8 +68,8 @@ public class Timer {
 	}
 
 	/**
-	 * Checks if the player is has sorting cooldown and if sorting is available
-	 * of it. If sorting isn't on cooldown it sets a cooldown for the player and
+	 * Checks if the player is has sorting cooldown and if sorting is available of
+	 * it. If sorting isn't on cooldown it sets a cooldown for the player and
 	 * returns true. If the sorting is on cooldown it sends a message with the
 	 * remaining time and returns false.
 	 * 
