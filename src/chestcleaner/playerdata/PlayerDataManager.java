@@ -38,17 +38,17 @@ public class PlayerDataManager {
 	}
 
 	public static void removePlayerDataFormMemory(Player p) {
-		playerEvaluator.remove(p);
-		playerPattern.remove(p);
-		playerAutoSort.remove(p);
+		playerEvaluator.remove(p.getUniqueId());
+		playerPattern.remove(p.getUniqueId());
+		playerAutoSort.remove(p.getUniqueId());
 	}
 
 	public static EvaluatorType getEvaluatorTypOfPlayer(Player p) {
-		return playerEvaluator.get(p) == null ? playerEvaluator.get(p.getUniqueId()) : EvaluatorType.DEFAULT;
+		return playerEvaluator.get(p.getUniqueId()) == null ? playerEvaluator.get(p.getUniqueId()) : EvaluatorType.DEFAULT;
 	}
 
 	public static SortingPattern getSortingPatternOfPlayer(Player p) {
-		return playerPattern.get(p) == null ? playerPattern.get(p.getUniqueId()) : SortingPattern.DEFAULT;
+		return playerPattern.get(p.getUniqueId()) == null ? playerPattern.get(p.getUniqueId()) : SortingPattern.DEFAULT;
 	}
 
 	public static boolean getAutoSortOfPlayer(Player p) {
