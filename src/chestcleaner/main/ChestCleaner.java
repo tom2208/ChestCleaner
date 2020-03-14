@@ -25,9 +25,10 @@ public class ChestCleaner extends JavaPlugin {
 	public static boolean eventmode = false;
 	public static boolean blockRefill = true;
 	public static boolean consumablesRefill = true;
-
+	private boolean updateCheckerActive = true;
+	
 	public static ChestCleaner main;
-
+	
 	@Override
 	public void onEnable() {
 		main = this;
@@ -40,7 +41,14 @@ public class ChestCleaner extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
-		new UpdateChecker(this).checkForUpdate();
+		
+		if(updateCheckerActive) {
+			new UpdateChecker(this).checkForUpdate();
+		}
 	}
-
+	
+	public void setUpdateCheckerActive(boolean b) {
+		this.updateCheckerActive = b;
+	}
+	
 }

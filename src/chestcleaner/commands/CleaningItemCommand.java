@@ -1,6 +1,7 @@
 package chestcleaner.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,21 +33,31 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
-	// possible sub-commands for the first argument of this command
-	private final List<String> cleaningItemCommands = new ArrayList<>();
+	/* sub-commands */
+	private final String renameSubCommand = "rename";
+	private final String setLoreSubCommand = "setLore";
+	private final String setItemSubCommand = "setItem";
+	private final String getSubCommand = "get";
+	private final String setActiveSubCommand = "setActive";
+	private final String setDurabilityLossSubCommand = "setDurabilityLoss";
+	private final String giveSubCommand = "give";
+	private final String setEventDetectionModeSubCommand = "setEventDetectionMode";
+	
+	private final String trueStr = "true";
+	private final String falseStr = "false";
+	
+	/* placeholder */
+	private final String newItemPlaceholder = "%newitem";
+	private final String itemNamePlaceholder = "%itemname";
+	private final String playerNamePlaceholder = "%playername";
+	private final String modeBooleanPlaceholder = "%modeBoolean";
 
-	public CleaningItemCommand() {
-
-		cleaningItemCommands.add("rename");
-		cleaningItemCommands.add("setLore");
-		cleaningItemCommands.add("setItem");
-		cleaningItemCommands.add("get");
-		cleaningItemCommands.add("setActive");
-		cleaningItemCommands.add("setDurabilityLoss");
-		cleaningItemCommands.add("give");
-		cleaningItemCommands.add("setEventDetectionMode");
-
-	}
+	/* Syntax Error Messages */
+	private final String renameSytaxError = "/cleaningitem rename <name>";
+	private final String setActiveSyntaxError = "/cleaningitem setactive <true/false>";
+	private final String setDurabilityLossSyntaxError = "/cleaningitem setDurabilityLoss <true/false>";
+	private final String subCommandsSyntaxError = "/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>";
+	private final String consoleSubCommandsSyntaxError = "/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>";
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -57,7 +68,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		if (args.length > 1) {
 
 			/* RENAME SUBCOMMAND */
-			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
+			if (args[0].equalsIgnoreCase(renameSubCommand)) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString()) || !isPlayer) {
 
@@ -74,10 +85,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					newname = newname.replace("&", "§");
 					if (isPlayer)
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname), player);
+								StringTable.getMessage(MessageID.NEW_ITEM_NAME, itemNamePlaceholder, newname), player);
 					else
 						MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM_NAME, "%itemname", newname));
+								StringTable.getMessage(MessageID.NEW_ITEM_NAME, itemNamePlaceholder, newname));
 
 					ItemStack is = ChestCleaner.item;
 					ItemMeta im = is.getItemMeta();
@@ -95,7 +106,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				return true;
 
 				/* SETLORE SUBCOMMAND */
-			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(1))) {
+			} else if (args[0].equalsIgnoreCase(setLoreSubCommand)) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString()) || !isPlayer) {
 
@@ -138,16 +149,16 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		if (args.length == 1) {
 
 			/* RENAME SUBCOMMAND ERRORS */
-			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(0))) {
+			if (args[0].equalsIgnoreCase(renameSubCommand)) {
 				if (isPlayer)
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/cleaningitem rename <name>", player);
+					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, renameSytaxError, player);
 				else
-					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, "/cleaningitem rename <name>");
+					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, renameSytaxError);
 				return true;
 			}
 
 			/* SETITEM SUBCOMMAND */
-			else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(2)) && isPlayer) {
+			else if (args[0].equalsIgnoreCase(setItemSubCommand) && isPlayer) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ITEM.getString())) {
 
@@ -159,7 +170,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 						ChestCleaner.item = item;
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-								StringTable.getMessage(MessageID.NEW_ITEM, "%newitem", item.toString()), player);
+								StringTable.getMessage(MessageID.NEW_ITEM, newItemPlaceholder, item.toString()),
+								player);
 						return true;
 
 					} else {
@@ -173,7 +185,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				}
 
 				/* GET SUBCOMMAND */
-			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(3)) && isPlayer) {
+			} else if (args[0].equalsIgnoreCase(getSubCommand) && isPlayer) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
 
@@ -192,14 +204,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		} else if (args.length == 2) {
 
 			/* SETACTIVE SUBCOMMAND */
-			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(4))) {
+			if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString()) || !isPlayer) {
 
-					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+					if (args[1].equalsIgnoreCase(trueStr) || args[1].equalsIgnoreCase(falseStr)) {
 
 						boolean b = false;
-						if (args[1].equalsIgnoreCase("true"))
+						if (args[1].equalsIgnoreCase(trueStr))
 							b = true;
 
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
@@ -214,11 +226,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					} else {
 						if (isPlayer)
-							MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-									"/cleaningitem setactive <true/false>", player);
+							MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setActiveSyntaxError, player);
 						else
-							MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-									"/cleaningitem setactive <true/false>");
+							MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, setActiveSyntaxError);
 						return true;
 					}
 
@@ -229,14 +239,15 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				}
 
 				/* SETDURIBILITYLOSS SUBCOMMAND */
-			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(5))) {
+			} else if (args[0].equalsIgnoreCase(setDurabilityLossSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString()) || !isPlayer) {
+				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())
+						|| !isPlayer) {
 
-					if (args[1].equalsIgnoreCase("true") || args[1].equalsIgnoreCase("false")) {
+					if (args[1].equalsIgnoreCase(trueStr) || args[1].equalsIgnoreCase(falseStr)) {
 
 						boolean b = false;
-						if (args[1].equalsIgnoreCase("true"))
+						if (args[1].equalsIgnoreCase(trueStr))
 							b = true;
 
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
@@ -251,8 +262,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						return true;
 
 					} else {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-								"/cleaningitem setactive <true/false>", player);
+						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setDurabilityLossSyntaxError,
+								player);
 						return true;
 					}
 
@@ -263,7 +274,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				}
 
 				/* GIVE SUBCOMMAND */
-			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(6))) {
+			} else if (args[0].equalsIgnoreCase(giveSubCommand)) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString()) || !isPlayer) {
 
@@ -273,12 +284,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 						p2.getInventory().addItem(ChestCleaner.item);
 						if (isPlayer)
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", p2.getName()),
-									player);
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
+									MessageID.PLAYER_GOT_ITEM, playerNamePlaceholder, p2.getName()), player);
 						else
-							MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.PLAYER_GOT_ITEM, "%playername", player.getName()));
+							MessageSystem.sendConsoleMessage(MessageType.SUCCESS, StringTable
+									.getMessage(MessageID.PLAYER_GOT_ITEM, playerNamePlaceholder, player.getName()));
 						return true;
 
 					} else {
@@ -292,17 +302,17 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 								pl.getInventory().addItem(ChestCleaner.item);
 								if (isPlayer)
 									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
-											MessageID.PLAYER_GOT_ITEM, "%playername", pl.getName()), player);
+											MessageID.PLAYER_GOT_ITEM, playerNamePlaceholder, pl.getName()), player);
 							}
 							return true;
 						}
 
 						if (isPlayer)
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-									StringTable.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]), p2);
+							MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
+									.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, playerNamePlaceholder, args[1]), p2);
 						else
-							MessageSystem.sendConsoleMessage(MessageType.ERROR,
-									StringTable.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, "%playername", args[1]));
+							MessageSystem.sendConsoleMessage(MessageType.ERROR, StringTable
+									.getMessage(MessageID.PLAYER_IS_NOT_ONLINE, playerNamePlaceholder, args[1]));
 						return true;
 					}
 
@@ -313,14 +323,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				}
 
 				/* SETEVENTDETECTIONMODE SUBCOMMAND */
-			} else if (args[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
+			} else if (args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
 
 					boolean b = Boolean.parseBoolean(args[1]);
 					ChestCleaner.eventmode = b;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable.getMessage(
-							MessageID.SET_INVENTORY_DETECTION_MODE, "%modeBoolean", String.valueOf(b)), player);
+							MessageID.SET_INVENTORY_DETECTION_MODE, modeBooleanPlaceholder, String.valueOf(b)), player);
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);
 
 					return true;
@@ -335,23 +345,17 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			} else {
 
 				if (isPlayer)
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-							"/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
-							player);
+					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, player);
 				else
-					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-							"/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>");
+					MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, consoleSubCommandsSyntaxError);
 				return true;
 			}
 
 		} else {
 			if (isPlayer)
-				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR,
-						"/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>",
-						player);
+				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, player);
 			else
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR,
-						"/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>");
+				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, consoleSubCommandsSyntaxError);
 			return true;
 		}
 
@@ -363,6 +367,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
+		final String[] strCleaningitemCommands = { renameSubCommand, setLoreSubCommand, setItemSubCommand,
+				getSubCommand, setActiveSubCommand, setDurabilityLossSubCommand, giveSubCommand,
+				setEventDetectionModeSubCommand };
+		final List<String> cleaningItemCommands = Arrays.asList(strCleaningitemCommands);
+
 		switch (args.length) {
 		case 0:
 			StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
@@ -371,14 +380,12 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
 			break;
 		case 2:
-			/* SETACTIVE || SETDURABILITYLOSS || SETEVENTDETECTIONMODE */
-			if (args[0].equalsIgnoreCase(cleaningItemCommands.get(4))
-					|| args[0].equalsIgnoreCase(cleaningItemCommands.get(5))
-					|| args[0].equalsIgnoreCase(cleaningItemCommands.get(7))) {
+			if (args[0].equalsIgnoreCase(setActiveSubCommand) || args[0].equalsIgnoreCase(setDurabilityLossSubCommand)
+					|| args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
 				ArrayList<String> commands = new ArrayList<>();
-				commands.add("true");
-				commands.add("false");
+				commands.add(trueStr);
+				commands.add(falseStr);
 
 				StringUtil.copyPartialMatches(args[1], commands, completions);
 			}

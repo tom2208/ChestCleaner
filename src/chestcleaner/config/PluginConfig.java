@@ -108,6 +108,10 @@ public class PluginConfig {
 			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.TIMER_TIME.getPath()));
 		}
 		
+		if(config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
+			ChestCleaner.main.setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
+		}
+		
 		if (config.contains(ConfigPath.BLACKLIST.getPath())) {
 			List<String> list = config.getStringList(ConfigPath.BLACKLIST.getPath());
 			ArrayList<Material> materials = new ArrayList<>();
@@ -233,7 +237,7 @@ public class PluginConfig {
 		OPEN_INVENTORY_MODE("openinventoryeventmode"), CONSUMABLES_REFILL("consumablesrefill"),
 		BLOCK_REFILL("blockrefill"), INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"),
 		BLACKLIST("blacklist"), INVENTORY_BLACKLIST("inventoryblacklist"), TIMER_TIME("timer.time"),
-		TIMER_ACTIVE("timer.active");
+		TIMER_ACTIVE("timer.active"), UPDATE_CHECKER_ACTIVE("updateMassageActive");
 
 		private String path;
 
