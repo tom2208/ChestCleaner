@@ -11,8 +11,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.main.ChestCleaner;
-import chestcleaner.main.ChestCleaner.ConfigPath;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.messages.MessageID;

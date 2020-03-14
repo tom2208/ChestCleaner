@@ -12,10 +12,10 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.ChestCleaner;
-import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
+import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -55,8 +55,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 							return;
 
 						damageItem(p, isMainHand);
-						InventorySorter.sortPlayerInv(p, PlayerDataManager.getSortingPatternOfPlayer(p),
-								PlayerDataManager.getEvaluatorTypOfPlayer(p));
+						InventorySorter.sortPlayerInv(p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+								PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p));
 						InventorySorter.playSortingSound(p);
 
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
@@ -78,8 +78,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 							return;
 						}
 
-						if (InventorySorter.sortPlayerBlock(b, p, PlayerDataManager.getSortingPatternOfPlayer(p),
-								PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+						if (InventorySorter.sortPlayerBlock(b, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+								PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
 							damageItem(p, isMainHand);
 
@@ -153,8 +153,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 					if (!Timer.playerCheck(p))
 						return;
 
-					InventorySorter.sortInventory(e.getInventory(), PlayerDataManager.getSortingPatternOfPlayer(p),
-							PlayerDataManager.getEvaluatorTypOfPlayer(p));
+					InventorySorter.sortInventory(e.getInventory(), PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+							PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p));
 					InventorySorter.playSortingSound(p);
 
 					damageItem(p, isMainHand);
@@ -177,7 +177,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (PlayerDataManager.getAutoSortOfPlayer(p)) {
+			if (PlayerDataManager.getInstance().getAutoSortOfPlayer(p)) {
 
 				if (!Timer.playerCheck(p)) {
 					return;

@@ -9,10 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
+import chestcleaner.utils.PlayerDataManager;
 
 public class InventorySorter {
 
@@ -183,8 +183,8 @@ public class InventorySorter {
 	 */
 	public static void sortInventoryByPlayer(Inventory inv, Player p) {
 
-		SortingPattern pattern = PlayerDataManager.getSortingPatternOfPlayer(p);
-		EvaluatorType evaluator = PlayerDataManager.getEvaluatorTypOfPlayer(p);
+		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
 
 		sortInventory(inv, pattern, evaluator);
 

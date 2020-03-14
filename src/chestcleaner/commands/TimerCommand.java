@@ -11,8 +11,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import chestcleaner.config.Config;
+import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.main.ChestCleaner;
-import chestcleaner.main.ChestCleaner.ConfigPath;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -54,7 +55,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					if (args[1].equalsIgnoreCase("true")) {
 
 						if (!ChestCleaner.timer) {
-							ChestCleaner.main.setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
+							Config.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
 							ChestCleaner.timer = true;
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED, p);
@@ -63,7 +64,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					} else if (args[1].equalsIgnoreCase("false")) {
 
 						if (ChestCleaner.timer) {
-							ChestCleaner.main.setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
+							Config.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
 							ChestCleaner.timer = false;
 						}
 						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED, p);
@@ -81,7 +82,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 					int time = Integer.valueOf(args[1]);
 					if (ChestCleaner.time != time) {
 						ChestCleaner.time = time;
-						ChestCleaner.main.setIntoConfig(ConfigPath.TIMER_TIME, time);
+						Config.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time);
 					}
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);

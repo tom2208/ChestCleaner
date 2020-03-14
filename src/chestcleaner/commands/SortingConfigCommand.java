@@ -10,12 +10,11 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.main.ChestCleaner;
-import chestcleaner.main.ChestCleaner.ConfigPath;
-import chestcleaner.playerdata.PlayerData;
-import chestcleaner.playerdata.PlayerDataManager;
+import chestcleaner.config.Config;
+import chestcleaner.config.Config.ConfigPath;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
+import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -80,8 +79,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				} else {
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_PATTERN_SET, p);
-					PlayerData.setSortingPattern(pattern, p);
-					PlayerDataManager.loadPlayerData(p);
+					Config.getInstance().setSortingPattern(pattern, p);
+					PlayerDataManager.getInstance().loadPlayerData(p);
 					return true;
 
 				}
@@ -105,8 +104,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				} else {
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_EVALUATOR_SET, p);
-					PlayerData.setEvaluatorTyp(evaluator, p);
-					PlayerDataManager.loadPlayerData(p);
+					Config.getInstance().setEvaluatorTyp(evaluator, p);
+					PlayerDataManager.getInstance().loadPlayerData(p);
 					return true;
 
 				}
@@ -131,8 +130,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 						StringTable.getMessage(MessageID.AUTOSORT_WAS_SET, "%boolean", String.valueOf(b)), p);
-				PlayerData.setAutoSort(b, p);
-				PlayerDataManager.loadPlayerData(p);
+				Config.getInstance().setAutoSort(b, p);
+				PlayerDataManager.getInstance().loadPlayerData(p);
 				return true;
 
 			} else {
@@ -161,7 +160,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
+					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
 
 					SortingPattern.DEFAULT = pattern;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_SORTING_PATTERN, p);
@@ -177,7 +176,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
+					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
 
 					EvaluatorType.DEFAULT = evaluator;
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_DEFAULT_EVALUATOR, p);
@@ -196,9 +195,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					PlayerDataManager.defaultAutoSort = b;
+					PlayerDataManager.getInstance().setDefaultAutoSort(b);
 
-					ChestCleaner.main.setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
+					Config.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
 							StringTable.getMessage(MessageID.DEFUALT_AUTOSORT, "%boolean", String.valueOf(b)), p);

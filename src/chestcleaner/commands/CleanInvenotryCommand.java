@@ -10,10 +10,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import chestcleaner.main.ChestCleaner;
-import chestcleaner.playerdata.PlayerDataManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.timer.Timer;
 import chestcleaner.utils.BlockDetector;
+import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageID;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.MessageType;
@@ -59,8 +59,8 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			if (Timer.playerCheck(p)) {
 
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p),
-						PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+				if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+						PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
 							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location", "(" + block.getX() + " / "
@@ -119,8 +119,8 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getSortingPatternOfPlayer(p),
-					PlayerDataManager.getEvaluatorTypOfPlayer(p))) {
+			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
+					PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
 				if (isPlayer) {
 					MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
