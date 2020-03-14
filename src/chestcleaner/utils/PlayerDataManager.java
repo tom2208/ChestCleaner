@@ -62,12 +62,11 @@ public class PlayerDataManager {
 	}
 
 	public EvaluatorType getEvaluatorTypOfPlayer(Player p) {
-		return playerEvaluator.get(p.getUniqueId()) == null ? playerEvaluator.get(p.getUniqueId())
-				: EvaluatorType.DEFAULT;
+		return playerEvaluator.get(p.getUniqueId()) == null ? EvaluatorType.DEFAULT : playerEvaluator.get(p.getUniqueId());
 	}
 
 	public SortingPattern getSortingPatternOfPlayer(Player p) {
-		return playerPattern.get(p.getUniqueId()) == null ? playerPattern.get(p.getUniqueId()) : SortingPattern.DEFAULT;
+		return playerPattern.get(p.getUniqueId()) == null ?  SortingPattern.DEFAULT : playerPattern.get(p.getUniqueId());
 	}
 
 	public boolean getAutoSortOfPlayer(Player p) {

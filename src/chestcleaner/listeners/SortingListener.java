@@ -70,11 +70,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 						Block b = BlockDetector.getTargetBlock(p);
 
-						if (BlacklistCommand.inventoryBlacklist.contains(b.getType())) {
-							return;
-						}
-
-						if (!Timer.playerCheck(p)) {
+						if (BlacklistCommand.inventoryBlacklist.contains(b.getType()) || !Timer.playerCheck(p)) {
 							return;
 						}
 
