@@ -18,7 +18,6 @@ import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -31,26 +30,6 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
-	// The length of a page one the list if it gets displayed in the in game chat.
-	private final int LIST_PAGE_LENGTH = 8;
-
-	/* sub-commands */
-	private final String addMaterialSubCommand = "addMaterial";
-	private final String removeMaterialSubCommand = "removeMaterial";
-	private final String listSubCommand = "list";
-	private final String clearSubCommand = "clear";
-
-	private final String sortingSubCommand = "sorting";
-	private final String inventoriesSubCommand = "inventories";
-
-	/* placeholder */
-	private final String materialPlaceholder = "%material";
-	private final String biggestIndexPlaceholder = "%biggestindex";
-	private final String indexPlaceholder = "%index";
-	private final String rangePlaceholder = "%range";
-	
-	/* syntax messages */
-	private final String syntaxErrorMessage = "/blacklist <sorting/inventory> <addMaterial/removeMaterial/list>";
 	// This List is the global list of blacklisted inventories, it get used in other
 	// classes etc.
 	public static ArrayList<Material> inventoryBlacklist = new ArrayList<>();
@@ -59,7 +38,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 
 		if (!(sender instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.NOT_A_PLAYER);
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER.getID());
 			return true;
 		}
 
@@ -101,9 +80,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 						material = Material.getMaterial(args[2]);
 
 						if (material == null) {
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-									StringTable.getMessage(MessageID.NO_MATERIAL_FOUND, materialPlaceholder, args[2]),
-									p);
+							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+									MessageID.MATERIAL_NAME_NOT_EXISTING, p, args[2]);
 							return true;
 						}
 
@@ -112,24 +90,24 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 						material = getMaterialFormPlayerHand(p);
 
 						if (material.equals(Material.AIR)) {
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM, p);
+							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM, p);
 							return true;
 						}
 
 					}
 
 					if (list.contains(material)) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
-								MessageID.IS_ALREADY_ON_BLACKLIST, materialPlaceholder, material.name()), p);
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+								MessageID.MATERIAL_ALREADY_ON_BLACKLIST, p, material.name());
 						return true;
 					}
 
 					list.add(material);
 					safeList(listNumber);
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.SET_TO_BLACKLIST, materialPlaceholder, material.name()),
-							p);
+					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+							MessageID.MATERIAL_ADDED_TO_BLACKLIST, p, material.name());
+
 					return true;
 
 					/*--------------- removeMaterial ---------------*/
@@ -153,17 +131,15 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 									material = list.get(index - 1);
 
 								} else {
-									MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-											StringTable.getMessage(MessageID.INDEX_OUT_OF_BOUNDS,
-													biggestIndexPlaceholder, String.valueOf(index)),
-											p);
+									MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+											MessageID.INDEX_OUT_OF_BOUNDS, p, String.valueOf(index));
 									return true;
 								}
 
 							} catch (NumberFormatException ex) {
 
-								MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
-										.getMessage(MessageID.NO_MATERIAL_FOUND, materialPlaceholder, args[2]), p);
+								MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+										MessageID.MATERIAL_NAME_NOT_EXISTING, p, args[2]);
 								return true;
 
 							}
@@ -175,30 +151,31 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 						material = getMaterialFormPlayerHand(p);
 
 						if (material.equals(Material.AIR)) {
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.HOLD_AN_ITEM, p);
+							MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM, p);
 							return true;
 						}
 
 					}
 
 					if (!list.contains(material)) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
-								MessageID.BLACKLIST_DOESNT_CONTAINS, materialPlaceholder, material.name()), p);
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+								MessageID.BLACKLIST_DOESNT_CONTAIN_MATERIAL, p, material.name());
 						return true;
 					}
 
 					list.remove(material);
 					safeList(listNumber);
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, StringTable
-							.getMessage(MessageID.REMOVED_FORM_BLACKLIST, materialPlaceholder, material.name()), p);
+					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+							MessageID.MATERIAL_REMOVED_FROM_BLACKLIST, p, material.name());
+
 					return true;
 
 					/*--------------- list ---------------*/
 				} else if (args[1].equalsIgnoreCase(listSubCommand)) {
 
 					if (list.size() == 0) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.BLACKLIST_IS_EMPTY, p);
+						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.BLACKLIST_EMPTY, p);
 						return true;
 					}
 
@@ -212,16 +189,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 							page = Integer.valueOf(args[2]);
 
 						} catch (NumberFormatException ex) {
-
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
-									.getMessage(MessageID.INVALID_INPUT_FOR_INTEGER, indexPlaceholder, args[1]), p);
+							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+									MessageID.NOT_AN_INTEGER, p, args[1]);
 							return true;
-
 						}
 
 						if (!(page > 0 && page <= pages)) {
-							MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable
-									.getMessage(MessageID.INVALID_PAGE_NUMBER, rangePlaceholder, "1 - " + pages), p);
+							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+									MessageID.INVALID_PAGE_NUMBER, p, "1 - " + pages);
 							return true;
 						}
 
@@ -335,5 +310,20 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 		return completions;
 	}
+
+	// The length of a page one the list if it gets displayed in the in game chat.
+	private final int LIST_PAGE_LENGTH = 8;
+
+	/* sub-commands */
+	private final String addMaterialSubCommand = "addMaterial";
+	private final String removeMaterialSubCommand = "removeMaterial";
+	private final String listSubCommand = "list";
+	private final String clearSubCommand = "clear";
+
+	private final String sortingSubCommand = "sorting";
+	private final String inventoriesSubCommand = "inventories";
+
+	/* syntax messages */
+	private final String syntaxErrorMessage = "/blacklist <sorting/inventory> <addMaterial/removeMaterial/list>";
 
 }

@@ -8,7 +8,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.commands.BlacklistCommand;
@@ -20,7 +19,6 @@ import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -85,8 +83,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 							damageItem(p, isMainHand);
 
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-									StringTable.getMessage(MessageID.INVENTORY_SORTED), p);
+							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
 							e.setCancelled(true);
 						}
 
@@ -163,8 +160,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 					damageItem(p, isMainHand);
 
 					e.setCancelled(true);
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.INVENTORY_SORTED), p);
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+
 				}
 
 			}

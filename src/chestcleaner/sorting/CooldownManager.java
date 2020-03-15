@@ -7,7 +7,6 @@ import org.bukkit.entity.Player;
 
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -25,7 +24,7 @@ public class CooldownManager {
 
 	public boolean isPlayerOnCooldown(Player p) {
 
-		if (!active || !p.hasPermission(PluginPermissions.TIMER_NO_EFFECT.getString())) {
+		if (!active || !p.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
 			return true;
 		}
 
@@ -36,8 +35,7 @@ public class CooldownManager {
 				times.put(p.getUniqueId(), System.currentTimeMillis());
 				return true;
 			}
-			MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(MessageID.SORTING_ON_COOLDOWN,
-					"%time", String.valueOf((cooldown - differnce) / 1000)), p);
+			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, p, String.valueOf((cooldown - differnce) / 1000));
 			return false;
 
 		} else {

@@ -16,7 +16,6 @@ import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -34,13 +33,16 @@ public class CleanInvenotryCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
 		Player p = (Player) cs;
-		boolean isPlayer = cs instanceof Player;
-		if (isPlayer) {
-			if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString()) && ChestCleaner.cleanInvPermission) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_INV_CLEAN.getString(),
-						p);
-				return true;
-			}
+
+		if (cs instanceof Player) {
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER.getID());
+			return true;
+		}
+		
+		if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString()) && ChestCleaner.cleanInvPermission) {
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					PluginPermissions.CMD_INV_CLEAN.getString(), p);
+			return true;
 		}
 
 		if (args.length == 0) {
@@ -65,10 +67,9 @@ public class CleanInvenotryCommand implements CommandExecutor {
 						PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
 						PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-							StringTable.getMessage(MessageID.BLOCK_HAS_NO_INV, "%location", "(" + block.getX() + " / "
-									+ block.getY() + " / " + block.getZ() + ", " + block.getType().name() + ")"),
-							p);
+					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+							MessageID.BLOCK_HAS_NO_INVENTORY, p, "(" + block.getX() + " / " + block.getY() + " / "
+									+ block.getZ() + ", " + block.getType().name() + ")");
 					return true;
 
 				} else {
@@ -86,25 +87,16 @@ public class CleanInvenotryCommand implements CommandExecutor {
 
 			World w;
 
-			if (isPlayer) {
-				if (args.length == 4)
-					w = Bukkit.getWorld(args[3]);
-				else
-					w = p.getWorld();
-				if (w == null) {
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR,
-							StringTable.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]), p);
-
-					return true;
-				}
-			} else {
+			if (args.length == 4) {
 				w = Bukkit.getWorld(args[3]);
-				if (w == null) {
-					MessageSystem.sendConsoleMessage(MessageType.ERROR,
-							StringTable.getMessage(MessageID.INVALID_WORLD_NAME, "%worldname", args[3]));
-					return true;
-				}
+			} else {
+				w = p.getWorld();
+			}
 
+			if (w == null) {
+				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.NO_WORLD_WITH_THIS_NAME,
+						p, args[3]);
+				return true;
 			}
 
 			if (args.length == 4) {
@@ -118,29 +110,21 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (isPlayer && !CooldownManager.getInstance().isPlayerOnCooldown(p)) {
+			if (!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 				return true;
 			}
 
 			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
 					PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
 
-				if (isPlayer) {
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, StringTable.getMessage(
-							MessageID.BLOCK_HAS_NO_INV, "%location", "(" + x + " / " + y + " / " + z + ")"), p);
-				} else {
-					MessageSystem.sendConsoleMessage(MessageType.ERROR, StringTable.getMessage(
-							MessageID.BLOCK_HAS_NO_INV, "%location", "(" + x + " / " + y + " / " + z + ")"));
-				}
+				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
+						p, "(" + x + " / " + y + " / " + z + ")");
 
 				return true;
 
 			} else {
-				if (isPlayer) {
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
-				} else {
-					MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.INVENTORY_SORTED);
-				}
+
+				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
 
 				return true;
 			}

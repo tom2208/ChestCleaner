@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.tom2208</groupId>
 	<artifactId>ChestCleaner</artifactId>
-	<version>1.7.1</version>
+	<version>1.8</version>
 	<repositories>
 		<!-- This adds the Spigot Maven repository to the build -->
 		<repository>
@@ -52,9 +52,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<release.version>0.1</release.version>
-	</properties>
 </project>

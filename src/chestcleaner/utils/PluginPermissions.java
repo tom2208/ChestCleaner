@@ -15,10 +15,10 @@ public enum PluginPermissions {
 	CMD_SORTING_CONFIG_EVALUATOR("chestcleaner.cmd.sortingconfig.evaluator"),
 	CMD_SORTING_CONFIG_SET_AUTOSORT("chestcleaner.cmd.sortingconfig.setautosort"),
 	CMD_SORTING_CONFIG_ADMIN_CONTROL("chestcleaner.cmd.sorting.config.admincontrol"),
-	CMD_TIMER("chestcleaner.cmd.timer"), REFILL_BLOCKS("chestcleaner.autorefill.blocks"),
+	CMD_COOLDOWN("chestcleaner.cmd.cooldown"), REFILL_BLOCKS("chestcleaner.autorefill.blocks"),
 	AUTOFILL_CONSUMABLES("chestcleaner.autorefill.consumables"),
 	CLEANING_ITEM_USE_OWN_INV("chestcleaner.cleaningitem.use.owninventory"),
-	CLEANING_ITEM_USE("chestcleaner.cleaningitem.use"), TIMER_NO_EFFECT("chestcleaner.timer.noeffect");
+	CLEANING_ITEM_USE("chestcleaner.cleaningitem.use"), COOLDOWN_IMMUNE("chestcleaner.cooldown.immune");
 
 	private String permission;
 

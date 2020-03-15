@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: 1.7.1
+version: 1.8
 author: Tom2208
 
 main: chestcleaner.main.ChestCleaner
@@ -8,7 +8,7 @@ commands:
   cleaninventory:
     description: Cleans an inventory of a block.
     usage: /<command> <x> <y> <z>
-  timer:
+  cooldown:
     description: Configures the timer.
     usage: /<command> <setActive/setTime>
   cleaningitem:

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -18,7 +19,6 @@ import chestcleaner.sorting.InventorySorter;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.PlayerDataManager;
-import chestcleaner.utils.messages.StringTable;
 
 /**
  * This is a singleton class to combine all configs and their utility methods
@@ -35,7 +35,7 @@ public class PluginConfig {
 	private FileConfiguration config;
 	private File playerDataConfigFile;
 	private FileConfiguration playerDataConfig;
-
+	
 	protected PluginConfig() {
 		configFile = new File("plugins/" + ChestCleaner.main.getName(), "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
@@ -66,10 +66,14 @@ public class PluginConfig {
 					.getSortingPatternByName(config.getString(ConfigPath.DEFAULT_SORTING_PATTERN.getPath()));
 		}
 
-		if (config.contains(ConfigPath.STRINGS.getPath())) {
-			StringTable.setUpList(config.getStringList(ConfigPath.STRINGS.getPath()));
+		if (config.contains(ConfigPath.LOCALE_LANGUAGE.getPath()) && config.contains(ConfigPath.LOCALE_COUNTRY.getPath())) {
+			String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
+			String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
+			ChestCleaner.main.setLocale(language, country);
 		} else {
-			StringTable.setUpList(null);
+			config.set(ConfigPath.LOCALE_LANGUAGE.getPath(), Locale.UK.getLanguage());
+			config.set(ConfigPath.LOCALE_COUNTRY.getPath(), Locale.UK.getCountry());
+			ChestCleaner.main.setLocale(Locale.UK);
 		}
 
 		if (setIfDoesntContains(ConfigPath.CLEANING_ITEM, new ItemStack(Material.IRON_HOE))) {
@@ -232,7 +236,7 @@ public class PluginConfig {
 
 	public enum ConfigPath {
 		DEFAULT_AUTOSORT("defaultautosort"), DEFAULT_EVALUATOR("defaultevaluator"),
-		DEFAULT_SORTING_PATTERN("defaultsortingpattern"), STRINGS("Strings"), CLEANING_ITEM("cleaningItem"),
+		DEFAULT_SORTING_PATTERN("defaultsortingpattern"), LOCALE_LANGUAGE("locale.lang"), LOCALE_COUNTRY("locale.country"), CLEANING_ITEM("cleaningItem"),
 		CLEANING_ITEM_ACTIVE("active"), CLEANING_ITEM_DURABILITY("durability"),
 		OPEN_INVENTORY_MODE("openinventoryeventmode"), CONSUMABLES_REFILL("consumablesrefill"),
 		BLOCK_REFILL("blockrefill"), INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"),

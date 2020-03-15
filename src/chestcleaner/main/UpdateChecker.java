@@ -19,7 +19,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -60,8 +59,7 @@ public class UpdateChecker {
 					if (localPluginVersion.equals(spigotPluginVersion))
 						return;
 
-					MessageSystem.sendConsoleMessage(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE));
+					MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE);
 
 					// Register the PlayerJoinEvent
 					Bukkit.getScheduler().runTask(javaPlugin,
@@ -71,8 +69,8 @@ public class UpdateChecker {
 									final Player player = event.getPlayer();
 									if (!player.hasPermission(UPDATE_PERM))
 										return;
-									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-											StringTable.getMessage(MessageID.NEW_UPDATE_AVAILABLE), player);
+
+									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE, player);
 								}
 							}, javaPlugin));
 

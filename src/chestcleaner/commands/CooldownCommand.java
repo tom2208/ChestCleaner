@@ -16,7 +16,6 @@ import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.StringTable;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
@@ -27,11 +26,11 @@ import chestcleaner.utils.messages.enums.MessageType;
  * @author Tom2208
  *
  */
-public class TimerCommand implements CommandExecutor, TabCompleter {
+public class CooldownCommand implements CommandExecutor, TabCompleter {
 
 	private final List<String> timerCommands = new ArrayList<>();
 
-	public TimerCommand() {
+	public CooldownCommand() {
 		timerCommands.add("setActive");
 		timerCommands.add("setTime");
 	}
@@ -40,13 +39,13 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
 		if (!(cs instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.NOT_A_PLAYER);
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
 			return true;
 		}
 
 		Player p = (Player) cs;
 
-		if (p.hasPermission(PluginPermissions.CMD_TIMER.getString())) {
+		if (p.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
 
 			if (args.length == 2) {
 
@@ -59,7 +58,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
 							CooldownManager.getInstance().setActive(true);
 						}
-						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_ACTIVATED, p);
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "true");
 						return true;
 
 					} else if (args[1].equalsIgnoreCase("false")) {
@@ -68,7 +67,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
 							CooldownManager.getInstance().setActive(false);
 						}
-						MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.TIMER_DEACTIVATED, p);
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "false");
 						return true;
 
 					} else {
@@ -85,8 +84,8 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 						CooldownManager.getInstance().setCooldown(time * 1000);
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time * 1000);
 					}
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS,
-							StringTable.getMessage(MessageID.TIMER_NEW_TIME, "%time", String.valueOf(time)), p);
+					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.TIMER_TIME, p, String.valueOf(time));
+
 					return true;
 
 				} else {
@@ -100,7 +99,7 @@ public class TimerCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_TIMER.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_COOLDOWN.getString(), p);
 			return true;
 		}
 
