@@ -62,6 +62,7 @@ public class ChestCleaner extends JavaPlugin {
 		}
 
 		getPlugin(this.getClass()).saveResource("ChestCleaner_en_GB.properties", false);
+		getPlugin(this.getClass()).saveResource("ChestCleaner_de_DE.properties", false);
 
 		try {
 			URL fileUrl = new File(this.getDataFolder().toString()).toURI().toURL();
