@@ -1,6 +1,7 @@
 package chestcleaner.utils.messages;
 
 import org.bukkit.entity.Player;
+import org.bukkit.ChatColor;
 
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.Tuple;
@@ -91,20 +92,20 @@ public class MessageSystem {
 
 		switch (type) {
 		case SYNTAX_ERROR:
-			out += "§c" + ChestCleaner.main.getRB().getString(MessageID.SYNTAX_ERROR.getID()) + ": " + arg;
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.SYNTAX_ERROR.getID()) + ": " + arg;
 			break;
 		case ERROR:
-			out += "§c" + ChestCleaner.main.getRB().getString(MessageID.ERROR.getID()) + ": " + arg;
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.ERROR.getID()) + ": " + arg;
 			break;
 		case SUCCESS:
-			out += "§a" + arg;
+			out += ChatColor.GREEN + arg;
 			break;
 		case MISSING_PERMISSION:
-			out += "§c" + ChestCleaner.main.getRB().getString(MessageID.NO_PERMISSION_FOR_COMMAND.getID()) + " ( " + arg
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.NO_PERMISSION_FOR_COMMAND.getID()) + " ( " + arg
 					+ " )";
 			break;
 		case UNHEADED_INFORMATION:
-			out = "§7" + arg;
+			out = ChatColor.GRAY + arg;
 			break;
 		default:
 			throw new IllegalArgumentException();
