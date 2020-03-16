@@ -4,3 +4,14 @@ ChestCleaner is a Minecraft Spigot plugin that sorts your chests and inventories
 I'm using the Spigot API version for MC v. 1.15.1-R0.1-SNAPSHOT
 
 For more information have a look at the Spigot article of this plugin: https://www.spigotmc.org/resources/chestcleaner-sorting-plugin.40313/
+
+Installing maven: https://maven.apache.org/install.html
+
+Building with maven:
+If you use CLI move in to your repository using cd (windows).
+Enter: mvn package
+or: mvn package -e (if you want to see the stacktrace, has no effect on the build)
+
+=> on success the maven shows you the path to your jar
+
+For more informations: https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html
