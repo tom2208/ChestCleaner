@@ -33,18 +33,17 @@ public class SortingListener implements org.bukkit.event.Listener {
 	private void onRightClick(PlayerInteractEvent e) {
 
 		Player p = e.getPlayer();
-		ItemStack itemMainHand = p.getInventory().getItemInMainHand().clone();
-		itemMainHand.setDurability((short) 0);
-		itemMainHand.setAmount(1);
-
-		ItemStack itemOffHand = p.getInventory().getItemInOffHand().clone();
-		itemOffHand.setDurability((short) 0);
-		itemOffHand.setAmount(1);
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-			boolean isMainHand = itemMainHand.equals(ChestCleaner.item);
-			boolean isOffHand = itemOffHand.equals(ChestCleaner.item);
+			ItemStack itemMainHand = p.getInventory().getItemInMainHand().clone();
+			itemMainHand.setDurability((short) 0);
+
+			ItemStack itemOffHand = p.getInventory().getItemInOffHand().clone();
+			itemOffHand.setDurability((short) 0);
+			
+			boolean isMainHand = itemMainHand.isSimilar(ChestCleaner.item);
+			boolean isOffHand = itemOffHand.isSimilar(ChestCleaner.item);
 
 			// TODO RIGHTCLICK WIRD WOHL ZWEI MAL AUFGERUFEN, WENN MAN IN BIEDEN
 			// SLOTS DAS ITEM HÄLT
