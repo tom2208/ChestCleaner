@@ -1,7 +1,6 @@
 package chestcleaner.listeners;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -19,48 +18,27 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private void onPlacingBlock(BlockPlaceEvent e) {
 
 		if (ChestCleaner.blockRefill && !e.isCancelled()) {
-			Player p = e.getPlayer();
+			Player player = e.getPlayer();
 
-			if (p.getGameMode().equals(GameMode.SURVIVAL)) {
+			if (isPlayerAllowedToRefillBlocks(player)) {
 
 				ItemStack item = e.getItemInHand();
+
 				if (item.getAmount() == 1) {
 
-					if (p.hasPermission(PluginPermissions.REFILL_BLOCKS.getString())) {
-
-						Material material = e.getBlockPlaced().getType();
-
-						if (material.toString().contains("STRIPPED")) {
-							if (p.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
-									|| p.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
-								return;
-							}
-						}
-
-						ItemStack[] items = InventoryDetector.getFullInventory(p.getInventory());
-
-						for (int i = 9; i < 36; i++) {
-
-							if (items[i] != null) {
-
-								if (items[i].getType().equals(material)) {
-
-									if (e.getHand().equals(EquipmentSlot.HAND)) {
-										p.getInventory().setItemInMainHand(items[i]);
-										p.getInventory().setItem(i, null);
-										break;
-									} else if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-										p.getInventory().setItemInOffHand(items[i]);
-										p.getInventory().setItem(i, null);
-										break;
-									}
-
-								}
-
-							}
-
+					/*
+					 * stripping a log counts as placing a block, at least some times (cause the axe
+					 * to get replaced)
+					 */
+					if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
+						if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
+								|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
+							return;
 						}
 					}
+
+					refillBlockInSlot(e);
+
 				}
 			}
 		}
@@ -73,7 +51,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 			Player player = e.getPlayer();
 
-			if (isPlayerAllowedToRefill(player)) {
+			if (isPlayerAllowedToRefillConsumables(player)) {
 
 				ItemStack item = e.getItem();
 				if (item.getAmount() == 1) {
@@ -83,12 +61,12 @@ public class RefillListener implements org.bukkit.event.Listener {
 						if (isPlayerHoldingAItemInMainHand(player)) {
 
 							if (playerMainHandHeldItemMaterialEquals(item, player)) {
-								refillSlot(true, e);
+								refillConsumableInSlot(true, e);
 
 							} else if (isPlayerHoldingAItemInOffHand(player)) {
 
 								if (playerOffHandHeldItemMaterialEquals(item, player)) {
-									refillSlot(false, e);
+									refillConsumableInSlot(false, e);
 								}
 
 							}
@@ -96,7 +74,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 						} else if (isPlayerHoldingAItemInOffHand(player)) {
 
 							if (playerOffHandHeldItemMaterialEquals(item, player)) {
-								refillSlot(false, e);
+								refillConsumableInSlot(false, e);
 							}
 
 						}
@@ -113,14 +91,26 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 	/**
 	 * If the player is in survival mode and has the permission
-	 * PluginPermissions.AUTOFILL_CONSUMABLES it returns true otherwise flase.
+	 * PluginPermissions.AUTOFILL_CONSUMABLES it returns true otherwise false.
 	 * 
 	 * @param player the player you want to check.
 	 * @return true if the player is allowed to auto refill otherwise false.
 	 */
-	private boolean isPlayerAllowedToRefill(Player player) {
+	private boolean isPlayerAllowedToRefillConsumables(Player player) {
 		return player.getGameMode().equals(GameMode.SURVIVAL)
 				&& player.hasPermission(PluginPermissions.AUTOFILL_CONSUMABLES.getString());
+	}
+
+	/**
+	 * If the player is in survival mode and has the permission
+	 * PluginPermissions.AUTOFILL_CONSUMABLES it returns true otherwise false.
+	 * 
+	 * @param player the player you want to check.
+	 * @return true if the player is allowed to auto refill otherwise false.
+	 */
+	private boolean isPlayerAllowedToRefillBlocks(Player player) {
+		return player.getGameMode().equals(GameMode.SURVIVAL)
+				&& player.hasPermission(PluginPermissions.REFILL_BLOCKS.getString());
 	}
 
 	/**
@@ -169,13 +159,14 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 	/**
 	 * Searches through the main inventory (slots 9 - 35) taking the first ItemStack
-	 * with the same type, an amount bigger than 1 and puts it into the slot (+ one
-	 * amount) while consuming.
+	 * with the same type, an amount bigger than 1 (bigger than 0 would work but
+	 * causes a rendering-bug in the client, so the golden apple is invisible) and
+	 * puts it into the slot (+ one amount) while consuming.
 	 * 
 	 * @param inMainHand true if the refill slot is the main hand otherwise false.
 	 * @param e          the consuming event the refill should happen.
 	 */
-	private void refillSlot(boolean inMainHand, PlayerItemConsumeEvent e) {
+	private void refillConsumableInSlot(boolean inMainHand, PlayerItemConsumeEvent e) {
 		ItemStack[] items = InventoryDetector.getFullInventory(e.getPlayer().getInventory());
 		for (int i = 9; i < 36; i++) {
 			if (items[i] != null) {
@@ -198,4 +189,36 @@ public class RefillListener implements org.bukkit.event.Listener {
 		}
 	}
 
+	/**
+	 * Searches through the main inventory (slots 9 - 35) taking the first ItemStack
+	 * with the same type of materials the placed block has and puts it into the
+	 * slot after placing.
+	 * 
+	 * @param e the block placing event the refill should happen.
+	 */
+	private void refillBlockInSlot(BlockPlaceEvent e) {
+		ItemStack[] items = InventoryDetector.getFullInventory(e.getPlayer().getInventory());
+
+		for (int i = 9; i < 36; i++) {
+
+			if (items[i] != null) {
+
+				if (items[i].getType().equals(e.getBlockPlaced().getType())) {
+
+					if (e.getHand().equals(EquipmentSlot.HAND)) {
+						e.getPlayer().getInventory().setItemInMainHand(items[i]);
+						e.getPlayer().getInventory().setItem(i, null);
+						break;
+					} else if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
+						e.getPlayer().getInventory().setItemInOffHand(items[i]);
+						e.getPlayer().getInventory().setItem(i, null);
+						break;
+					}
+
+				}
+
+			}
+
+		}
+	}
 }
