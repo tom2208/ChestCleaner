@@ -12,7 +12,7 @@ With <b>mvn -version</b> you can check if you already installed maven.</br></br>
 Building with maven:</br>
 If you use CLI move in to your repository using cd (windows).</br>
 Enter: <b>mvn package</b> </br>
-or: <b>mvn package -e</b></br> (if you want to see the stacktrace, has no effect on the build)
+or: <b>mvn package -e</b></br> (to see the stacktrace but has no effect on the build)
 
 => on success the maven shows you the path to your jar
 
