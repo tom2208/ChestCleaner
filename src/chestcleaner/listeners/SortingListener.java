@@ -9,6 +9,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.main.ChestCleaner;
@@ -117,12 +119,15 @@ public class SortingListener implements org.bukkit.event.Listener {
 				item = player.getInventory().getItemInOffHand();
 			}
 
-			if (item.getMaxStackSize() == 1)
-				item.setDurability((short) (item.getDurability() + 1));
+	        ItemMeta itemMeta = item.getItemMeta();
+            Damageable damageable = ((Damageable) itemMeta);
+	        if (!(damageable.getDamage() + 1 >= item.getType().getMaxDurability())){
+	            damageable.setDamage(damageable.getDamage() + 1);
+	        }else {
+	        	item.setAmount(item.getAmount() - 1);
+	        }
+	        item.setItemMeta(itemMeta);
 
-			if (item.getDurability() >= item.getType().getMaxDurability()) {
-				item.setAmount(item.getAmount() - 1);
-			}
 		}
 
 	}

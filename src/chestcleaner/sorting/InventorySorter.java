@@ -65,6 +65,9 @@ public class InventorySorter {
 		ArrayList<ItemStack> out = new ArrayList<>();
 
 		for (int i = 0; i < items.size(); i++) {
+			if(items.get(i).getType().equals(Material.AIR)) {
+				continue;
+			}
 			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
 			for (int j = 0; j < stacks; j++) {
 				ItemStack item = items.get(i).clone();

@@ -8,15 +8,20 @@ commands:
   cleaninventory:
     description: Cleans an inventory of a block.
     usage: /<command> <x> <y> <z>
+    aliases: [cleaninv, cinv]
   cooldown:
     description: Configures the timer.
     usage: /<command> <setActive/setTime>
+    aliases: cd
   cleaningitem:
     description: Configuration of the cleaningitem.
     usage: /<command> <get/give/rename/setActive/setDurabilityLoss/setEventDetectionMode/setItem/setLore>
+    aliases: ci
   blacklist:
     description: Avoiding items to get stacked while sorting.
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
+    aliases: bl
   sortingconfig:
     description: Configuration of the sorting algorithm.
     usage: /<command> <pattern/evaluator/setautosort/adminconfig>
+    aliases: [sconfig, sc]

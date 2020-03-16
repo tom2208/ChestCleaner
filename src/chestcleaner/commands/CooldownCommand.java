@@ -55,7 +55,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 					if (args[1].equalsIgnoreCase("true")) {
 
 						if (!CooldownManager.getInstance().isActive()) {
-							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, true);
+							PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, true);
 							CooldownManager.getInstance().setActive(true);
 						}
 						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "true");
@@ -64,7 +64,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 					} else if (args[1].equalsIgnoreCase("false")) {
 
 						if (CooldownManager.getInstance().isActive()) {
-							PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_ACTIVE, false);
+							PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, false);
 							CooldownManager.getInstance().setActive(false);
 						}
 						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "false");
@@ -82,7 +82,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 					int time = Integer.valueOf(args[1]);
 					if (CooldownManager.getInstance().getCooldown() != time) {
 						CooldownManager.getInstance().setCooldown(time * 1000);
-						PluginConfig.getInstance().setIntoConfig(ConfigPath.TIMER_TIME, time * 1000);
+						PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_TIME, time * 1000);
 					}
 					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.TIMER_TIME, p, String.valueOf(time));
 

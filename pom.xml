@@ -5,11 +5,15 @@
 	<groupId>io.github.tom2208</groupId>
 	<artifactId>ChestCleaner</artifactId>
 	<version>1.8</version>
+
+	<packaging>jar</packaging>
+
 	<repositories>
 		<!-- This adds the Spigot Maven repository to the build -->
 		<repository>
 			<id>spigot-repo</id>
-			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/
+			</url>
 		</repository>
 	</repositories>
 
@@ -40,6 +44,7 @@
 		</dependency>
 	</dependencies>
 	<build>
+		<defaultGoal>clean install</defaultGoal>
 		<sourceDirectory>src</sourceDirectory>
 		<plugins>
 			<plugin>
@@ -52,4 +57,9 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 </project>

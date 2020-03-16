@@ -51,17 +51,17 @@ public class PluginConfig {
 
 		save(configFile, config);
 
-		if (setIfDoesntContains(ConfigPath.DEFAULT_AUTOSORT, PlayerDataManager.getInstance().isDefaultAutoSort())) {
+		if (!setIfDoesntContains(ConfigPath.DEFAULT_AUTOSORT, PlayerDataManager.getInstance().isDefaultAutoSort())) {
 			PlayerDataManager.getInstance()
 					.setDefaultAutoSort(config.getBoolean(ConfigPath.DEFAULT_AUTOSORT.getPath()));
 		}
 
-		if (setIfDoesntContains(ConfigPath.DEFAULT_EVALUATOR, EvaluatorType.DEFAULT.name())) {
+		if (!setIfDoesntContains(ConfigPath.DEFAULT_EVALUATOR, EvaluatorType.DEFAULT.name())) {
 			EvaluatorType.DEFAULT = EvaluatorType
 					.getEvaluatorTypByName(config.getString(ConfigPath.DEFAULT_EVALUATOR.getPath()));
 		}
 
-		if (setIfDoesntContains(ConfigPath.DEFAULT_SORTING_PATTERN, SortingPattern.DEFAULT.name())) {
+		if (!setIfDoesntContains(ConfigPath.DEFAULT_SORTING_PATTERN, SortingPattern.DEFAULT.name())) {
 			SortingPattern.DEFAULT = SortingPattern
 					.getSortingPatternByName(config.getString(ConfigPath.DEFAULT_SORTING_PATTERN.getPath()));
 		}
@@ -76,40 +76,40 @@ public class PluginConfig {
 			ChestCleaner.main.setLocale(Locale.UK);
 		}
 
-		if (setIfDoesntContains(ConfigPath.CLEANING_ITEM, new ItemStack(Material.IRON_HOE))) {
+		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM, new ItemStack(Material.IRON_HOE))) {
 			ChestCleaner.item = config.getItemStack(ConfigPath.CLEANING_ITEM.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.CLEANING_ITEM_ACTIVE, true)) {
+		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_ACTIVE, true)) {
 			ChestCleaner.itemBoolean = config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.CLEANING_ITEM_DURABILITY, true)) {
+		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_DURABILITY, true)) {
 			ChestCleaner.durability = config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.OPEN_INVENTORY_MODE, false)) {
+		if (!setIfDoesntContains(ConfigPath.OPEN_INVENTORY_MODE, false)) {
 			ChestCleaner.eventmode = config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.CONSUMABLES_REFILL, true)) {
+		if (!setIfDoesntContains(ConfigPath.CONSUMABLES_REFILL, true)) {
 			ChestCleaner.consumablesRefill = config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.BLOCK_REFILL, true)) {
+		if (!setIfDoesntContains(ConfigPath.BLOCK_REFILL, true)) {
 			ChestCleaner.blockRefill = config.getBoolean(ConfigPath.BLOCK_REFILL.getPath());
 		}
 
-		if (setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
+		if (!setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
 			ChestCleaner.cleanInvPermission = config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath());
 		}
 		
-		if(setIfDoesntContains(ConfigPath.TIMER_ACTIVE, true)) {
-			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.TIMER_ACTIVE.getPath()));
+		if(!setIfDoesntContains(ConfigPath.COOLDOWN_ACTIVE, true)) {
+			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.COOLDOWN_ACTIVE.getPath()));
 		}
 		
-		if(config.contains(ConfigPath.TIMER_TIME.getPath())) {
-			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.TIMER_TIME.getPath()));
+		if(config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
+			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.COOLDOWN_TIME.getPath()));
 		}
 		
 		if(config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
@@ -202,7 +202,7 @@ public class PluginConfig {
 	 * @return true if the path was set otherwise false.
 	 */
 	private boolean setIfDoesntContains(ConfigPath path, Object value) {
-		if (!config.contains("path")) {
+		if (!config.contains(path.getPath())) {
 			config.set(path.getPath(), value);
 			return true;
 		}
@@ -240,8 +240,8 @@ public class PluginConfig {
 		CLEANING_ITEM_ACTIVE("active"), CLEANING_ITEM_DURABILITY("durability"),
 		OPEN_INVENTORY_MODE("openinventoryeventmode"), CONSUMABLES_REFILL("consumablesrefill"),
 		BLOCK_REFILL("blockrefill"), INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"),
-		BLACKLIST("blacklist"), INVENTORY_BLACKLIST("inventoryblacklist"), TIMER_TIME("timer.time"),
-		TIMER_ACTIVE("timer.active"), UPDATE_CHECKER_ACTIVE("updateMassageActive");
+		BLACKLIST("blacklist"), INVENTORY_BLACKLIST("inventoryblacklist"), COOLDOWN_TIME("cooldown.time"),
+		COOLDOWN_ACTIVE("cooldown.active"), UPDATE_CHECKER_ACTIVE("updateMassageActive");
 
 		private String path;
 

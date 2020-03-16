@@ -35,7 +35,7 @@ public class CooldownManager {
 				times.put(p.getUniqueId(), System.currentTimeMillis());
 				return true;
 			}
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, p, String.valueOf((cooldown - differnce) / 1000));
+			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, p, String.valueOf((cooldown - differnce) / 1000 + 1));
 			return false;
 
 		} else {

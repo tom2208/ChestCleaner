@@ -224,8 +224,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-					PluginPermissions.CMD_BLACKLIST.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_BLACKLIST.getString(), p);
 			return true;
 		}
 
