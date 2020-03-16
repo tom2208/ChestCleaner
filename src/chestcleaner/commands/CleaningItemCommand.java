@@ -59,7 +59,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					}
 
-					newname = newname.replace("&", "§");
+					newname = newname.replace("&", "\u00A7");
 					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
 							MessageID.SET_CLEANING_ITEM_NAME, player, newname);
 
@@ -93,7 +93,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					ArrayList<String> lorelist = new ArrayList<>();
 
 					for (String obj : lorearray) {
-						obj = obj.replace("&", "§");
+						obj = obj.replace("&", "\u00A7");
 						lorelist.add(obj);
 
 					}
