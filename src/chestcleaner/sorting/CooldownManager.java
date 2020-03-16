@@ -24,7 +24,7 @@ public class CooldownManager {
 
 	public boolean isPlayerOnCooldown(Player p) {
 
-		if (!active || !p.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
+		if (!active || p.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
 			return true;
 		}
 
