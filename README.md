@@ -7,6 +7,8 @@ For more information have a look at the Spigot article of this plugin: https://w
 
 _____________________________________________________________________________________
 
+<h3>Maven</h3>
+
 Installing maven: https://maven.apache.org/install.html </br>
 With <b>mvn -version</b> you can check if you already installed maven.</br></br>
 Building with maven:</br>
