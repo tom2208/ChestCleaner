@@ -122,8 +122,11 @@ public class InventorySorter {
 	 * 
 	 * @param p The player whose inventory you want to sort.
 	 */
-	public static void sortPlayerInv(Player p, SortingPattern pattern, EvaluatorType evaluator) {
-
+	public static void sortPlayerInv(Player p) {
+		
+		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
+		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		
 		ArrayList<ItemStack> list = InventoryDetector.getPlayerInventoryList(p);
 		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
 
@@ -145,8 +148,11 @@ public class InventorySorter {
 	 * @param p the player or owner of an enderchest inventory.
 	 * @return returns true if an inventory got sorted, otherwise false.
 	 */
-	public static boolean sortPlayerBlock(Block b, Player p, SortingPattern pattern, EvaluatorType evaluator) {
+	public static boolean sortPlayerBlock(Block b, Player p) {
 
+		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
+		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		
 		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
 
 		if (inv != null) {

@@ -63,9 +63,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p,
-						PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
-						PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
+				if (!InventorySorter.sortPlayerBlock(block, p)) {
 
 					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
 							MessageID.BLOCK_HAS_NO_INVENTORY, p, "(" + block.getX() + " / " + block.getY() + " / "
@@ -114,8 +112,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (!InventorySorter.sortPlayerBlock(block, p, PlayerDataManager.getInstance().getSortingPatternOfPlayer(p),
-					PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p))) {
+			if (!InventorySorter.sortPlayerBlock(block, p)) {
 
 				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
 						p, "(" + x + " / " + y + " / " + z + ")");

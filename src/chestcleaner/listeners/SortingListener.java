@@ -45,8 +45,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 						return;
 
 					damageItem(player);
-					InventorySorter.sortPlayerInv(player, PlayerDataManager.getInstance().getSortingPatternOfPlayer(player),
-							PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(player));
+					InventorySorter.sortPlayerInv(player);
 					InventorySorter.playSortingSound(player);
 
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
@@ -69,9 +68,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 						
 						damageItem(player);
 
-						if (InventorySorter.sortPlayerBlock(b, player,
-								PlayerDataManager.getInstance().getSortingPatternOfPlayer(player),
-								PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(player))) {
+						if (InventorySorter.sortPlayerBlock(b, player)) {
 
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 							e.setCancelled(true);
