@@ -36,7 +36,7 @@ public class InventoryDetector {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * <b>Returns the inventory of the block on the location {@code location} in the
 	 * world {@code world}. If the block has no inventory it will return

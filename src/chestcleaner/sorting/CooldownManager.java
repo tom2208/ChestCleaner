@@ -15,7 +15,8 @@ public class CooldownManager {
 	private static CooldownManager instance = null;
 
 	private HashMap<UUID, Long> times;
-	private int cooldown = 5000;
+	private final int defaultCooldown = 5000;
+	private int cooldown = defaultCooldown;
 	private boolean active = true;
 
 	protected CooldownManager() {

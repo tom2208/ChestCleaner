@@ -19,9 +19,9 @@ public class InventorySorter {
 	public static ArrayList<Material> blacklist = new ArrayList<>();
 
 	/**
-	 * Returns {@code list} with full stacked items.
+	 * Returns {@code list} sorted in full stacked items.
 	 * 
-	 * @param list
+	 * @param list an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
 	 */
 	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {

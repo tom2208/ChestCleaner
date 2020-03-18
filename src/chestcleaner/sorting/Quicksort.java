@@ -11,7 +11,7 @@ public class Quicksort {
 
 	private ArrayList<ItemStack> items;
 	// Default Evaluator
-	public Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
+	private Evaluator evaluator = EvaluatorType.getEvaluator(EvaluatorType.DEFAULT);
 
 	public Quicksort(ArrayList<ItemStack> items, Evaluator evaluator) {
 		this.items = items;
