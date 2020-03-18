@@ -12,6 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.StringUtil;
 
@@ -131,7 +132,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					ItemStack item = player.getInventory().getItemInMainHand().clone();
 					if (item != null) {
-						item.setDurability((short) 0);
+						ItemMeta itemMeta = item.getItemMeta();
+						Damageable damageable = ((Damageable) itemMeta);
+						damageable.setDamage(0);
+						item.setItemMeta(itemMeta);
 						item.setAmount(1);
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, item);
 
@@ -363,6 +367,5 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	private final String setActiveSyntaxError = "/cleaningitem setactive <true/false>";
 	private final String setDurabilityLossSyntaxError = "/cleaningitem setDurabilityLoss <true/false>";
 	private final String subCommandsSyntaxError = "/cleaningitem <setitem/setactive/setdurabilityLoss/get/give/rename/setlore/seteventdetectionmode>";
-	private final String consoleSubCommandsSyntaxError = "/cleaningitem <setactive/setdurabilityloss/give/rename/setlore>";
 
 }
