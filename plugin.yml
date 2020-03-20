@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: 1.8
+version: 1.8-A1
 author: Tom2208
 
 main: chestcleaner.main.ChestCleaner
@@ -10,8 +10,8 @@ commands:
     usage: /<command> <x> <y> <z>
     aliases: [cleaninv, cinv]
   cooldown:
-    description: Configures the timer.
-    usage: /<command> <setActive/setTime>
+    description: Configures the cooldown time of the sorting.
+    usage: /<command> <setActive/setCooldown>
     aliases: cd
   cleaningitem:
     description: Configuration of the cleaningitem.

@@ -1,6 +1,7 @@
 package chestcleaner.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
+import chestcleaner.config.PluginConfigurationManager;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
@@ -27,13 +29,6 @@ import chestcleaner.utils.messages.enums.MessageType;
  *
  */
 public class CooldownCommand implements CommandExecutor, TabCompleter {
-
-	private final List<String> timerCommands = new ArrayList<>();
-
-	public CooldownCommand() {
-		timerCommands.add("setActive");
-		timerCommands.add("setTime");
-	}
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
@@ -50,82 +45,91 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 			if (args.length == 2) {
 
 				/* SETACTIVE SUBCOMMAND */
-				if (args[0].equalsIgnoreCase(timerCommands.get(0))) {
+				if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
 
-					if (args[1].equalsIgnoreCase("true")) {
+					String trueStr = PluginConfigurationManager.getInstance().getTrueString();
+					String falseStr = PluginConfigurationManager.getInstance().getFalseString();
+
+					if (args[1].equalsIgnoreCase(trueStr)) {
 
 						if (!CooldownManager.getInstance().isActive()) {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, true);
 							CooldownManager.getInstance().setActive(true);
 						}
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "true");
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+								MessageID.COOLDOWN_TOGGLE, p, trueStr);
 						return true;
 
-					} else if (args[1].equalsIgnoreCase("false")) {
+					} else if (args[1].equalsIgnoreCase(falseStr)) {
 
 						if (CooldownManager.getInstance().isActive()) {
 							PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, false);
 							CooldownManager.getInstance().setActive(false);
 						}
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, p, "false");
+						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+								MessageID.COOLDOWN_TOGGLE, p, falseStr);
 						return true;
 
 					} else {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, " /timer <setActive> <true/false>",
-								p);
+						sendSytaxErrorToPlayer(p);
 						return true;
 					}
 
 					/* SETTIMER SUBCOMMAND */
-				} else if (args[0].equalsIgnoreCase(timerCommands.get(1))) {
+				} else if (args[0].equalsIgnoreCase(setCooldownSubCommand)) {
 
 					int time = Integer.valueOf(args[1]);
 					if (CooldownManager.getInstance().getCooldown() != time) {
 						CooldownManager.getInstance().setCooldown(time * 1000);
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_TIME, time * 1000);
 					}
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.TIMER_TIME, p, String.valueOf(time));
+					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.TIMER_TIME, p,
+							String.valueOf(time));
 
 					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/timer <setActive/setTime>", p);
+					sendSytaxErrorToPlayer(p);
 					return true;
 				}
 
 			} else {
-				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, "/timer <setActive/setTime>", p);
+				sendSytaxErrorToPlayer(p);
 				return true;
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_COOLDOWN.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					PluginPermissions.CMD_COOLDOWN.getString(), p);
 			return true;
 		}
 
+	}
+
+	private void sendSytaxErrorToPlayer(Player p) {
+		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, cooldownSyntax, p);
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
+		String[] subCommandsListStr = { setActiveSubCommand, setCooldownSubCommand };
+		List<String> subCommandsList = Arrays.asList(subCommandsListStr);
+
 		if (args.length == 1) {
 			switch (args.length) {
 			case 0:
-				StringUtil.copyPartialMatches(args[0], timerCommands, completions);
+				StringUtil.copyPartialMatches(args[0], subCommandsList, completions);
 				break;
 			case 1:
-				StringUtil.copyPartialMatches(args[0], timerCommands, completions);
+				StringUtil.copyPartialMatches(args[0], subCommandsList, completions);
 				break;
 			case 2:
 				/* SETACTIVE */
-				if (args[0].equalsIgnoreCase(timerCommands.get(0))) {
-
-					ArrayList<String> commands = new ArrayList<>();
-					commands.add("true");
-					commands.add("false");
-
-					StringUtil.copyPartialMatches(args[1], commands, completions);
+				if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
+					StringUtil.copyPartialMatches(args[1], PluginConfigurationManager.getBooleanValueStringList(),
+							completions);
 				}
 
 			}
@@ -135,4 +139,8 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 		return completions;
 	}
 
+	private final String setCooldownSubCommand = "setCooldown";
+	private final String setActiveSubCommand = "setActive";
+
+	private final String cooldownSyntax = "/cooldown <setActive/setCooldown>";
 }

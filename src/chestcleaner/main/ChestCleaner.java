@@ -19,20 +19,14 @@ import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.commands.CooldownCommand;
 import chestcleaner.config.PluginConfig;
+import chestcleaner.config.PluginConfigurationManager;
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
 
 public class ChestCleaner extends JavaPlugin {
 
-	public static boolean cleanInvPermission = true;
 	public static ItemStack item = new ItemStack(Material.IRON_HOE);
-	public static boolean durability = true;
-	public static boolean itemBoolean = true;
-	public static boolean eventmode = false;
-	public static boolean blockRefill = true;
-	public static boolean consumablesRefill = true;
-	private boolean updateCheckerActive = true;
 
 	public static ChestCleaner main;
 	private ResourceBundle rb;
@@ -42,19 +36,6 @@ public class ChestCleaner extends JavaPlugin {
 	public void onEnable() {
 		main = this;
 		PluginConfig.getInstance().loadConfig();
-		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
-		getCommand("cooldown").setExecutor(new CooldownCommand());
-		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
-		getCommand("blacklist").setExecutor(new BlacklistCommand());
-		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
-		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
-		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
-		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
-
-		if (updateCheckerActive) {
-			new UpdateChecker(this).checkForUpdate();
-		}
-
 		getPlugin(this.getClass()).saveResource("ChestCleaner_en_GB.properties", false);
 		getPlugin(this.getClass()).saveResource("ChestCleaner_de_DE.properties", false);
 
@@ -65,12 +46,19 @@ public class ChestCleaner extends JavaPlugin {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
+		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
+		getCommand("cooldown").setExecutor(new CooldownCommand());
+		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
+		getCommand("blacklist").setExecutor(new BlacklistCommand());
+		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
+		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
+		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
+		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
 
+		if (PluginConfigurationManager.getInstance().isUpdateCheckerActive()) {
+			new UpdateChecker(this).checkForUpdate();
+		}
 
-	}
-
-	public void setUpdateCheckerActive(boolean b) {
-		this.updateCheckerActive = b;
 	}
 
 	public ResourceBundle getRB() {

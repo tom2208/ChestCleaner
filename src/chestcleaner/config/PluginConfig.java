@@ -81,27 +81,27 @@ public class PluginConfig {
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_ACTIVE, true)) {
-			ChestCleaner.itemBoolean = config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath());
+			PluginConfigurationManager.getInstance().setCleaningItemActive(config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_DURABILITY, true)) {
-			ChestCleaner.durability = config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath());
+			PluginConfigurationManager.getInstance().setDurabilityLossActive(config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.OPEN_INVENTORY_MODE, false)) {
-			ChestCleaner.eventmode = config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath());
+			PluginConfigurationManager.getInstance().setDurabilityLossActive(config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CONSUMABLES_REFILL, true)) {
-			ChestCleaner.consumablesRefill = config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath());
+			PluginConfigurationManager.getInstance().setConsumablesRefillActive(config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.BLOCK_REFILL, true)) {
-			ChestCleaner.blockRefill = config.getBoolean(ConfigPath.BLOCK_REFILL.getPath());
+			PluginConfigurationManager.getInstance().setBlockRefillActive(config.getBoolean(ConfigPath.BLOCK_REFILL.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
-			ChestCleaner.cleanInvPermission = config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath());
+			PluginConfigurationManager.getInstance().setCleanInvPermission(config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath()));
 		}
 		
 		if(!setIfDoesntContains(ConfigPath.COOLDOWN_ACTIVE, true)) {
@@ -113,7 +113,7 @@ public class PluginConfig {
 		}
 		
 		if(config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
-			ChestCleaner.main.setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
+			PluginConfigurationManager.getInstance().setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
 		}
 		
 		if (config.contains(ConfigPath.BLACKLIST.getPath())) {

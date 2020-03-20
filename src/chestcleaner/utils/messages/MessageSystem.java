@@ -57,7 +57,7 @@ public class MessageSystem {
 	}
 
 	/**
-	 * Replaces all Strings from the tuples {@code repplacements} first elements in
+	 * Replaces all Strings from the tuples {@code replacements} first elements in
 	 * the String {@code str} with the seconds elements of the tuples
 	 * {@code replacements}. The first element of the tuple is the element to get
 	 * replaced, the second is the replacement. The method does the replacement with

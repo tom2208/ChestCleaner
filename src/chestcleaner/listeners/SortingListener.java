@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import chestcleaner.commands.BlacklistCommand;
+import chestcleaner.config.PluginConfigurationManager;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
@@ -52,7 +53,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					e.setCancelled(true);
 
-				} else if (!ChestCleaner.eventmode) {
+				} else if (!PluginConfigurationManager.getInstance().isEventModeActive()) {
 
 					if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
@@ -128,7 +129,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 	 */
 	private void damageItem(Player player) {
 
-		if (ChestCleaner.durability) {
+		if (PluginConfigurationManager.getInstance().isDurabilityLossActive()) {
 
 			ItemStack item;
 			if (isPlayerHoldingCleaningItemInMainHand(player)) {
@@ -154,7 +155,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onOpenInventory(InventoryOpenEvent e) {
 
-		if (ChestCleaner.eventmode) {
+		if (PluginConfigurationManager.getInstance().isEventModeActive()) {
 
 			Player player = (Player) e.getPlayer();
 

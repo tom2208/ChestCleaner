@@ -180,7 +180,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					}
 
 					int page = 1;
-					int pages = (list.size()-1)/ LIST_PAGE_LENGTH + 1;
+					int pages = (list.size() - 1) / LIST_PAGE_LENGTH + 1;
 
 					if (args.length == 3) {
 
@@ -224,7 +224,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION, PluginPermissions.CMD_BLACKLIST.getString(), p);
+			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					PluginPermissions.CMD_BLACKLIST.getString(), p);
 			return true;
 		}
 
