@@ -38,7 +38,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 
 		if (!(sender instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER.getID());
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
 			return true;
 		}
 

@@ -34,7 +34,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		Player p = (Player) cs;
 
 		if (cs instanceof Player) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER.getID());
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
 			return true;
 		}
 		

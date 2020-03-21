@@ -35,6 +35,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
 		if (!(cs instanceof Player)) {
+			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
 			return true;
 		}
 
