@@ -3,8 +3,8 @@ package chestcleaner.utils.messages.enums;
 public enum MessageID {
 
 	SORTING_ON_COOLDOWN("sortingOnCooldown"), BLOCK_HAS_NO_INVENTORY("blockHasNoInventory"),
-	INVENTORY_SORTED("inventorySorted"), NO_WORLD_WITH_THIS_NAME("noWorldWithThisName"), COOLDOWN_TOGGLE("cooldownTogggled"),
-	TIMER_TIME("cooldownTime"), SET_CLEANING_ITEM_NAME("cleaningItemNameSet"),
+	INVENTORY_SORTED("inventorySorted"), NO_WORLD_WITH_THIS_NAME("noWorldWithThisName"),
+	COOLDOWN_TOGGLE("cooldownTogggled"), TIMER_TIME("cooldownTime"), SET_CLEANING_ITEM_NAME("cleaningItemNameSet"),
 	SET_CLEANING_ITEM_LORE("cleaningItemLoreSet"), SET_CLEANING_ITEM("cleaningItemSet"),
 	YOU_HAVE_TO_HOLD_AN_ITEM("youHaveToHoldAnItem"), YOU_GOT_CLEANING_ITEM("youGotACleaningItem"),
 	CLEANING_ITEM_TOGGLED("cleaningItemToggled"), PLAYER_GOT_CLEANING_ITEM("playerGotCleaningItem"),
