@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
 
@@ -17,7 +17,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onPlacingBlock(BlockPlaceEvent e) {
 
-		if (PluginConfigurationManager.getInstance().isBlockRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.getInstance().isBlockRefillActive() && !e.isCancelled()) {
 			Player player = e.getPlayer();
 
 			if (isPlayerAllowedToRefillBlocks(player)) {
@@ -47,7 +47,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onConsuming(PlayerItemConsumeEvent e) {
 
-		if (PluginConfigurationManager.getInstance().isConsumablesRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.getInstance().isConsumablesRefillActive() && !e.isCancelled()) {
 
 			Player player = e.getPlayer();
 

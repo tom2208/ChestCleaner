@@ -19,7 +19,7 @@ import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.commands.CooldownCommand;
 import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.listeners.SortingListener;
 import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
@@ -55,7 +55,7 @@ public class ChestCleaner extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
 		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
 
-		if (PluginConfigurationManager.getInstance().isUpdateCheckerActive()) {
+		if (PluginConfigManager.getInstance().isUpdateCheckerActive()) {
 			new UpdateChecker(this).checkForUpdate();
 		}
 

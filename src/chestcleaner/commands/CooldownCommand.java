@@ -14,7 +14,7 @@ import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
@@ -85,17 +85,18 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 					String.valueOf(time));
 
 		} catch (NumberFormatException ex) {
-			
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, player, arg);
-			
+
+			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, player,
+					arg);
+
 		}
 
 		return true;
 	}
 
 	private boolean setActiveSubCommand(String arg, Player player) {
-		String trueStr = PluginConfigurationManager.getInstance().getTrueString();
-		String falseStr = PluginConfigurationManager.getInstance().getFalseString();
+		String trueStr = PluginConfigManager.getInstance().getTrueString();
+		String falseStr = PluginConfigManager.getInstance().getFalseString();
 
 		if (arg.equalsIgnoreCase(trueStr)) {
 
@@ -123,8 +124,14 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private void sendSytaxErrorToPlayer(Player p) {
-		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, cooldownSyntax, p);
+	/**
+	 * Sends a syntax error of the command CooldownCommand to the player
+	 * {@code player}.
+	 * 
+	 * @param player the player who should get the error message.
+	 */
+	private void sendSytaxErrorToPlayer(Player player) {
+		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, cooldownSyntax, player);
 	}
 
 	@Override
@@ -145,7 +152,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 			case 2:
 				/* SETACTIVE */
 				if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
-					StringUtil.copyPartialMatches(args[1], PluginConfigurationManager.getBooleanValueStringList(),
+					StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(),
 							completions);
 				}
 

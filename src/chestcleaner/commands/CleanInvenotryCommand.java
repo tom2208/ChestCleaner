@@ -9,7 +9,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
@@ -37,8 +37,9 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
 			return true;
 		}
-		
-		if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString()) && PluginConfigurationManager.getInstance().isCleanInvPermission()) {
+
+		if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
+				&& PluginConfigManager.getInstance().isCleanInvPermission()) {
 			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
 					PluginPermissions.CMD_INV_CLEAN.getString(), p);
 			return true;
@@ -128,7 +129,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		}
 		return true;
 	}
-	
+
 	private final String syntax = "/cleaninventory <x> <y> <z>";
-	
+
 }

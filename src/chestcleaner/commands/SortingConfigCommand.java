@@ -13,7 +13,7 @@ import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.PluginPermissions;
@@ -103,9 +103,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				}
 
 				boolean b = false;
-				if (PluginConfigurationManager.isStringTrue(args[1])) {
+				if (PluginConfigManager.isStringTrue(args[1])) {
 					b = true;
-				} else if (!PluginConfigurationManager.isStringFalse(args[1])) {
+				} else if (!PluginConfigManager.isStringFalse(args[1])) {
 					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setAutoSortSyntax, p);
 					return true;
 				}
@@ -169,9 +169,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 					Boolean b = false;
 
-					if (PluginConfigurationManager.isStringTrue(args[2])) {
+					if (PluginConfigManager.isStringTrue(args[2])) {
 						b = true;
-					} else if (!PluginConfigurationManager.isStringFalse(args[2])) {
+					} else if (!PluginConfigManager.isStringFalse(args[2])) {
 						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, adminConfigSetDefaultSortSyntax, p);
 						return true;
 					}
@@ -227,8 +227,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			else if (args[0].equalsIgnoreCase(evaluatorSubCommand))
 				StringUtil.copyPartialMatches(args[1], EvaluatorType.getIDList(), completions);
 			else if (args[0].equalsIgnoreCase(setAutoSortSubCommand))
-				StringUtil.copyPartialMatches(args[1], PluginConfigurationManager.getBooleanValueStringList(),
-						completions);
+				StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(), completions);
 			else if (args[0].equalsIgnoreCase(adminConfigSubCommand))
 				StringUtil.copyPartialMatches(args[1], adminControlSubCommands, completions);
 
@@ -239,7 +238,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				else if (args[1].equalsIgnoreCase(evaluatorSubCommand))
 					StringUtil.copyPartialMatches(args[2], EvaluatorType.getIDList(), completions);
 				else if (args[1].equalsIgnoreCase(setDefaultAutoSortSubCommand))
-					StringUtil.copyPartialMatches(args[2], PluginConfigurationManager.getBooleanValueStringList(),
+					StringUtil.copyPartialMatches(args[2], PluginConfigManager.getBooleanValueStringList(),
 							completions);
 			}
 		}

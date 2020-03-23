@@ -17,7 +17,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfigurationManager;
+import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
@@ -181,14 +181,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
 
-					if (PluginConfigurationManager.isStringTrueOrFalse(args[1])) {
+					if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
 
 						boolean b = false;
-						if (args[1].equalsIgnoreCase(PluginConfigurationManager.getInstance().getTrueString()))
+						if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
 							b = true;
 
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
-						PluginConfigurationManager.getInstance().setCleaningItemActive(b);
+						PluginConfigManager.getInstance().setCleaningItemActive(b);
 
 						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
 								MessageID.CLEANING_ITEM_TOGGLED, player, String.valueOf(b));
@@ -211,15 +211,15 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
 
-					if (PluginConfigurationManager.isStringTrueOrFalse(args[1])) {
+					if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
 
 						boolean b = false;
-						if (args[1].equalsIgnoreCase(PluginConfigurationManager.getInstance().getTrueString()))
+						if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
 							b = true;
 
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
-						PluginConfigurationManager.getInstance().setDurabilityLossActive(b);
-						if (PluginConfigurationManager.getInstance().isDurabilityLossActive()) {
+						PluginConfigManager.getInstance().setDurabilityLossActive(b);
+						if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
 							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_AVTIVATED,
 									player);
 						} else {
@@ -289,7 +289,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
 
 					boolean b = Boolean.parseBoolean(args[1]);
-					PluginConfigurationManager.getInstance().setEventModeActive(b);
+					PluginConfigManager.getInstance().setEventModeActive(b);
 					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
 							MessageID.OPEN_INV_MODE_TOGGLED, player, String.valueOf(b));
 
@@ -337,7 +337,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			if (args[0].equalsIgnoreCase(setActiveSubCommand) || args[0].equalsIgnoreCase(setDurabilityLossSubCommand)
 					|| args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
-				StringUtil.copyPartialMatches(args[1], PluginConfigurationManager.getBooleanValueStringList(), completions);
+				StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(), completions);
 			}
 
 		}

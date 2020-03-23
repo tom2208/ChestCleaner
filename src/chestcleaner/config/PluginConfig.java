@@ -35,7 +35,7 @@ public class PluginConfig {
 	private FileConfiguration config;
 	private File playerDataConfigFile;
 	private FileConfiguration playerDataConfig;
-	
+
 	protected PluginConfig() {
 		configFile = new File("plugins/" + ChestCleaner.main.getName(), "config.yml");
 		config = YamlConfiguration.loadConfiguration(configFile);
@@ -66,7 +66,8 @@ public class PluginConfig {
 					.getSortingPatternByName(config.getString(ConfigPath.DEFAULT_SORTING_PATTERN.getPath()));
 		}
 
-		if (config.contains(ConfigPath.LOCALE_LANGUAGE.getPath()) && config.contains(ConfigPath.LOCALE_COUNTRY.getPath())) {
+		if (config.contains(ConfigPath.LOCALE_LANGUAGE.getPath())
+				&& config.contains(ConfigPath.LOCALE_COUNTRY.getPath())) {
 			String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
 			String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
 			ChestCleaner.main.setLocale(language, country);
@@ -81,41 +82,48 @@ public class PluginConfig {
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_ACTIVE, true)) {
-			PluginConfigurationManager.getInstance().setCleaningItemActive(config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath()));
+			PluginConfigManager.getInstance()
+					.setCleaningItemActive(config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_DURABILITY, true)) {
-			PluginConfigurationManager.getInstance().setDurabilityLossActive(config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath()));
+			PluginConfigManager.getInstance()
+					.setDurabilityLossActive(config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.OPEN_INVENTORY_MODE, false)) {
-			PluginConfigurationManager.getInstance().setDurabilityLossActive(config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath()));
+			PluginConfigManager.getInstance()
+					.setDurabilityLossActive(config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CONSUMABLES_REFILL, true)) {
-			PluginConfigurationManager.getInstance().setConsumablesRefillActive(config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath()));
+			PluginConfigManager.getInstance()
+					.setConsumablesRefillActive(config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.BLOCK_REFILL, true)) {
-			PluginConfigurationManager.getInstance().setBlockRefillActive(config.getBoolean(ConfigPath.BLOCK_REFILL.getPath()));
+			PluginConfigManager.getInstance()
+					.setBlockRefillActive(config.getBoolean(ConfigPath.BLOCK_REFILL.getPath()));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
-			PluginConfigurationManager.getInstance().setCleanInvPermission(config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath()));
+			PluginConfigManager.getInstance()
+					.setCleanInvPermission(config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath()));
 		}
-		
-		if(!setIfDoesntContains(ConfigPath.COOLDOWN_ACTIVE, true)) {
+
+		if (!setIfDoesntContains(ConfigPath.COOLDOWN_ACTIVE, true)) {
 			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.COOLDOWN_ACTIVE.getPath()));
 		}
-		
-		if(config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
+
+		if (config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
 			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.COOLDOWN_TIME.getPath()));
 		}
-		
-		if(config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
-			PluginConfigurationManager.getInstance().setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
+
+		if (config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
+			PluginConfigManager.getInstance()
+					.setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
 		}
-		
+
 		if (config.contains(ConfigPath.BLACKLIST.getPath())) {
 			List<String> list = config.getStringList(ConfigPath.BLACKLIST.getPath());
 			ArrayList<Material> materials = new ArrayList<>();
@@ -236,12 +244,13 @@ public class PluginConfig {
 
 	public enum ConfigPath {
 		DEFAULT_AUTOSORT("defaultautosort"), DEFAULT_EVALUATOR("defaultevaluator"),
-		DEFAULT_SORTING_PATTERN("defaultsortingpattern"), LOCALE_LANGUAGE("locale.lang"), LOCALE_COUNTRY("locale.country"), CLEANING_ITEM("cleaningItem"),
-		CLEANING_ITEM_ACTIVE("active"), CLEANING_ITEM_DURABILITY("durability"),
-		OPEN_INVENTORY_MODE("openinventoryeventmode"), CONSUMABLES_REFILL("consumablesrefill"),
-		BLOCK_REFILL("blockrefill"), INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"),
-		BLACKLIST("blacklist"), INVENTORY_BLACKLIST("inventoryblacklist"), COOLDOWN_TIME("cooldown.time"),
-		COOLDOWN_ACTIVE("cooldown.active"), UPDATE_CHECKER_ACTIVE("updateMassageActive");
+		DEFAULT_SORTING_PATTERN("defaultsortingpattern"), LOCALE_LANGUAGE("locale.lang"),
+		LOCALE_COUNTRY("locale.country"), CLEANING_ITEM("cleaningItem"), CLEANING_ITEM_ACTIVE("active"),
+		CLEANING_ITEM_DURABILITY("durability"), OPEN_INVENTORY_MODE("openinventoryeventmode"),
+		CONSUMABLES_REFILL("consumablesrefill"), BLOCK_REFILL("blockrefill"),
+		INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"), BLACKLIST("blacklist"),
+		INVENTORY_BLACKLIST("inventoryblacklist"), COOLDOWN_TIME("cooldown.time"), COOLDOWN_ACTIVE("cooldown.active"),
+		UPDATE_CHECKER_ACTIVE("updateMassageActive");
 
 		private String path;
 
