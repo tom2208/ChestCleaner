@@ -31,105 +31,135 @@ public class CleanInvenotryCommand implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-		Player p = (Player) cs;
+		Player player = null;
 
 		if (cs instanceof Player) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
-			return true;
-		}
-
-		if (!p.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
-				&& PluginConfigManager.getInstance().isCleanInvPermission()) {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-					PluginPermissions.CMD_INV_CLEAN.getString(), p);
-			return true;
+			player = (Player) cs;
+			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
+					&& PluginConfigManager.getInstance().isCleanInvPermission()) {
+				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+						PluginPermissions.CMD_INV_CLEAN.getString(), player);
+				return true;
+			}
 		}
 
 		if (args.length == 0) {
-
-			// if cs is a console
-			if (!(cs instanceof Player)) {
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntax);
+			
+			if(player == null) {
+				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxConsole);
 				return true;
 			}
-
-			Block block = BlockDetector.getTargetBlock(p);
+			
+			Block block = BlockDetector.getTargetBlock(player);
 
 			if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
+				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, player);
 				return true;
 			}
 
-			if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
+			if (CooldownManager.getInstance().isPlayerOnCooldown(player)) {
 
 				// if the block has no inventory
-				if (!InventorySorter.sortPlayerBlock(block, p)) {
+				if (!InventorySorter.sortPlayerBlock(block, player)) {
 
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
-							MessageID.BLOCK_HAS_NO_INVENTORY, p, "(" + block.getX() + " / " + block.getY() + " / "
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
+							MessageID.BLOCK_HAS_NO_INVENTORY, player, "(" + block.getX() + " / " + block.getY() + " / "
 									+ block.getZ() + ", " + block.getType().name() + ")");
 					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 					return true;
 				}
 
 			}
 
-		} else if (args.length == 3 || args.length == 4) {
-
-			int x = (int) Double.parseDouble(args[0]);
-			int y = (int) Double.parseDouble(args[1]);
-			int z = (int) Double.parseDouble(args[2]);
-
-			World w;
-
-			if (args.length == 4) {
-				w = Bukkit.getWorld(args[3]);
-			} else {
-				w = p.getWorld();
-			}
-
-			if (w == null) {
-				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.NO_WORLD_WITH_THIS_NAME,
-						p, args[3]);
+		} else if (args.length == 3) {
+			
+			if(player == null) {
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxConsole, cs);
 				return true;
+			}else {
+				return sortInvAtLocation(args[0], args[1], args[2], null, player, cs);
 			}
 
-			if (args.length == 4) {
-				w = Bukkit.getWorld(args[3]);
-			}
-
-			Block block = BlockDetector.getBlockByLocation(new Location(w, x, y, z));
-
-			if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
-				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, p);
-				return true;
-			}
-
-			if (!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
-				return true;
-			}
-
-			if (!InventorySorter.sortPlayerBlock(block, p)) {
-
-				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
-						p, "(" + x + " / " + y + " / " + z + ")");
-
-				return true;
-
-			} else {
-
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
-
-				return true;
-			}
-
+		} else if(args.length == 4){
+			return sortInvAtLocation(args[0], args[1], args[2], args[3], player, cs);
+		} else {
+			MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxConsole, cs);
+			return true;
 		}
 		return true;
 	}
 
+	private boolean sortInvAtLocation(String xStr, String yStr, String zStr, String worldStr, Player player,
+			CommandSender cs) {
+
+		int x = (int) Double.parseDouble(xStr);
+		int y = (int) Double.parseDouble(yStr);
+		int z = (int) Double.parseDouble(zStr);
+
+		World world;
+
+		/**
+		 * World detecting
+		 */
+		if (worldStr == null) {
+			if (player == null) {
+				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxConsole);
+				return true;
+			} else {
+				world = player.getWorld();
+			}
+		} else {
+			world = Bukkit.getWorld(worldStr);
+			if (world == null) {
+				MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.NO_WORLD_WITH_THIS_NAME, cs, worldStr);
+				return true;
+			}
+		}
+
+		/**
+		 * Block detecting
+		 */
+		Block block = BlockDetector.getBlockByLocation(new Location(world, x, y, z));
+
+		if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, cs);
+			return true;
+		}
+
+		if (!CooldownManager.getInstance().isPlayerOnCooldown(player)) {
+			return true;
+		}
+
+		/**
+		 * Sorting inventory
+		 */
+		if (player == null) {
+
+			if (InventorySorter.sortPlayerBlock(block, null)) {
+				MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.INVENTORY_SORTED);
+				return true;
+			} else {
+				MessageSystem.sendConsoleMessageWithReplacement(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
+						"(" + x + " / " + y + " / " + z + ")");
+				return true;
+			}
+
+		} else {
+			if (InventorySorter.sortPlayerBlock(block, player)) {
+				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+				return true;
+			} else {
+				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
+						player, "(" + x + " / " + y + " / " + z + ")");
+				return true;
+			}
+		}
+	}
+
 	private final String syntax = "/cleaninventory <x> <y> <z>";
+	private final String syntaxConsole = "/cleaninventory <x> <y> <z> <world>";
 
 }

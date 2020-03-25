@@ -98,11 +98,15 @@ public class InventorySorter {
 	 * 
 	 * @param inv the inventory you want to sort.
 	 */
-	public static void sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
+	public static boolean sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
 
 		ArrayList<ItemStack> list = InventoryConverter.getArrayListFormInventory(inv);
 		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
-
+		
+		if(list == null) {
+			return false;
+		}
+		
 		if (list.size() <= 1) {
 			InventoryConverter.setItemsOfInventory(inv, list, false, pattern);
 		}
@@ -112,7 +116,8 @@ public class InventorySorter {
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
 		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
-
+		return true;
+		
 	}
 
 	/**
@@ -150,9 +155,14 @@ public class InventorySorter {
 	 */
 	public static boolean sortPlayerBlock(Block b, Player p) {
 
-		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
-		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		EvaluatorType evaluator = EvaluatorType.DEFAULT;
+		SortingPattern pattern = SortingPattern.DEFAULT;
 		
+		if(p != null) {
+			evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
+			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		}
+				
 		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
 
 		if (inv != null) {

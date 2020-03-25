@@ -2,6 +2,7 @@ package chestcleaner.utils.messages;
 
 import org.bukkit.entity.Player;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.Tuple;
@@ -9,6 +10,45 @@ import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
 public class MessageSystem {
+
+	public static void sendMessageToCS(MessageType type, String arg, CommandSender cs) {
+		if (cs instanceof Player) {
+			Player player = (Player) cs;
+			sendMessageToPlayer(type, arg, player);
+		} else {
+			sendConsoleMessage(type, arg);
+		}
+	}
+
+	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
+		if (cs instanceof Player) {
+			Player player = (Player) cs;
+			sendMessageToPlayer(type, messageID, player);
+		} else {
+			sendConsoleMessage(type, messageID);
+		}
+	}
+
+	/**
+	 * Sends a message with the MessageID {@code messageID} and the MessageType
+	 * {@code messageType} to the CommandSender {@code cs} (player or console)
+	 * replacing the DEFAULT_PLACEHOLDER ("%variable%") with the String
+	 * {@code Replacement}.
+	 * 
+	 * @param type        the MessageType of the message.
+	 * @param messageID   the MessageID of the Message.
+	 * @param player      the player who should receive the message.
+	 * @param replacement the replacement of the DEFAULT_PLACEHOLDEN.
+	 */
+	public static void sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
+			String replacement) {
+		if (cs instanceof Player) {
+			Player player = (Player) cs;
+			sendMessageToPlayerWithReplacement(type, messageID, player, replacement);
+		} else {
+			sendConsoleMessageWithReplacement(type, messageID, replacement);
+		}
+	}
 
 	public static void sendMessageToPlayer(MessageType type, String arg, Player p) {
 		p.sendMessage(getMessageString(type, arg));
@@ -23,15 +63,15 @@ public class MessageSystem {
 	 * {@code messageType} to the player {@code p} replacing the DEFAULT_PLACEHOLDER
 	 * ("%variable%") with the String {@code Replacement}.
 	 * 
-	 * @param type the MessageType of the message.
-	 * @param messageID the MessageID of the Message.
-	 * @param p the player who should receive the message.
+	 * @param type        the MessageType of the message.
+	 * @param messageID   the MessageID of the Message.
+	 * @param player      the player who should receive the message.
 	 * @param replacement the replacement of the DEFAULT_PLACEHOLDEN.
 	 */
-	public static void sendMessageToPlayerWithReplacements(MessageType type, MessageID messageID, Player p,
+	public static void sendMessageToPlayerWithReplacement(MessageType type, MessageID messageID, Player player,
 			String replacement) {
 		String message = ChestCleaner.main.getRB().getString(messageID.getID());
-		p.sendMessage(getMessageString(type, replaceVariable(message, replacement)));
+		player.sendMessage(getMessageString(type, replaceVariable(message, replacement)));
 	}
 
 	public static void sendConsoleMessage(MessageType type, String arg) {
@@ -41,6 +81,11 @@ public class MessageSystem {
 	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
 		ChestCleaner.main.getServer().getConsoleSender()
 				.sendMessage(getMessageString(type, ChestCleaner.main.getRB().getString(messageID.getID())));
+	}
+
+	public static void sendConsoleMessageWithReplacement(MessageType type, MessageID messageID, String replacement) {
+		String message = ChestCleaner.main.getRB().getString(messageID.getID());
+		ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, replaceVariable(message, replacement)));
 	}
 
 	/**
@@ -101,8 +146,8 @@ public class MessageSystem {
 			out += ChatColor.GREEN + arg;
 			break;
 		case MISSING_PERMISSION:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.NO_PERMISSION_FOR_COMMAND.getID()) + " ( " + arg
-					+ " )";
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.NO_PERMISSION_FOR_COMMAND.getID())
+					+ " ( " + arg + " )";
 			break;
 		case UNHEADED_INFORMATION:
 			out = ChatColor.GRAY + arg;

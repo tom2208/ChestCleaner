@@ -80,7 +80,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 						material = Material.getMaterial(args[2]);
 
 						if (material == null) {
-							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+							MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 									MessageID.MATERIAL_NAME_NOT_EXISTING, p, args[2]);
 							return true;
 						}
@@ -97,7 +97,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					}
 
 					if (list.contains(material)) {
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 								MessageID.MATERIAL_ALREADY_ON_BLACKLIST, p, material.name());
 						return true;
 					}
@@ -105,7 +105,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					list.add(material);
 					safeList(listNumber);
 
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 							MessageID.MATERIAL_ADDED_TO_BLACKLIST, p, material.name());
 
 					return true;
@@ -131,14 +131,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 									material = list.get(index - 1);
 
 								} else {
-									MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+									MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 											MessageID.INDEX_OUT_OF_BOUNDS, p, String.valueOf(index));
 									return true;
 								}
 
 							} catch (NumberFormatException ex) {
 
-								MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+								MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 										MessageID.MATERIAL_NAME_NOT_EXISTING, p, args[2]);
 								return true;
 
@@ -158,7 +158,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					}
 
 					if (!list.contains(material)) {
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 								MessageID.BLACKLIST_DOESNT_CONTAIN_MATERIAL, p, material.name());
 						return true;
 					}
@@ -166,7 +166,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					list.remove(material);
 					safeList(listNumber);
 
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 							MessageID.MATERIAL_REMOVED_FROM_BLACKLIST, p, material.name());
 
 					return true;
@@ -189,13 +189,13 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 							page = Integer.valueOf(args[2]);
 
 						} catch (NumberFormatException ex) {
-							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+							MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 									MessageID.NOT_AN_INTEGER, p, args[1]);
 							return true;
 						}
 
 						if (!(page > 0 && page <= pages)) {
-							MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+							MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 									MessageID.INVALID_PAGE_NUMBER, p, "1 - " + pages);
 							return true;
 						}

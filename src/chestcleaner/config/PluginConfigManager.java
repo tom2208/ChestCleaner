@@ -3,9 +3,9 @@ package chestcleaner.config;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PluginConfigurationManager {
+public class PluginConfigManager {
 
-	private static PluginConfigurationManager instance = null;
+	private static PluginConfigManager instance = null;
 
 	private boolean durabilityLossActive = true;
 	private boolean cleaningItemActive = true;
@@ -17,13 +17,13 @@ public class PluginConfigurationManager {
 	private final String falseString = "false";
 	private final String trueString = "true";
 
-	protected PluginConfigurationManager() {
+	protected PluginConfigManager() {
 
 	}
 
-	public static PluginConfigurationManager getInstance() {
+	public static PluginConfigManager getInstance() {
 		if (instance == null) {
-			instance = new PluginConfigurationManager();
+			instance = new PluginConfigManager();
 		}
 
 		return instance;

@@ -13,7 +13,7 @@ public class MaterialListUtils {
 
 	public static void sendListPageToPlayer(List<Material> list, Player p, int page, int maxPageLines, int pages) {
 
-		MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS , MessageID.BLACKLIST_PAGE, p, page + " / " + pages);
+		MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS , MessageID.BLACKLIST_PAGE, p, page + " / " + pages);
 
 		for (int i = (page - 1) * maxPageLines; i < page * maxPageLines; i++) {
 			if (list.size() == i) {
@@ -25,7 +25,7 @@ public class MaterialListUtils {
 		}
 
 		if (pages > page) {
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS , MessageID.BLACKLIST_NEXT_PAGE, p, String.valueOf(page + 1));
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS , MessageID.BLACKLIST_NEXT_PAGE, p, String.valueOf(page + 1));
 
 		}
 

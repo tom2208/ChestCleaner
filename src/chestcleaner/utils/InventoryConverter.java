@@ -16,14 +16,13 @@ public class InventoryConverter {
 	 * Air will get removed.
 	 * 
 	 * @param inv The inventory you want to convert into an ArrayList.
-	 * @return Returns an ArrayList of ItemStacks you got from the inventory.
-	 * @throws IllegalArgumentException throws if the argument Inventory {@code inv}
-	 *                                  is equal to null.
+	 * @return Returns an ArrayList of ItemStacks you got from the inventory. If the
+	 *         Inventory is null it returns null.
 	 */
 	public static ArrayList<ItemStack> getArrayListFormInventory(Inventory inv) {
 
 		if (inv == null) {
-			throw new IllegalArgumentException();
+			return null;
 		}
 
 		ArrayList<ItemStack> list = new ArrayList<>();

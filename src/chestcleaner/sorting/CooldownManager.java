@@ -23,24 +23,28 @@ public class CooldownManager {
 		times = new HashMap<>();
 	}
 
-	public boolean isPlayerOnCooldown(Player p) {
-
-		if (!active || p.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
+	public boolean isPlayerOnCooldown(Player player) {
+		
+		if(player == null) {
+			return true;
+		}
+		
+		if (!active || player.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
 			return true;
 		}
 
-		if (times.containsKey(p.getUniqueId())) {
-			long differnce = System.currentTimeMillis() - times.get(p.getUniqueId());
+		if (times.containsKey(player.getUniqueId())) {
+			long differnce = System.currentTimeMillis() - times.get(player.getUniqueId());
 
 			if (differnce >= cooldown) {
-				times.put(p.getUniqueId(), System.currentTimeMillis());
+				times.put(player.getUniqueId(), System.currentTimeMillis());
 				return true;
 			}
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, p, String.valueOf((cooldown - differnce) / 1000 + 1));
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, player, String.valueOf((cooldown - differnce) / 1000 + 1));
 			return false;
 
 		} else {
-			times.put(p.getUniqueId(), System.currentTimeMillis());
+			times.put(player.getUniqueId(), System.currentTimeMillis());
 			return true;
 		}
 

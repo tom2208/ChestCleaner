@@ -81,12 +81,12 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 				CooldownManager.getInstance().setCooldown(time * 1000);
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_TIME, time * 1000);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.TIMER_TIME, player,
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.TIMER_TIME, player,
 					String.valueOf(time));
 
 		} catch (NumberFormatException ex) {
 
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, player,
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, player,
 					arg);
 
 		}
@@ -104,7 +104,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, true);
 				CooldownManager.getInstance().setActive(true);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
 					trueStr);
 			return true;
 
@@ -114,7 +114,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, false);
 				CooldownManager.getInstance().setActive(false);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
+			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
 					falseStr);
 			return true;
 

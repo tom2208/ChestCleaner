@@ -62,7 +62,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					}
 
 					newname = newname.replace("&", "\u00A7");
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 							MessageID.SET_CLEANING_ITEM_NAME, player, newname);
 
 					ItemStack is = ChestCleaner.item;
@@ -141,7 +141,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, item);
 
 						ChestCleaner.item = item;
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 								MessageID.SET_CLEANING_ITEM, player, item.toString());
 
 						return true;
@@ -190,7 +190,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
 						PluginConfigManager.getInstance().setCleaningItemActive(b);
 
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 								MessageID.CLEANING_ITEM_TOGGLED, player, String.valueOf(b));
 
 						return true;
@@ -250,7 +250,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					if (p2 != null) {
 
 						p2.getInventory().addItem(ChestCleaner.item);
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 								MessageID.PLAYER_GOT_CLEANING_ITEM, player, p2.getName());
 
 						return true;
@@ -264,14 +264,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 							for (Object p : players) {
 								Player pl = (Player) p;
 								pl.getInventory().addItem(ChestCleaner.item);
-								MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+								MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 										MessageID.PLAYER_GOT_CLEANING_ITEM, player, pl.getName());
 
 							}
 							return true;
 						}
 
-						MessageSystem.sendMessageToPlayerWithReplacements(MessageType.ERROR,
+						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
 								MessageID.PLAYER_NOT_ONLINE, p2, args[1]);
 
 						return true;
@@ -290,7 +290,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 					boolean b = Boolean.parseBoolean(args[1]);
 					PluginConfigManager.getInstance().setEventModeActive(b);
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 							MessageID.OPEN_INV_MODE_TOGGLED, player, String.valueOf(b));
 
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);

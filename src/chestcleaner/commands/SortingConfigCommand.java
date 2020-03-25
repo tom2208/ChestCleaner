@@ -110,7 +110,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, p,
+				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, p,
 						String.valueOf(b));
 				PluginConfig.getInstance().setAutoSort(b, p);
 				PlayerDataManager.getInstance().loadPlayerData(p);
@@ -179,7 +179,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					PlayerDataManager.getInstance().setDefaultAutoSort(b);
 
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
-					MessageSystem.sendMessageToPlayerWithReplacements(MessageType.SUCCESS,
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 							MessageID.AUTOSORTING_TOGGLED, p, String.valueOf(b));
 
 					return true;
