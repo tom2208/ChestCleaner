@@ -159,7 +159,6 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		}
 	}
 
-	private final String syntax = "/cleaninventory <x> <y> <z>";
 	private final String syntaxConsole = "/cleaninventory <x> <y> <z> <world>";
 
 }

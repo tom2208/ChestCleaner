@@ -31,70 +31,61 @@ import chestcleaner.utils.messages.enums.MessageType;
 public class CooldownCommand implements CommandExecutor, TabCompleter {
 
 	@Override
-	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		if (!(cs instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
-			return true;
+
+		
+		if(sender instanceof Player) {
+			if (!sender.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
+				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+						PluginPermissions.CMD_COOLDOWN.getString(), (Player) sender);
+				return true;
+			}
 		}
+		
+		if (args.length == 2) {
 
-		Player p = (Player) cs;
+			/* SETACTIVE SUBCOMMAND */
+			if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
 
-		if (p.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
+				return setActiveSubCommand(args[1], sender);
 
-			if (args.length == 2) {
+				/* SETCOOLDOWN SUBCOMMAND */
+			} else if (args[0].equalsIgnoreCase(setCooldownSubCommand)) {
 
-				/* SETACTIVE SUBCOMMAND */
-				if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
-
-					return setActiveSubCommand(args[1], p);
-
-					/* SETCOOLDOWN SUBCOMMAND */
-				} else if (args[0].equalsIgnoreCase(setCooldownSubCommand)) {
-
-					return setCooldownSubCommand(args[1], p);
-
-				} else {
-					sendSytaxErrorToPlayer(p);
-					return true;
-				}
+				return setCooldownSubCommand(args[1], sender);
 
 			} else {
-				sendSytaxErrorToPlayer(p);
+				sendSytaxError(sender);
 				return true;
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-					PluginPermissions.CMD_COOLDOWN.getString(), p);
+			sendSytaxError(sender);
 			return true;
 		}
 
 	}
 
-	private boolean setCooldownSubCommand(String arg, Player player) {
+	private boolean setCooldownSubCommand(String arg, CommandSender sender) {
 
 		try {
-
 			int time = Integer.valueOf(arg);
 			if (CooldownManager.getInstance().getCooldown() != time) {
 				CooldownManager.getInstance().setCooldown(time * 1000);
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_TIME, time * 1000);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.TIMER_TIME, player,
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.TIMER_TIME, sender,
 					String.valueOf(time));
 
 		} catch (NumberFormatException ex) {
-
-			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, player,
-					arg);
-
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.NOT_AN_INTEGER, sender, arg);
 		}
 
 		return true;
 	}
 
-	private boolean setActiveSubCommand(String arg, Player player) {
+	private boolean setActiveSubCommand(String arg, CommandSender sender) {
 		String trueStr = PluginConfigManager.getInstance().getTrueString();
 		String falseStr = PluginConfigManager.getInstance().getFalseString();
 
@@ -104,7 +95,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, true);
 				CooldownManager.getInstance().setActive(true);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, sender,
 					trueStr);
 			return true;
 
@@ -114,24 +105,24 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, false);
 				CooldownManager.getInstance().setActive(false);
 			}
-			MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, player,
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, sender,
 					falseStr);
 			return true;
 
 		} else {
-			sendSytaxErrorToPlayer(player);
+			sendSytaxError(sender);
 			return true;
 		}
 	}
 
 	/**
-	 * Sends a syntax error of the command CooldownCommand to the player
-	 * {@code player}.
+	 * Sends a syntax error of the command CooldownCommand to the CommandServer
+	 * {@code sender}.
 	 * 
-	 * @param player the player who should get the error message.
+	 * @param sender the CommandServer which should get the error message.
 	 */
-	private void sendSytaxErrorToPlayer(Player player) {
-		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, cooldownSyntax, player);
+	private void sendSytaxError(CommandSender sender) {
+		MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, cooldownSyntax, sender);
 	}
 
 	@Override
@@ -166,5 +157,5 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 	private final String setCooldownSubCommand = "setCooldown";
 	private final String setActiveSubCommand = "setActive";
 
-	private final String cooldownSyntax = "/cooldown <setActive/setCooldown>";
+	private final String cooldownSyntax = "/cooldown <setActive/setCooldown> <arg>";
 }

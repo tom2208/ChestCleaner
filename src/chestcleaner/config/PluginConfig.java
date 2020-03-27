@@ -70,7 +70,7 @@ public class PluginConfig {
 				&& config.contains(ConfigPath.LOCALE_COUNTRY.getPath())) {
 			String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
 			String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
-			ChestCleaner.main.setLocale(language, country);
+			ChestCleaner.main.setLocale(language, country, ChestCleaner.main.getDescription().getVersion().replace(".", "-"));
 		} else {
 			config.set(ConfigPath.LOCALE_LANGUAGE.getPath(), Locale.UK.getLanguage());
 			config.set(ConfigPath.LOCALE_COUNTRY.getPath(), Locale.UK.getCountry());

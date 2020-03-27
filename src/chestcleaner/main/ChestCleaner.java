@@ -35,9 +35,10 @@ public class ChestCleaner extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		main = this;
+		String version = getDescription().getVersion().replace(".", "-");
 		PluginConfig.getInstance().loadConfig();
-		getPlugin(this.getClass()).saveResource("ChestCleaner_en_GB.properties", false);
-		getPlugin(this.getClass()).saveResource("ChestCleaner_de_DE.properties", false);
+		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);
+		getPlugin(this.getClass()).saveResource(getName() + "_de_DE_" + version + ".properties", false);
 
 		try {
 			URL fileUrl = new File(this.getDataFolder().toString()).toURI().toURL();
@@ -65,8 +66,8 @@ public class ChestCleaner extends JavaPlugin {
 		return rb;
 	}
 
-	public void setLocale(String lang, String country) {
-		locale = new Locale(lang, country);
+	public void setLocale(String language, String country, String variant) {
+		locale = new Locale(language, country, variant);
 	}
 
 	public void setLocale(Locale locale) {
