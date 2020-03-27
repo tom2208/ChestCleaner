@@ -34,19 +34,24 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 
-		if (!(cs instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
-			return true;
+		Player player = null;
+		if(cs instanceof Player) {
+			player = (Player) cs;
 		}
-
-		Player p = (Player) cs;
-
+		
+		if(player == null) {
+			if(args.length != 3) {
+				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, adminConfigSyntax);
+				return true;
+			}
+		}
+		
 		if (args.length == 2) {
 
 			/* PATTERN */
 			if (args[0].equalsIgnoreCase(patternSubCommand)) {
-
-				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
+				
+				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
 							PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString());
 					return true;
@@ -56,14 +61,14 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 				if (pattern == null) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, p);
+					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, player);
 					return true;
 
 				} else {
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.PATTERN_SET, p);
-					PluginConfig.getInstance().setSortingPattern(pattern, p);
-					PlayerDataManager.getInstance().loadPlayerData(p);
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.PATTERN_SET, player);
+					PluginConfig.getInstance().setSortingPattern(pattern, player);
+					PlayerDataManager.getInstance().loadPlayerData(player);
 					return true;
 
 				}
@@ -71,7 +76,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* EVALUATOR */
 			} else if (args[0].equalsIgnoreCase(evaluatorSubCommand)) {
 
-				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
+				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
 							PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString());
 					return true;
@@ -81,14 +86,14 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 				if (evaluator == null) {
 
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, p);
+					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, player);
 					return true;
 
 				} else {
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.EVALUATOR_SET, p);
-					PluginConfig.getInstance().setEvaluatorTyp(evaluator, p);
-					PlayerDataManager.getInstance().loadPlayerData(p);
+					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.EVALUATOR_SET, player);
+					PluginConfig.getInstance().setEvaluatorTyp(evaluator, player);
+					PlayerDataManager.getInstance().loadPlayerData(player);
 					return true;
 
 				}
@@ -96,7 +101,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				/* SETAUTOSORT */
 			} else if (args[0].equalsIgnoreCase(setAutoSortSubCommand)) {
 
-				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
+				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
 					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
 							PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString());
 					return true;
@@ -106,18 +111,18 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				if (PluginConfigManager.isStringTrue(args[1])) {
 					b = true;
 				} else if (!PluginConfigManager.isStringFalse(args[1])) {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setAutoSortSyntax, p);
+					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setAutoSortSyntax, player);
 					return true;
 				}
 
-				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, p,
+				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, player,
 						String.valueOf(b));
-				PluginConfig.getInstance().setAutoSort(b, p);
-				PlayerDataManager.getInstance().loadPlayerData(p);
+				PluginConfig.getInstance().setAutoSort(b, player);
+				PlayerDataManager.getInstance().loadPlayerData(player);
 				return true;
 
 			} else {
-				sendSyntaxErrorMessage(p);
+				sendSyntaxErrorMessage(player);
 				return true;
 			}
 
@@ -125,27 +130,29 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 			/* ADMINCONFIG */
 			if (args[0].equalsIgnoreCase(adminConfigSubCommand)) {
-
-				if (!p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), p);
-					return true;
+				
+				if(player != null) {
+					if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), cs);
+						return true;
+					}
 				}
-
+					
 				/* SETDEFAULTPATTERN */
 				if (args[1].equalsIgnoreCase(setDefaultPatternSubCommand)) {
 
 					SortingPattern pattern = SortingPattern.getSortingPatternByName(args[2]);
 
 					if (pattern == null) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, p);
+						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, cs);
 						return true;
 					}
 
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
 
 					SortingPattern.DEFAULT = pattern;
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DEFAULT_PATTER_SET, p);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_PATTER_SET, cs);
 					return true;
 
 					/* SETDEFAULTEVALUATOR */
@@ -154,14 +161,14 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(args[2]);
 
 					if (evaluator == null) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, p);
+						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, cs);
 						return true;
 					}
 
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
 
 					EvaluatorType.DEFAULT = evaluator;
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DEFAULT_EVALUATOR_SET, p);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_EVALUATOR_SET, cs);
 					return true;
 
 					/* SETDEFAULTAUTOSORTING */
@@ -172,37 +179,37 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					if (PluginConfigManager.isStringTrue(args[2])) {
 						b = true;
 					} else if (!PluginConfigManager.isStringFalse(args[2])) {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, adminConfigSetDefaultSortSyntax, p);
+						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSetDefaultSortSyntax, cs);
 						return true;
 					}
 
 					PlayerDataManager.getInstance().setDefaultAutoSort(b);
 
 					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
-					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-							MessageID.AUTOSORTING_TOGGLED, p, String.valueOf(b));
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+							MessageID.AUTOSORTING_TOGGLED, cs, String.valueOf(b));
 
 					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, adminConfigSyntax, p);
+					MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSyntax, cs);
 					return true;
 				}
 
 			} else {
-				sendSyntaxErrorMessage(p);
+				sendSyntaxErrorMessage(cs);
 				return true;
 			}
 
 		} else {
-			sendSyntaxErrorMessage(p);
+			sendSyntaxErrorMessage(cs);
 			return true;
 		}
 
 	}
 
-	private void sendSyntaxErrorMessage(Player p) {
-		MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, syntax, p);
+	private void sendSyntaxErrorMessage(CommandSender sender) {
+		MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntax, sender);
 	}
 
 	@Override
