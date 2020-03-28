@@ -37,82 +37,80 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 
-		if (!(sender instanceof Player)) {
-			MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
-			return true;
+		Player player = null;
+		if (sender instanceof Player) {
+			player = (Player) sender;
 		}
-
-		Player player = (Player) sender;
 
 		if (args.length > 1) {
 
 			/* RENAME SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(renameSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString())) {
-
-					String newname = new String();
-					for (int i = 1; i < args.length; i++) {
-
-						if (i == 1)
-							newname = args[1];
-						else
-							newname = newname + " " + args[i];
-
-					}
-
-					newname = newname.replace("&", "\u00A7");
-					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-							MessageID.SET_CLEANING_ITEM_NAME, player, newname);
-
-					ItemStack is = ChestCleaner.item;
-					ItemMeta im = is.getItemMeta();
-					im.setDisplayName(newname);
-					ChestCleaner.item.setItemMeta(im);
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
-					if (args.length == 1)
+				if (player != null) {
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString())) {
+						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString(), player);
 						return true;
-
-				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString(), player);
-					return true;
+					}
 				}
+
+				String newname = new String();
+				for (int i = 1; i < args.length; i++) {
+
+					if (i == 1)
+						newname = args[1];
+					else
+						newname = newname + " " + args[i];
+
+				}
+
+				newname = newname.replace("&", "\u00A7");
+				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_NAME,
+						sender, newname);
+
+				ItemStack is = ChestCleaner.item;
+				ItemMeta im = is.getItemMeta();
+				im.setDisplayName(newname);
+				ChestCleaner.item.setItemMeta(im);
+				PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
+
 				return true;
 
 				/* SETLORE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(setLoreSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString())) {
-
-					String lore = args[1];
-					for (int i = 2; i < args.length; i++) {
-						lore = lore + " " + args[i];
+				if (player != null) {
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString())) {
+						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString(), player);
+						return true;
 					}
 
-					String[] lorearray = lore.split("/n");
-
-					ArrayList<String> lorelist = new ArrayList<>();
-
-					for (String obj : lorearray) {
-						obj = obj.replace("&", "\u00A7");
-						lorelist.add(obj);
-
-					}
-
-					ItemMeta im = ChestCleaner.item.getItemMeta();
-					im.setLore(lorelist);
-					ChestCleaner.item.setItemMeta(im);
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
-
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_LORE, player);
-					return true;
-
-				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString(), player);
-					return true;
 				}
+
+				String lore = args[1];
+				for (int i = 2; i < args.length; i++) {
+					lore = lore + " " + args[i];
+				}
+
+				String[] lorearray = lore.split("/n");
+
+				ArrayList<String> lorelist = new ArrayList<>();
+
+				for (String obj : lorearray) {
+					obj = obj.replace("&", "\u00A7");
+					lorelist.add(obj);
+
+				}
+
+				ItemMeta im = ChestCleaner.item.getItemMeta();
+				im.setLore(lorelist);
+				ChestCleaner.item.setItemMeta(im);
+				PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
+
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_LORE, sender);
+				return true;
 
 			}
 
@@ -122,12 +120,17 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 			/* RENAME SUBCOMMAND ERRORS */
 			if (args[0].equalsIgnoreCase(renameSubCommand)) {
-				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, renameSytaxError, player);
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, renameSytaxError, sender);
 				return true;
 			}
 
 			/* SETITEM SUBCOMMAND */
 			else if (args[0].equalsIgnoreCase(setItemSubCommand)) {
+
+				if (player == null) {
+					MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
+					return true;
+				}
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ITEM.getString())) {
 
@@ -160,6 +163,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				/* GET SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(getSubCommand)) {
 
+				if (player == null) {
+					MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
+					return true;
+				}
+
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
 
 					player.getInventory().addItem(ChestCleaner.item);
@@ -172,6 +180,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
+			}else {
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, sender);
+				return true;
 			}
 
 		} else if (args.length == 2) {
@@ -179,141 +190,138 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			/* SETACTIVE SUBCOMMAND */
 			if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
+				if (player != null) {
 
-					if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
-
-						boolean b = false;
-						if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
-							b = true;
-
-						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
-						PluginConfigManager.getInstance().setCleaningItemActive(b);
-
-						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-								MessageID.CLEANING_ITEM_TOGGLED, player, String.valueOf(b));
-
-						return true;
-
-					} else {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setActiveSyntaxError, player);
+					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString(), sender);
 						return true;
 					}
 
+				}
+
+				if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
+
+					boolean b = false;
+					if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
+						b = true;
+
+					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
+					PluginConfigManager.getInstance().setCleaningItemActive(b);
+
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.CLEANING_ITEM_TOGGLED,
+							sender, String.valueOf(b));
+
+					return true;
+
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString(), player);
+					MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, setActiveSyntaxError, sender);
 					return true;
 				}
 
 				/* SETDURIBILITYLOSS SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(setDurabilityLossSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
-
-					if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
-
-						boolean b = false;
-						if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
-							b = true;
-
-						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
-						PluginConfigManager.getInstance().setDurabilityLossActive(b);
-						if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_AVTIVATED,
-									player);
-						} else {
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.DURABILITYLOSS_DEACTIVATED,
-									player);
-						}
-						return true;
-
-					} else {
-						MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setDurabilityLossSyntaxError,
-								player);
+				if (player != null) {
+					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
+						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString(), player);
 						return true;
 					}
+				}
+
+				if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
+
+					boolean b = false;
+					if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
+						b = true;
+
+					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
+					PluginConfigManager.getInstance().setDurabilityLossActive(b);
+					if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
+						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DURABILITYLOSS_AVTIVATED, sender);
+					} else {
+						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DURABILITYLOSS_DEACTIVATED,
+								sender);
+					}
+					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString(), player);
+					MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, setDurabilityLossSyntaxError, sender);
 					return true;
 				}
 
 				/* GIVE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(giveSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
-
-					Player p2 = Bukkit.getPlayer(args[1]);
-
-					if (p2 != null) {
-
-						p2.getInventory().addItem(ChestCleaner.item);
-						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-								MessageID.PLAYER_GOT_CLEANING_ITEM, player, p2.getName());
-
+				if (player != null) {
+					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
+						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString(), player);
 						return true;
+					}
+				}
 
-					} else {
+				Player player2 = Bukkit.getPlayer(args[1]);
 
-						if (args[1].equalsIgnoreCase("@a")) {
+				if (player2 != null) {
 
-							Object[] players = Bukkit.getOnlinePlayers().toArray();
+					player2.getInventory().addItem(ChestCleaner.item);
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+							MessageID.PLAYER_GOT_CLEANING_ITEM, sender, player2.getName());
 
-							for (Object p : players) {
-								Player pl = (Player) p;
-								pl.getInventory().addItem(ChestCleaner.item);
-								MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-										MessageID.PLAYER_GOT_CLEANING_ITEM, player, pl.getName());
+					return true;
 
-							}
-							return true;
+				} else {
+
+					if (args[1].equalsIgnoreCase("@a")) {
+
+						Object[] players = Bukkit.getOnlinePlayers().toArray();
+
+						for (Object p : players) {
+							Player pl = (Player) p;
+							pl.getInventory().addItem(ChestCleaner.item);
+							MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+									MessageID.PLAYER_GOT_CLEANING_ITEM, sender, pl.getName());
+
 						}
-
-						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
-								MessageID.PLAYER_NOT_ONLINE, p2, args[1]);
-
 						return true;
 					}
 
-				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString(), player);
+					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR, MessageID.PLAYER_NOT_ONLINE,
+							player2, args[1]);
+
 					return true;
 				}
 
 				/* SETEVENTDETECTIONMODE SUBCOMMAND */
 			} else if (args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
-				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
+				if (player != null) {
+					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
+						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+								PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString(), player);
+						return true;
 
-					boolean b = Boolean.parseBoolean(args[1]);
-					PluginConfigManager.getInstance().setEventModeActive(b);
-					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
-							MessageID.OPEN_INV_MODE_TOGGLED, player, String.valueOf(b));
-
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);
-					return true;
-
-				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString(), player);
-					return true;
+					}
 				}
+				boolean b = Boolean.parseBoolean(args[1]);
+				PluginConfigManager.getInstance().setEventModeActive(b);
+				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.OPEN_INV_MODE_TOGGLED,
+						sender, String.valueOf(b));
+
+				PluginConfig.getInstance().setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);
+				return true;
 
 			} else {
-
-				MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, player);
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, sender);
 				return true;
 			}
 
 		} else {
-			MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, player);
+			MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, subCommandsSyntaxError, sender);
 			return true;
 		}
-
-		return true;
 
 	}
 
