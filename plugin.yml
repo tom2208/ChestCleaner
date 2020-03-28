@@ -1,6 +1,7 @@
 name: ChestCleaner
 version: 1.8.A1
 author: Tom2208
+api-version: "1.15"
 
 main: chestcleaner.main.ChestCleaner
 
