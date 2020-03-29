@@ -98,53 +98,35 @@ public class InventorySorter {
 	 * 
 	 * @param inv the inventory you want to sort.
 	 */
-	public static boolean sortInventory(Inventory inv, SortingPattern pattern, EvaluatorType evaluator) {
+	public static boolean sortInventory(Inventory inv, Player p) {
 
-		ArrayList<ItemStack> list = InventoryConverter.getArrayListFormInventory(inv);
-		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
-		
+		ArrayList<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
+		ArrayList<ItemStack> temp;
+		EvaluatorType evaluator = EvaluatorType.DEFAULT;
+		SortingPattern pattern = SortingPattern.DEFAULT;
+
 		if(list == null) {
 			return false;
 		}
-		
+
+		if(p != null) {
+			evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
+			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+		}
+
 		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, list, false, pattern);
+			InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		}
 
 		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
 		temp = sorter.sort(0, list.size() - 1);
 		ArrayList<ItemStack> out = getFullStacks(temp);
 
-		InventoryConverter.setItemsOfInventory(inv, out, false, pattern);
+		InventoryConverter.setItemsOfInventory(inv, out, pattern);
 		return true;
 		
 	}
 
-	/**
-	 * Sorts a part of the inventory of a player. It sorts the slots with the index
-	 * 9 to 35, that means the hotbar, armor slot and the extra item slot are not
-	 * effected.
-	 * 
-	 * @param p The player whose inventory you want to sort.
-	 */
-	public static void sortPlayerInv(Player p) {
-		
-		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
-		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
-		
-		ArrayList<ItemStack> list = InventoryDetector.getPlayerInventoryList(p);
-		ArrayList<ItemStack> temp = new ArrayList<ItemStack>();
-
-		if (list.size() <= 1) {
-			InventoryConverter.setPlayerInventory(list, p, pattern);
-		}
-
-		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-		temp = sorter.sort(0, list.size() - 1);
-		ArrayList<ItemStack> out = getFullStacks(temp);
-
-		InventoryConverter.setPlayerInventory(out, p, pattern);
-	}
 
 	/**
 	 * Checks if the block has an inventory or if it is an enderchest and sorts it.
@@ -155,50 +137,25 @@ public class InventorySorter {
 	 */
 	public static boolean sortPlayerBlock(Block b, Player p) {
 
-		EvaluatorType evaluator = EvaluatorType.DEFAULT;
-		SortingPattern pattern = SortingPattern.DEFAULT;
-		
-		if(p != null) {
-			evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
-			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
-		}
-				
 		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
 
 		if (inv != null) {
 			if (p != null) {
 				playSortingSound(p);
 			}
-			sortInventory(inv, pattern, evaluator);
+			sortInventory(inv, p);
 			return true;
 		}
 
 		if (p != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
 				playSortingSound(p);
-				sortInventory(p.getEnderChest(), pattern, evaluator);
+				sortInventory(p.getEnderChest(), p);
 				return true;
 			}
 		}
 
 		return false;
-	}
-
-	/**
-	 * Sorts an inventory with the saved patterns of the player selected pattern and
-	 * evaluator, if nothing was selected it takes the default pattern and
-	 * evaluator.
-	 * 
-	 * @param inv The inventory you want to sort.
-	 * @param p   the player who is the owner of the sorting pattern and evaluator.
-	 */
-	public static void sortInventoryByPlayer(Inventory inv, Player p) {
-
-		SortingPattern pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
-		EvaluatorType evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
-
-		sortInventory(inv, pattern, evaluator);
-
 	}
 
 	public static void playSortingSound(Player p) {
