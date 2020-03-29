@@ -42,7 +42,7 @@ public class Quicksort {
 
 			do {
 				j--;
-			} while (evaluator.isGreaterThan(items.get(j), item));
+			} while (evaluator.isSmallerThan(item, items.get(j)));
 
 			if (i < j) {
 				ItemStack k = items.get(i);
