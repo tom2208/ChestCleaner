@@ -5,6 +5,7 @@ I'm using the Spigot API version 1.15.2-R0.1-SNAPSHOT
 
 For more information have a look at the Spigot article of this plugin: https://www.spigotmc.org/resources/chestcleaner-sorting-plugin.40313/
 
+Discord: https://discord.gg/4AeApQ5
 _____________________________________________________________________________________
 
 <h3>Maven</h3>
