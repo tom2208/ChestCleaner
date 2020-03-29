@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -19,7 +20,7 @@ public class InventoryConverter {
 	 * @return Returns an ArrayList of ItemStacks you got from the inventory. If the
 	 *         Inventory is null it returns null.
 	 */
-	public static ArrayList<ItemStack> getArrayListFormInventory(Inventory inv) {
+	public static ArrayList<ItemStack> getArrayListFromInventory(Inventory inv) {
 
 		if (inv == null) {
 			return null;
@@ -44,13 +45,13 @@ public class InventoryConverter {
 	 * 
 	 * @param inv      The inventory you want to put the items in.
 	 * @param items    The list of items you want to put into the cleared inventory.
-	 * @param isPlayer true if you are sorting a player inventory.
 	 * @throws IllegalArgumentException throws if the argument ItemStack
 	 *                                  {@code items} or the Inventory {@code inv}
 	 *                                  is equal to null.
 	 */
-	public static void setItemsOfInventory(Inventory inv, ArrayList<ItemStack> items, boolean isPlayer,
-			SortingPattern pattern) {
+	public static void setItemsOfInventory(Inventory inv, ArrayList<ItemStack> items, SortingPattern pattern) {
+
+		boolean isPlayer = inv.getType() == InventoryType.PLAYER;
 
 		if (items == null || inv == null) {
 			throw new IllegalArgumentException();
@@ -157,7 +158,7 @@ public class InventoryConverter {
 			throw new IllegalArgumentException();
 		}
 
-		setItemsOfInventory(p.getInventory(), items, true, pattern);
+		setItemsOfInventory(p.getInventory(), items, pattern);
 
 	}
 
