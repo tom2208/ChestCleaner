@@ -63,6 +63,7 @@
 					<include>plugin.yml</include>
 					<include>ChestCleaner_de_DE_1-8-A1.properties</include>
 					<include>ChestCleaner_en_GB_1-8-A1.properties</include>
+					<include>config.yml</include>
 				</includes>
 			</resource>
 		</resources>

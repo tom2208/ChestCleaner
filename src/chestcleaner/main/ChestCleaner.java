@@ -39,7 +39,8 @@ public class ChestCleaner extends JavaPlugin {
 		PluginConfig.getInstance().loadConfig();
 		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);
 		getPlugin(this.getClass()).saveResource(getName() + "_de_DE_" + version + ".properties", false);
-
+		getPlugin(this.getClass()).saveResource("config.yml", false);
+		
 		try {
 			URL fileUrl = new File(this.getDataFolder().toString()).toURI().toURL();
 			ClassLoader loader = new URLClassLoader(new URL[] { fileUrl });

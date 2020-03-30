@@ -1,0 +1,18 @@
+defaultautosort: false
+defaultevaluator: BACK_BEGIN_STRING
+defaultsortingpattern: LEFT_TO_RIGHT_TOP_TO_BOTTOM
+locale:
+  lang: en
+  country: GB
+cleaningItem:
+  ==: org.bukkit.inventory.ItemStack
+  v: 2230
+  type: LEGACY_IRON_HOE
+active: true
+durability: true
+openinventoryeventmode: false
+consumablesrefill: true
+blockrefill: true
+cleanInventorypermissionactive: true
+cooldown:
+  active: true

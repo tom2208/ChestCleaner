@@ -74,7 +74,7 @@ public class PluginConfig {
 		} else {
 			config.set(ConfigPath.LOCALE_LANGUAGE.getPath(), Locale.UK.getLanguage());
 			config.set(ConfigPath.LOCALE_COUNTRY.getPath(), Locale.UK.getCountry());
-			ChestCleaner.main.setLocale(Locale.UK);
+			ChestCleaner.main.setLocale(Locale.UK.getLanguage(), Locale.UK.getCountry(), ChestCleaner.main.getDescription().getVersion().replace(".", "-"));
 		}
 
 		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM, new ItemStack(Material.IRON_HOE))) {
