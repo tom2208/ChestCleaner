@@ -1,9 +1,55 @@
 package chestcleaner.sorting;
 
+import chestcleaner.config.ListCategory;
+import chestcleaner.config.WordCategory;
+
 import java.util.Arrays;
 import java.util.List;
 
 public class DefaultSortingList {
+    // todo: move to sample config.yaml
+
+    public static final List<String> DEFAULT_CATEGORIES_ORDER = Arrays.asList("StoneList", "CarpetWord");
+    public static final List<WordCategory> DEFAULT_WORD_CATEGORIES= Arrays.asList(
+            new WordCategory("StoneWord", "stone"),
+            new WordCategory("StairWord", "stair"),
+            new WordCategory("SlabWord", "slab"),
+            new WordCategory("CarpetWord", "carpet")
+    );
+    public static final List<ListCategory> DEFAULT_LIST_CATEGORIES = Arrays.asList(
+            new ListCategory("StoneList", Arrays.asList(
+                    "minecraft:stone",
+                    "minecraft:stone_bricks",
+                    "minecraft:mossy_stone_bricks",
+                    "minecraft:cracked_stone_bricks",
+                    "minecraft:chiseled_stone_bricks",
+                    "minecraft:smooth_stone",
+                    "minecraft:granite",
+                    "minecraft:polished_granite",
+                    "minecraft:diorite",
+                    "minecraft:polished_diorite",
+                    "minecraft:andesite",
+                    "minecraft:polished_andesite",
+                    "minecraft:gravel"
+                    )),
+            new ListCategory("DirtList", Arrays.asList(
+                    "minecraft:dirt",
+                    "minecraft:grass_block",
+                    "minecraft:grass_path",
+                    "minecraft:coarse_dirt",
+                    "minecraft:podzol",
+                    "minecraft:mycelium"
+            )),
+            new ListCategory("DirtList", Arrays.asList(
+                    "minecraft:dirt",
+                    "minecraft:grass_block",
+                    "minecraft:grass_path",
+                    "minecraft:coarse_dirt",
+                    "minecraft:podzol",
+                    "minecraft:mycelium"
+            ))
+    );
+
     public static final List<String> DEFAULT_SORTING_LIST = Arrays.asList(
             "minecraft:dirt",
             "minecraft:grass_block",

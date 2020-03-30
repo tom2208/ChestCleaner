@@ -1,7 +1,12 @@
 package chestcleaner.sorting;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import chestcleaner.config.PluginConfigManager;
+import chestcleaner.sorting.v2.Categorizer;
+import chestcleaner.sorting.v2.Categorizers;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -9,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PlayerDataManager;
@@ -24,7 +28,7 @@ public class InventorySorter {
 	 * @param list an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
 	 */
-	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
+	private static List<ItemStack> getFullStacks(List<ItemStack> list) {
 
 		ArrayList<ItemStack> items = new ArrayList<>();
 		ArrayList<Integer> amounts = new ArrayList<>();
@@ -100,9 +104,8 @@ public class InventorySorter {
 	 */
 	public static boolean sortInventory(Inventory inv, Player p) {
 
-		ArrayList<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
-		ArrayList<ItemStack> temp;
-		EvaluatorType evaluator = EvaluatorType.DEFAULT;
+		List<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
+		List<String> categorizerConfig = PluginConfigManager.getInstance().getCategorizationOrder();
 		SortingPattern pattern = SortingPattern.DEFAULT;
 
 		if(list == null) {
@@ -110,7 +113,7 @@ public class InventorySorter {
 		}
 
 		if(p != null) {
-			evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
+			// categorizerConfig = PlayerDataManager.getInstance().getCategorizationOrder(p);
 			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
 		}
 
@@ -118,13 +121,30 @@ public class InventorySorter {
 			InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		}
 
-		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-		temp = sorter.sort(0, list.size() - 1);
-		ArrayList<ItemStack> out = getFullStacks(temp);
+		List<Categorizer> categorizers = categorizerConfig.stream()
+				.map(Categorizers::getByName).collect(Collectors.toList());
+		list = executeCategorizers(list, categorizers);
+		list = getFullStacks(list);
 
-		InventoryConverter.setItemsOfInventory(inv, out, pattern);
+		InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		return true;
 		
+	}
+
+	public static List<ItemStack> executeCategorizers(List<ItemStack> items, List<Categorizer> categorizers) {
+		List<List<ItemStack>> categories = new ArrayList<>();
+		categories.add(items);
+
+		for (Categorizer categorizer : categorizers) {
+			categories = categorizer.categorize(categories);
+		}
+
+		List<ItemStack> returnItems = new ArrayList<>();
+
+		for (List<ItemStack> category : categories) {
+			returnItems.addAll(category);
+		}
+		return returnItems;
 	}
 
 

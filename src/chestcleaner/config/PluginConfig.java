@@ -6,9 +6,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import chestcleaner.sorting.DefaultSortingList;
+import chestcleaner.sorting.v2.Categorizers;
+import chestcleaner.sorting.v2.ListCategoryCategorizer;
+import chestcleaner.sorting.v2.PredicateCategorizer;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -38,6 +43,8 @@ public class PluginConfig {
 
 	protected PluginConfig() {
 		configFile = new File("plugins/" + ChestCleaner.main.getName(), "config.yml");
+		ConfigurationSerialization.registerClass(WordCategory.class);
+		ConfigurationSerialization.registerClass(ListCategory.class);
 		config = YamlConfiguration.loadConfiguration(configFile);
 		playerDataConfigFile = new File("plugins/" + ChestCleaner.main.getName(), "playerdata.yml");
 		playerDataConfig = YamlConfiguration.loadConfiguration(playerDataConfigFile);
@@ -115,6 +122,16 @@ public class PluginConfig {
 			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.COOLDOWN_ACTIVE.getPath()));
 		}
 
+		setIfDoesntContains(ConfigPath.CATEGORIES_ORDER, DefaultSortingList.DEFAULT_CATEGORIES_ORDER);
+		PluginConfigManager.getInstance().setCategorizationOrder(
+				(List<String>) config.getList(ConfigPath.CATEGORIES_ORDER.getPath()));
+		setIfDoesntContains(ConfigPath.CATEGORIES_WORDS, DefaultSortingList.DEFAULT_WORD_CATEGORIES);
+		loadWordCategorizers((List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()));
+
+		setIfDoesntContains(ConfigPath.CATEGORIES_LISTS, DefaultSortingList.DEFAULT_LIST_CATEGORIES);
+		loadListCategorizers((List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath()));
+
+
 		if (config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
 			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.COOLDOWN_TIME.getPath()));
 		}
@@ -144,6 +161,24 @@ public class PluginConfig {
 			BlacklistCommand.inventoryBlacklist = materials;
 		}
 		save(configFile, config);
+	}
+
+	private void loadListCategorizers(List<ListCategory> categories) {
+		if (categories == null) {
+			return;
+		}
+		for (ListCategory category : categories) {
+			Categorizers.addCategorizer(new ListCategoryCategorizer(category));
+		}
+	}
+
+	private void loadWordCategorizers(List<WordCategory> categories) {
+		if (categories == null) {
+			return;
+		}
+		for (WordCategory category : categories) {
+			Categorizers.addCategorizer(new PredicateCategorizer(category));
+		}
 	}
 
 	/**
@@ -243,14 +278,26 @@ public class PluginConfig {
 	}
 
 	public enum ConfigPath {
-		DEFAULT_AUTOSORT("defaultautosort"), DEFAULT_EVALUATOR("defaultevaluator"),
-		DEFAULT_SORTING_PATTERN("defaultsortingpattern"), LOCALE_LANGUAGE("locale.lang"),
-		LOCALE_COUNTRY("locale.country"), CLEANING_ITEM("cleaningItem"), CLEANING_ITEM_ACTIVE("active"),
-		CLEANING_ITEM_DURABILITY("durability"), OPEN_INVENTORY_MODE("openinventoryeventmode"),
-		CONSUMABLES_REFILL("consumablesrefill"), BLOCK_REFILL("blockrefill"),
-		INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"), BLACKLIST("blacklist"),
-		INVENTORY_BLACKLIST("inventoryblacklist"), COOLDOWN_TIME("cooldown.time"), COOLDOWN_ACTIVE("cooldown.active"),
-		UPDATE_CHECKER_ACTIVE("updateMassageActive");
+		DEFAULT_AUTOSORT("defaultautosort"),
+		DEFAULT_EVALUATOR("defaultevaluator"),
+		DEFAULT_SORTING_PATTERN("defaultsortingpattern"),
+		LOCALE_LANGUAGE("locale.lang"),
+		LOCALE_COUNTRY("locale.country"),
+		CLEANING_ITEM("cleaningItem"),
+		CLEANING_ITEM_ACTIVE("active"),
+		CLEANING_ITEM_DURABILITY("durability"),
+		OPEN_INVENTORY_MODE("openinventoryeventmode"),
+		CONSUMABLES_REFILL("consumablesrefill"),
+		BLOCK_REFILL("blockrefill"),
+		INVENTORY_PERMISSION_ACTIVE("cleanInventorypermissionactive"),
+		BLACKLIST("blacklist"),
+		INVENTORY_BLACKLIST("inventoryblacklist"),
+		COOLDOWN_TIME("cooldown.time"),
+		COOLDOWN_ACTIVE("cooldown.active"),
+		UPDATE_CHECKER_ACTIVE("updateMassageActive"),
+		CATEGORIES_ORDER("categories.order"),
+		CATEGORIES_WORDS("categories.words"),
+		CATEGORIES_LISTS("categories.lists");
 
 		private String path;
 

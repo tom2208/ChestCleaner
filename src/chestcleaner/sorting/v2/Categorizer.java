@@ -6,30 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-
-// sortItems method, todo: extract to InventorySorter(?)
-class SortingImpl {
-    public List<ItemStack> sortItems(List<ItemStack> items, Categorizer[] categorizers) {
-        // create Starting point
-        List<List<ItemStack>> categories = new ArrayList<>();
-        categories.add(items);
-
-        // categorize
-        for (Categorizer categorizer : categorizers) {
-            categories = categorizer.categorize(categories);
-        }
-
-        // iterate over category Lists and merge them into one
-        List<ItemStack> returnItems = new ArrayList<>();
-
-        for (List<ItemStack> category : categories) {
-            returnItems.addAll(category);
-        }
-        return returnItems;
-    }
-}
-
 public abstract class Categorizer {
+
+    /**
+     * The unique name of the categorizer
+     */
+    String name;
+
+    public String getName() {
+        return name;
+    }
 
     /**
      * categorizes every existing categories into finer grained categories

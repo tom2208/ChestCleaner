@@ -1,6 +1,7 @@
 package chestcleaner.config;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PluginConfigManager {
@@ -14,6 +15,7 @@ public class PluginConfigManager {
 	private boolean consumablesRefillActive = true;
 	private boolean updateCheckerActive = true;
 	private boolean cleanInvPermission = true;
+	private List<String> categorizationOrder = null;
 	private final String falseString = "false";
 	private final String trueString = "true";
 
@@ -83,6 +85,13 @@ public class PluginConfigManager {
 
 	public void setCleanInvPermission(boolean cleanInvPermission) {
 		this.cleanInvPermission = cleanInvPermission;
+	}
+
+	public List<String> getCategorizationOrder() {
+		return categorizationOrder;
+	}
+	public void setCategorizationOrder(List<String> categorizationOrder) {
+		this.categorizationOrder = categorizationOrder;
 	}
 
 	public String getFalseString() {

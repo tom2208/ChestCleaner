@@ -1,6 +1,7 @@
 package chestcleaner.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -49,13 +50,13 @@ public class InventoryConverter {
 	 *                                  {@code items} or the Inventory {@code inv}
 	 *                                  is equal to null.
 	 */
-	public static void setItemsOfInventory(Inventory inv, ArrayList<ItemStack> items, SortingPattern pattern) {
-
-		boolean isPlayer = inv.getType() == InventoryType.PLAYER;
+	public static void setItemsOfInventory(Inventory inv, List<ItemStack> items, SortingPattern pattern) {
 
 		if (items == null || inv == null) {
 			throw new IllegalArgumentException();
 		}
+
+		boolean isPlayer = inv.getType() == InventoryType.PLAYER;
 
 		if (!isPlayer)
 			inv.clear();
