@@ -1,8 +1,9 @@
 package chestcleaner.config;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import chestcleaner.sorting.v2.ItemSorter;
 
 public class PluginConfigManager {
 
@@ -18,6 +19,7 @@ public class PluginConfigManager {
 	private List<String> categorizationOrder = null;
 	private final String falseString = "false";
 	private final String trueString = "true";
+	private ItemSorter sorter = new ItemSorter();
 
 	protected PluginConfigManager() {
 
@@ -119,6 +121,14 @@ public class PluginConfigManager {
 		list.add(getInstance().getTrueString());
 		list.add(getInstance().getFalseString());
 		return list;
+	}
+
+	public ItemSorter getSorter() {
+		return sorter;
+	}
+
+	public void setSorter(ItemSorter sorter) {
+		this.sorter = sorter;
 	}
 
 }

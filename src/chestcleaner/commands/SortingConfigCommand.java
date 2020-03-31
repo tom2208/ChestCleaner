@@ -11,13 +11,13 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfig.ConfigPath;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;

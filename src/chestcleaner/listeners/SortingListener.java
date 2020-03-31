@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import chestcleaner.commands.BlacklistCommand;
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.CooldownManager;
@@ -21,7 +22,6 @@ import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;

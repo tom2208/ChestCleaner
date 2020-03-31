@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.v2.Categorizer;
-import chestcleaner.sorting.v2.Categorizers;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -16,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PlayerDataManager;
 
 public class InventorySorter {
 
@@ -122,7 +121,7 @@ public class InventorySorter {
 		}
 
 		List<Categorizer> categorizers = categorizerConfig.stream()
-				.map(Categorizers::getByName).collect(Collectors.toList());
+				.map(PluginConfigManager.getInstance().getSorter().getManager()::getByName).collect(Collectors.toList());
 		list = executeCategorizers(list, categorizers);
 		list = getFullStacks(list);
 
