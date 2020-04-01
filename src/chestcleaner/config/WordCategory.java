@@ -1,10 +1,12 @@
 package chestcleaner.config;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@SerializableAs("WordCategory")
 public class WordCategory implements Category<String>, ConfigurationSerializable {
 
     private String name;

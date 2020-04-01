@@ -1,6 +1,7 @@
 package chestcleaner.sorting;
 
 import chestcleaner.config.ListCategory;
+import chestcleaner.config.MasterCategory;
 import chestcleaner.config.WordCategory;
 
 import java.util.Arrays;
@@ -10,6 +11,12 @@ public class DefaultSortingList {
     // todo: move to sample config.yaml
 
     public static final List<String> DEFAULT_CATEGORIES_ORDER = Arrays.asList("StoneList", "CarpetWord");
+
+    public static final List<MasterCategory> DEFAULT_MASTER_CATEGORIES = Arrays.asList(
+            new MasterCategory("StoneMaster", Arrays.asList("StoneList", "StoneWord")),
+            new MasterCategory("DirtMaster", Arrays.asList("DirtList", "StoneList"))
+    );
+
     public static final List<WordCategory> DEFAULT_WORD_CATEGORIES= Arrays.asList(
             new WordCategory("StoneWord", "stone"),
             new WordCategory("StairWord", "stair"),

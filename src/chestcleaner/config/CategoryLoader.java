@@ -4,6 +4,7 @@ import chestcleaner.sorting.evaluator.BiPredicateEvaluator;
 import chestcleaner.sorting.v2.Categorizers;
 import chestcleaner.sorting.v2.EvaluatorCategorizer;
 import chestcleaner.sorting.v2.ListCategoryCategorizer;
+import chestcleaner.sorting.v2.MasterCategorizer;
 import chestcleaner.sorting.v2.PredicateCategorizer;
 import org.bukkit.inventory.ItemStack;
 
@@ -32,10 +33,12 @@ public class CategoryLoader {
             new BiPredicateEvaluator((item1, item2) -> new StringBuilder(item1.getType().name()).reverse().toString()
                     .compareTo(new StringBuilder(item2.getType().name()).reverse().toString()) > 0);
 
-    public static void loadCategorizers(List<WordCategory> wordCategories, List<ListCategory> listCategories) {
+    public static void loadCategorizers(List<WordCategory> wordCategories, List<ListCategory> listCategories,
+                                        List<MasterCategory> masterCategories) {
         loadStaticCategorizers();
         loadWordCategorizers(wordCategories);
         loadListCategorizers(listCategories);
+        loadMasterCategorizers(masterCategories);
     }
 
     private static void loadStaticCategorizers() {
@@ -66,6 +69,15 @@ public class CategoryLoader {
         }
         for (ListCategory category : categories) {
             Categorizers.addCategorizer(new ListCategoryCategorizer(category));
+        }
+    }
+
+    private static void loadMasterCategorizers(List<MasterCategory> categories) {
+        if (categories == null) {
+            return;
+        }
+        for (MasterCategory category : categories) {
+            Categorizers.addCategorizer(new MasterCategorizer(category));
         }
     }
 }

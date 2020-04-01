@@ -1,11 +1,13 @@
 package chestcleaner.config;
 
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.SerializableAs;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@SerializableAs("ListCategory")
 public class ListCategory implements Category<List<String>>, ConfigurationSerializable {
 
     public String name;

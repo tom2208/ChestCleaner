@@ -128,10 +128,12 @@ public class PluginConfig {
 
 		setIfDoesntContains(ConfigPath.CATEGORIES_WORDS, DefaultSortingList.DEFAULT_WORD_CATEGORIES);
 		setIfDoesntContains(ConfigPath.CATEGORIES_LISTS, DefaultSortingList.DEFAULT_LIST_CATEGORIES);
+		setIfDoesntContains(ConfigPath.CATEGORIES_MASTER, DefaultSortingList.DEFAULT_MASTER_CATEGORIES);
 
 		CategoryLoader.loadCategorizers(
 				(List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()),
-				(List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath())
+				(List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath()),
+				(List<MasterCategory>) config.getList(ConfigPath.CATEGORIES_MASTER.getPath())
 		);
 
 
@@ -283,7 +285,8 @@ public class PluginConfig {
 		UPDATE_CHECKER_ACTIVE("updateMassageActive"),
 		CATEGORIES_ORDER("categories.order"),
 		CATEGORIES_WORDS("categories.words"),
-		CATEGORIES_LISTS("categories.lists");
+		CATEGORIES_LISTS("categories.lists"),
+		CATEGORIES_MASTER("categories.master");
 
 		private String path;
 
