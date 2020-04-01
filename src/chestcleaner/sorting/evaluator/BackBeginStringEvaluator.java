@@ -2,6 +2,7 @@ package chestcleaner.sorting.evaluator;
 
 import org.bukkit.inventory.ItemStack;
 
+@Deprecated
 public class BackBeginStringEvaluator implements Evaluator {
 
 	/**

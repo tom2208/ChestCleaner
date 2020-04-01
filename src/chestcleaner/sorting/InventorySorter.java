@@ -2,10 +2,8 @@ package chestcleaner.sorting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.v2.Categorizer;
 import chestcleaner.sorting.v2.Categorizers;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -121,32 +119,13 @@ public class InventorySorter {
 			InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		}
 
-		List<Categorizer> categorizers = categorizerConfig.stream()
-				.map(Categorizers::getByName).collect(Collectors.toList());
-		list = executeCategorizers(list, categorizers);
+		list = Categorizers.categorizeAndMerge(list, categorizerConfig);
 		list = getFullStacks(list);
 
 		InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		return true;
 		
 	}
-
-	public static List<ItemStack> executeCategorizers(List<ItemStack> items, List<Categorizer> categorizers) {
-		List<List<ItemStack>> categories = new ArrayList<>();
-		categories.add(items);
-
-		for (Categorizer categorizer : categorizers) {
-			categories = categorizer.categorize(categories);
-		}
-
-		List<ItemStack> returnItems = new ArrayList<>();
-
-		for (List<ItemStack> category : categories) {
-			returnItems.addAll(category);
-		}
-		return returnItems;
-	}
-
 
 	/**
 	 * Checks if the block has an inventory or if it is an enderchest and sorts it.

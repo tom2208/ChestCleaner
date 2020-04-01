@@ -1,7 +1,10 @@
 package chestcleaner.sorting.v2;
 
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Categorizers {
 
@@ -22,6 +25,30 @@ public class Categorizers {
         }
 
         return result;
+    }
+
+    public static List<List<ItemStack>> executeCategorizers(List<ItemStack> items, List<String> categorizerNames) {
+
+        List<Categorizer> categorizers = categorizerNames.stream()
+                .map(Categorizers::getByName).collect(Collectors.toList());
+
+        List<List<ItemStack>> categories = new ArrayList<>();
+        categories.add(items);
+
+        for (Categorizer categorizer : categorizers) {
+            categories = categorizer.categorize(categories);
+        }
+        return categories;
+    }
+
+    public static List<ItemStack> mergeCategoryLists(List<List<ItemStack>> categories) {
+        List<ItemStack> returnItems = new ArrayList<>();
+        categories.forEach(returnItems::addAll);
+        return returnItems;
+    }
+
+    public static List<ItemStack> categorizeAndMerge(List<ItemStack> items, List<String> categorizerNames) {
+        return mergeCategoryLists(executeCategorizers(items, categorizerNames));
     }
 
 }

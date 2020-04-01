@@ -125,11 +125,14 @@ public class PluginConfig {
 		setIfDoesntContains(ConfigPath.CATEGORIES_ORDER, DefaultSortingList.DEFAULT_CATEGORIES_ORDER);
 		PluginConfigManager.getInstance().setCategorizationOrder(
 				(List<String>) config.getList(ConfigPath.CATEGORIES_ORDER.getPath()));
-		setIfDoesntContains(ConfigPath.CATEGORIES_WORDS, DefaultSortingList.DEFAULT_WORD_CATEGORIES);
-		loadWordCategorizers((List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()));
 
+		setIfDoesntContains(ConfigPath.CATEGORIES_WORDS, DefaultSortingList.DEFAULT_WORD_CATEGORIES);
 		setIfDoesntContains(ConfigPath.CATEGORIES_LISTS, DefaultSortingList.DEFAULT_LIST_CATEGORIES);
-		loadListCategorizers((List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath()));
+
+		CategoryLoader.loadCategorizers(
+				(List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()),
+				(List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath())
+		);
 
 
 		if (config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
@@ -163,23 +166,6 @@ public class PluginConfig {
 		save(configFile, config);
 	}
 
-	private void loadListCategorizers(List<ListCategory> categories) {
-		if (categories == null) {
-			return;
-		}
-		for (ListCategory category : categories) {
-			Categorizers.addCategorizer(new ListCategoryCategorizer(category));
-		}
-	}
-
-	private void loadWordCategorizers(List<WordCategory> categories) {
-		if (categories == null) {
-			return;
-		}
-		for (WordCategory category : categories) {
-			Categorizers.addCategorizer(new PredicateCategorizer(category));
-		}
-	}
 
 	/**
 	 * Saves this {@code FileConfiguration} to the the ChestCleaner folder. If the

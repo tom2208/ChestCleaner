@@ -3,6 +3,7 @@ package chestcleaner.sorting.evaluator;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public enum EvaluatorType {
 
 	BACK_BEGIN_STRING, BEGIN_BACK_STRING;

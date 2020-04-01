@@ -11,7 +11,8 @@ public class EvaluatorCategorizer extends Categorizer {
 
     Evaluator evaluator;
 
-    public EvaluatorCategorizer(Evaluator evaluator) {
+    public EvaluatorCategorizer(String name, Evaluator evaluator) {
+        this.name = name;
         this.evaluator = evaluator;
     }
 
