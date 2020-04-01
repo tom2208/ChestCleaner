@@ -31,10 +31,10 @@ public class ChestCleaner extends JavaPlugin {
 	public static ChestCleaner main;
 	private ResourceBundle rb;
 	private Locale locale;
-
+	
 	@Override
 	public void onEnable() {
-		main = this;
+		main = this;		
 		String version = getDescription().getVersion().replace(".", "-");
 		PluginConfig.getInstance().loadConfig();
 		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);

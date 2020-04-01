@@ -4,7 +4,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public abstract class Categorizer {
 

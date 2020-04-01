@@ -3,6 +3,7 @@ package chestcleaner.sorting;
 import java.util.ArrayList;
 import java.util.List;
 
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.v2.Categorizers;
 import org.bukkit.Material;
@@ -14,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PlayerDataManager;
 
 public class InventorySorter {
 

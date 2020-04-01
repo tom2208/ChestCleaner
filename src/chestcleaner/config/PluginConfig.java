@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Locale;
 
 import chestcleaner.sorting.DefaultSortingList;
-import chestcleaner.sorting.v2.Categorizers;
+import chestcleaner.sorting.v2.CategorizerManager;
+import chestcleaner.sorting.v2.ItemSorter;
 import chestcleaner.sorting.v2.ListCategoryCategorizer;
 import chestcleaner.sorting.v2.PredicateCategorizer;
 import org.bukkit.Material;
@@ -23,7 +24,6 @@ import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
-import chestcleaner.utils.PlayerDataManager;
 
 /**
  * This is a singleton class to combine all configs and their utility methods

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ListCategoryCategorizer extends Categorizer {
 
-    List<String > list;
+    List<String> list;
 
     public ListCategoryCategorizer(ListCategory listCategory) {
         this.name = listCategory.getName();

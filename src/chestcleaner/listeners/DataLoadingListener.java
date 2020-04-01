@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import chestcleaner.utils.PlayerDataManager;
+import chestcleaner.config.PlayerDataManager;
 
 public class DataLoadingListener implements Listener {
 

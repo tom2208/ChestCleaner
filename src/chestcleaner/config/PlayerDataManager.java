@@ -1,11 +1,10 @@
-package chestcleaner.utils;
+package chestcleaner.config;
 
 import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import chestcleaner.config.PluginConfig;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.evaluator.EvaluatorType;
 
