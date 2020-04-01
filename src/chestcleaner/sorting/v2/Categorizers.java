@@ -42,9 +42,7 @@ public class Categorizers {
     }
 
     public static List<ItemStack> mergeCategoryLists(List<List<ItemStack>> categories) {
-        List<ItemStack> returnItems = new ArrayList<>();
-        categories.forEach(returnItems::addAll);
-        return returnItems;
+        return categories.stream().flatMap(List::stream).collect(Collectors.toList());
     }
 
     public static List<ItemStack> categorizeAndMerge(List<ItemStack> items, List<String> categorizerNames) {

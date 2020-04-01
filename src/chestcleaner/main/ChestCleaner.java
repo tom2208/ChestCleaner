@@ -7,9 +7,13 @@ import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import chestcleaner.config.ListCategory;
+import chestcleaner.config.MasterCategory;
+import chestcleaner.config.WordCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -36,6 +40,9 @@ public class ChestCleaner extends JavaPlugin {
 	public void onEnable() {
 		main = this;		
 		String version = getDescription().getVersion().replace(".", "-");
+		ConfigurationSerialization.registerClass(WordCategory.class);
+		ConfigurationSerialization.registerClass(ListCategory.class);
+		ConfigurationSerialization.registerClass(MasterCategory.class);
 		PluginConfig.getInstance().loadConfig();
 		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);
 		getPlugin(this.getClass()).saveResource(getName() + "_de_DE_" + version + ".properties", false);

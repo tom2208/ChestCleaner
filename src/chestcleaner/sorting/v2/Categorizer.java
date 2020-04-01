@@ -2,8 +2,8 @@ package chestcleaner.sorting.v2;
 
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class Categorizer {
 
@@ -23,12 +23,10 @@ public abstract class Categorizer {
      * @return List of Lists of ItemStacks (categories)
      */
     public List<List<ItemStack>> categorize(List<List<ItemStack>> categories) {
-        List<List<ItemStack>> returnCategories = new ArrayList<>();
-
-        for (List<ItemStack> category : categories) {
-            returnCategories.addAll(doCategorization(category));
-        }
-        return returnCategories;
+        return categories.stream()
+                .map(this::doCategorization)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
     }
 
     /**

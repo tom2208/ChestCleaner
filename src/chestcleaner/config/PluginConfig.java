@@ -7,10 +7,6 @@ import java.util.List;
 import java.util.Locale;
 
 import chestcleaner.sorting.DefaultSortingList;
-import chestcleaner.sorting.v2.CategorizerManager;
-import chestcleaner.sorting.v2.ItemSorter;
-import chestcleaner.sorting.v2.ListCategoryCategorizer;
-import chestcleaner.sorting.v2.PredicateCategorizer;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;

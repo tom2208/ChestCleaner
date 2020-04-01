@@ -27,9 +27,13 @@ public class PredicateCategorizer extends Categorizer {
     @Override
     public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
         List<List<ItemStack>> returnItems = new ArrayList<>();
-        Map<Boolean, List<ItemStack>> lists = items.stream().collect(Collectors.partitioningBy(predicate));
+        Map<Boolean, List<ItemStack>> lists = doCategorizationGetMap(items);
         returnItems.add(lists.get(Boolean.TRUE));
         returnItems.add(lists.get(Boolean.FALSE));
         return returnItems;
+    }
+
+    public Map<Boolean, List<ItemStack>> doCategorizationGetMap(List<ItemStack> items) {
+        return items.stream().collect(Collectors.partitioningBy(predicate));
     }
 }

@@ -58,26 +58,20 @@ public class CategoryLoader {
         if (categories == null) {
             return;
         }
-        for (WordCategory category : categories) {
-            Categorizers.addCategorizer(new PredicateCategorizer(category));
-        }
+        categories.forEach(category -> Categorizers.addCategorizer(new PredicateCategorizer(category)));
     }
 
     private static void loadListCategorizers(List<ListCategory> categories) {
         if (categories == null) {
             return;
         }
-        for (ListCategory category : categories) {
-            Categorizers.addCategorizer(new ListCategoryCategorizer(category));
-        }
+        categories.forEach(category -> Categorizers.addCategorizer(new ListCategoryCategorizer(category)));
     }
 
     private static void loadMasterCategorizers(List<MasterCategory> categories) {
         if (categories == null) {
             return;
         }
-        for (MasterCategory category : categories) {
-            Categorizers.addCategorizer(new MasterCategorizer(category));
-        }
+        categories.forEach(category -> Categorizers.addCategorizer(new MasterCategorizer(category)));
     }
 }

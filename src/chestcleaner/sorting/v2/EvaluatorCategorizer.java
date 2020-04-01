@@ -18,10 +18,14 @@ public class EvaluatorCategorizer extends Categorizer {
 
     @Override
     public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
-        items = QuicksortV2.sort(items, evaluator, 0, items.size());
+        items = doCategorizationGetList(items);
         List<List<ItemStack>> returnItems = new ArrayList<>();
         returnItems.add(items);
         return returnItems;
+    }
+
+    public List<ItemStack> doCategorizationGetList(List<ItemStack> items) {
+        return QuicksortV2.sort(items, evaluator, 0, items.size() - 1);
     }
 
 }
