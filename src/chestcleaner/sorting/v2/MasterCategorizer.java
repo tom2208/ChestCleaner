@@ -1,6 +1,6 @@
 package chestcleaner.sorting.v2;
 
-import chestcleaner.config.MasterCategory;
+import chestcleaner.config.serializable.MasterCategory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -18,7 +18,7 @@ public class MasterCategorizer extends Categorizer{
     @Override
     public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
         List<List<ItemStack>> returnItems = new ArrayList<>();
-        returnItems.add(Categorizers.categorizeAndMerge(items, subCategorizers));
+        returnItems.add(Categorizers.sort(items, subCategorizers));
         return returnItems;
     }
 }

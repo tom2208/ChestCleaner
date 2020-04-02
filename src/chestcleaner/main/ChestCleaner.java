@@ -7,9 +7,9 @@ import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import chestcleaner.config.ListCategory;
-import chestcleaner.config.MasterCategory;
-import chestcleaner.config.WordCategory;
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 

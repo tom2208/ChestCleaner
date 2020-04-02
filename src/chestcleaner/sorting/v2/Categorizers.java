@@ -27,7 +27,7 @@ public class Categorizers {
         return result;
     }
 
-    public static List<List<ItemStack>> executeCategorizers(List<ItemStack> items, List<String> categorizerNames) {
+    public static List<ItemStack> sort(List<ItemStack> items, List<String> categorizerNames) {
 
         List<Categorizer> categorizers = categorizerNames.stream()
                 .map(Categorizers::getByName).collect(Collectors.toList());
@@ -38,15 +38,7 @@ public class Categorizers {
         for (Categorizer categorizer : categorizers) {
             categories = categorizer.categorize(categories);
         }
-        return categories;
-    }
 
-    public static List<ItemStack> mergeCategoryLists(List<List<ItemStack>> categories) {
         return categories.stream().flatMap(List::stream).collect(Collectors.toList());
     }
-
-    public static List<ItemStack> categorizeAndMerge(List<ItemStack> items, List<String> categorizerNames) {
-        return mergeCategoryLists(executeCategorizers(items, categorizerNames));
-    }
-
 }

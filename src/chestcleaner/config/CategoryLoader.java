@@ -1,13 +1,16 @@
 package chestcleaner.config;
 
-import chestcleaner.sorting.evaluator.BiPredicateEvaluator;
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
 import chestcleaner.sorting.v2.Categorizers;
-import chestcleaner.sorting.v2.EvaluatorCategorizer;
+import chestcleaner.sorting.v2.ComparatorCategorizer;
 import chestcleaner.sorting.v2.ListCategoryCategorizer;
 import chestcleaner.sorting.v2.MasterCategorizer;
 import chestcleaner.sorting.v2.PredicateCategorizer;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -19,19 +22,13 @@ public class CategoryLoader {
     private static Predicate<ItemStack> is_fuel = item -> item.getType().isFuel();
     private static Predicate<ItemStack> is_flammable = item -> item.getType().isFlammable();
 
-    private static BiPredicateEvaluator alphabet_asc =
-            new BiPredicateEvaluator((item1, item2) -> item1.getType().name().compareTo(item2.getType().name()) < 0);
+    private static Comparator<ItemStack> alphabet_asc = Comparator.comparing(item -> item.getType().name());
+    private static Comparator<ItemStack> alphabet_desc = alphabet_asc.reversed();
 
-    private static BiPredicateEvaluator alphabet_desc =
-            new BiPredicateEvaluator((item1, item2) -> item1.getType().name().compareTo(item2.getType().name()) > 0);
+    private static Comparator<ItemStack> alphabet_back_asc = Comparator.comparing(
+            item -> new StringBuilder(item.getType().name()).reverse().toString());
+    private static Comparator<ItemStack> alphabet_back_desc = alphabet_back_asc.reversed();
 
-    private static BiPredicateEvaluator alphabet_back_asc =
-            new BiPredicateEvaluator((item1, item2) -> new StringBuilder(item1.getType().name()).reverse().toString()
-                    .compareTo(new StringBuilder(item2.getType().name()).reverse().toString()) < 0);
-
-    private static BiPredicateEvaluator alphabet_back_desc =
-            new BiPredicateEvaluator((item1, item2) -> new StringBuilder(item1.getType().name()).reverse().toString()
-                    .compareTo(new StringBuilder(item2.getType().name()).reverse().toString()) > 0);
 
     public static void loadCategorizers(List<WordCategory> wordCategories, List<ListCategory> listCategories,
                                         List<MasterCategory> masterCategories) {
@@ -48,10 +45,10 @@ public class CategoryLoader {
         Categorizers.addCategorizer(new PredicateCategorizer("is_fuel", is_fuel));
         Categorizers.addCategorizer(new PredicateCategorizer("is_flammable", is_flammable));
 
-        Categorizers.addCategorizer(new EvaluatorCategorizer("alpha_asc", alphabet_asc));
-        Categorizers.addCategorizer(new EvaluatorCategorizer("alpha_desc", alphabet_desc));
-        Categorizers.addCategorizer(new EvaluatorCategorizer("alpha_back_asc", alphabet_back_asc));
-        Categorizers.addCategorizer(new EvaluatorCategorizer("alpha_back_desc", alphabet_back_desc));
+        Categorizers.addCategorizer(new ComparatorCategorizer("alpha_asc", alphabet_asc));
+        Categorizers.addCategorizer(new ComparatorCategorizer("alpha_desc", alphabet_desc));
+        Categorizers.addCategorizer(new ComparatorCategorizer("alpha_back_asc", alphabet_back_asc));
+        Categorizers.addCategorizer(new ComparatorCategorizer("alpha_back_desc", alphabet_back_desc));
     }
 
     private static void loadWordCategorizers(List<WordCategory> categories) {

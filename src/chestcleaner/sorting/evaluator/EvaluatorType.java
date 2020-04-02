@@ -33,19 +33,6 @@ public enum EvaluatorType {
 		return list;
 	}
 
-	public static Evaluator getEvaluator(EvaluatorType type) {
-
-		if (type == null)
-			return null;
-
-		if (type.equals(BACK_BEGIN_STRING)) {
-			return new BackBeginStringEvaluator();
-		} else if (type.equals(BEGIN_BACK_STRING)) {
-			return new BeginBackStringEvaluator();
-		}
-		return null;
-	}
-
 	public static EvaluatorType DEFAULT = EvaluatorType.BACK_BEGIN_STRING;
 
 }

@@ -1,6 +1,6 @@
 package chestcleaner.sorting.v2;
 
-import chestcleaner.config.WordCategory;
+import chestcleaner.config.serializable.WordCategory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;

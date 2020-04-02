@@ -1,8 +1,8 @@
 package chestcleaner.sorting;
 
-import chestcleaner.config.ListCategory;
-import chestcleaner.config.MasterCategory;
-import chestcleaner.config.WordCategory;
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
 
 import java.util.Arrays;
 import java.util.List;

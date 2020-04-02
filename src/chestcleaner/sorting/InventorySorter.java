@@ -33,14 +33,13 @@ public class InventorySorter {
 
 		boolean blackListedItemUsed = false;
 
-		for (int i = 0; i < list.size(); i++) {
+		for (ItemStack item : list) {
 
-			ItemStack item = list.get(i);
 			int amount = item.getAmount();
 
 			item.setAmount(1);
 
-			if (blacklist.contains(list.get(i).getType())) {
+			if (blacklist.contains(item.getType())) {
 				items.add(item);
 				amounts.add(amount);
 				blackListedItemUsed = true;
@@ -48,7 +47,7 @@ public class InventorySorter {
 
 				int index = -1;
 				for (int j = 0; j < items.size(); j++) {
-					if (items.get(j).isSimilar(list.get(i))) {
+					if (items.get(j).isSimilar(item)) {
 						index = j;
 						break;
 					}
@@ -119,7 +118,7 @@ public class InventorySorter {
 			InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		}
 
-		list = Categorizers.categorizeAndMerge(list, categorizerConfig);
+		list = Categorizers.sort(list, categorizerConfig);
 		list = getFullStacks(list);
 
 		InventoryConverter.setItemsOfInventory(inv, list, pattern);

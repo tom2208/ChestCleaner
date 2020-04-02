@@ -1,4 +1,4 @@
-package chestcleaner.config;
+package chestcleaner.config.serializable;
 
 public interface Category<T> {
     String getName();

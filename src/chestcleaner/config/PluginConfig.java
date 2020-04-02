@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
 import chestcleaner.sorting.DefaultSortingList;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;

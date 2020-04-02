@@ -92,6 +92,7 @@ public class PluginConfigManager {
 	public List<String> getCategorizationOrder() {
 		return categorizationOrder;
 	}
+
 	public void setCategorizationOrder(List<String> categorizationOrder) {
 		this.categorizationOrder = categorizationOrder;
 	}
@@ -117,7 +118,7 @@ public class PluginConfigManager {
 	}
 	
 	public static List<String> getBooleanValueStringList(){
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add(getInstance().getTrueString());
 		list.add(getInstance().getFalseString());
 		return list;

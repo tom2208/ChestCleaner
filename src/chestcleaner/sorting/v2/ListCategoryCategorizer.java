@@ -1,10 +1,10 @@
 package chestcleaner.sorting.v2;
 
-import chestcleaner.config.ListCategory;
-import chestcleaner.sorting.evaluator.BiPredicateEvaluator;
+import chestcleaner.config.serializable.ListCategory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +13,7 @@ public class ListCategoryCategorizer extends Categorizer {
 
     List<String> list;
     PredicateCategorizer predicateCategorizer;
-    EvaluatorCategorizer evaluatorCategorizer;
+    ComparatorCategorizer comparatorCategorizer;
 
     public ListCategoryCategorizer(ListCategory listCategory) {
         this.name = listCategory.getName();
@@ -22,15 +22,15 @@ public class ListCategoryCategorizer extends Categorizer {
         this.predicateCategorizer = new PredicateCategorizer("",
                 item -> list.indexOf(getMaterialName(item)) >= 0);
 
-        this.evaluatorCategorizer = new EvaluatorCategorizer("", new BiPredicateEvaluator(
-                (item1, item2) -> list.indexOf(getMaterialName(item1)) < list.indexOf(getMaterialName(item2))));
+        this.comparatorCategorizer = new ComparatorCategorizer("",
+                Comparator.comparing(item -> list.indexOf(getMaterialName(item))));
     }
 
     @Override
     public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
         List<List<ItemStack>> returnItems = new ArrayList<>();
         Map<Boolean, List<ItemStack>> map = predicateCategorizer.doCategorizationGetMap(items);
-        List<ItemStack> sortedList = evaluatorCategorizer.doCategorizationGetList(map.get(Boolean.TRUE));
+        List<ItemStack> sortedList = comparatorCategorizer.doCategorizationGetList(map.get(Boolean.TRUE));
         returnItems.add(sortedList);
         returnItems.add(map.get(Boolean.FALSE));
         return returnItems;
