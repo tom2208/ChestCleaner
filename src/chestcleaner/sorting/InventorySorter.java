@@ -23,75 +23,46 @@ public class InventorySorter {
 	/**
 	 * Returns {@code list} sorted in full stacked items.
 	 * 
-	 * @param list an ArrayList of ItemStacks you want to sort
+	 * @param items an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
 	 */
-	private static List<ItemStack> getFullStacks(List<ItemStack> list) {
+	private static List<ItemStack> getFullStacks(List<ItemStack> items) {
+		// temp list, every item once, amounts get added
+		ArrayList<ItemStack> tempItems = new ArrayList<>();
 
-		ArrayList<ItemStack> items = new ArrayList<>();
-		ArrayList<Integer> amounts = new ArrayList<>();
-
-		boolean blackListedItemUsed = false;
-
-		for (ItemStack item : list) {
-
-			int amount = item.getAmount();
-
-			item.setAmount(1);
-
+		for (ItemStack item : items) {
 			if (blacklist.contains(item.getType())) {
-				items.add(item);
-				amounts.add(amount);
-				blackListedItemUsed = true;
+				tempItems.add(item);
 			} else {
+				ItemStack temp = tempItems.stream()
+						.filter(tempItem -> tempItem.isSimilar(item))
+						.findFirst().orElse(null);
 
-				int index = -1;
-				for (int j = 0; j < items.size(); j++) {
-					if (items.get(j).isSimilar(item)) {
-						index = j;
-						break;
-					}
-				}
-
-				if (index >= 0) {
-					amounts.set(index, amounts.get(index) + amount);
+				if (temp == null) {
+					tempItems.add(item);
 				} else {
-					items.add(item);
-					amounts.add(amount);
+					temp.setAmount(temp.getAmount() + item.getAmount());
 				}
 			}
-
 		}
 
 		ArrayList<ItemStack> out = new ArrayList<>();
 
-		for (int i = 0; i < items.size(); i++) {
-			if(items.get(i).getType().equals(Material.AIR)) {
-				continue;
-			}
-			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
-			for (int j = 0; j < stacks; j++) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(items.get(i).getMaxStackSize());
+		for (ItemStack item : tempItems) {
+			if (blacklist.contains(item.getType())) {
 				out.add(item);
+			} else if (!item.getType().equals(Material.AIR)){
+				// get / set full stacks
+				while (item.getAmount() > 0) {
+					int amount = Math.min(item.getAmount(), item.getMaxStackSize());
+					ItemStack clone = item.clone();
+					clone.setAmount(amount);
+					out.add(clone);
+					item.setAmount(item.getAmount() - amount);
+				}
 			}
-
-			int remainingItems = amounts.get(i) % items.get(i).getMaxStackSize();
-			if (remainingItems > 0) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(remainingItems);
-				out.add(item);
-			}
-
 		}
-
-		if (blackListedItemUsed) {
-			AmountSorter sorter = new AmountSorter(out);
-			return sorter.sortArray();
-		}
-
 		return out;
-
 	}
 
 	/**
@@ -116,6 +87,7 @@ public class InventorySorter {
 
 		if (list.size() <= 1) {
 			InventoryConverter.setItemsOfInventory(inv, list, pattern);
+			return true;
 		}
 
 		list = Categorizers.sort(list, categorizerConfig);

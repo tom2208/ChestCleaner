@@ -139,28 +139,4 @@ public class InventoryConverter {
 		}
 
 	}
-
-	/**
-	 * Sets the Item Stacks of the ArrayList into the slots of the player-inventory,
-	 * just effects index 9 (including) to index 35 (including).That means the
-	 * hotbar or other important slots (armor slots, second hand slot) are getting
-	 * avoided.
-	 * 
-	 * @param items The list of ItemStacks you want to put into the player
-	 *              inventory. Its size should be <= 27.
-	 * @param p     the player whose inventory will get effected.
-	 * @throws IllegalArgumentException throws if the argument ItemStack
-	 *                                  {@code items} or the Inventory {@code inv}
-	 *                                  is equal to null.
-	 */
-	public static void setPlayerInventory(ArrayList<ItemStack> items, Player p, SortingPattern pattern) {
-
-		if (items == null || p == null) {
-			throw new IllegalArgumentException();
-		}
-
-		setItemsOfInventory(p.getInventory(), items, pattern);
-
-	}
-
 }
