@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import chestcleaner.sorting.v2.Categorizers;
+import chestcleaner.utils.MessageUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -120,6 +122,12 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 					setDefaultAutoSort(sender, args[2]);
 					return true;
 
+					/* SETDEFAULTCATEGORIES */
+				} else if (args[1].equalsIgnoreCase(setDefaultCategoriesSubCommand)) {
+
+					setDefaultCategories(sender, args[2]);
+					return true;
+
 				} else {
 					MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSyntax, sender);
 					return true;
@@ -138,11 +146,12 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void setDefaultAutoSort(CommandSender sender, String bool) {
-		Boolean b = false;
+		boolean b = false;
 
 		if (PluginConfigManager.isStringTrue(bool)) {
 			b = true;
-		} else if (!PluginConfigManager.isStringFalse(bool)) {
+		}
+		if (!PluginConfigManager.isStringFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSetDefaultSortSyntax, sender);
 		} else {
 
@@ -165,6 +174,18 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 			EvaluatorType.DEFAULT = evaluator;
 			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_EVALUATOR_SET, sender);
+		}
+	}
+
+	private void setDefaultCategories(CommandSender sender, String commaSeperatedCategories) {
+		List<String> categories = Arrays.asList(commaSeperatedCategories.split(","));
+
+		if (!Categorizers.validateExists(categories)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_CATEGORIZER_NAME, sender);
+		} else {
+			PluginConfig.getInstance().setIntoConfig(ConfigPath.CATEGORIES_ORDER, categories);
+			PluginConfigManager.getInstance().setCategorizationOrder(categories);
+			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_CATEGORIES_SET, sender);
 		}
 	}
 
@@ -245,7 +266,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		final String[] strCommandList = { patternSubCommand, evaluatorSubCommand, setAutoSortSubCommand,
 				adminConfigSubCommand };
 		final String[] strAdminControlSubCommands = { setDefaultPatternSubCommand, setDefaultEvaluatorSubCommand,
-				setDefaultAutoSortSubCommand };
+				setDefaultAutoSortSubCommand, setDefaultCategoriesSubCommand };
 		final List<String> commandList = Arrays.asList(strCommandList);
 		final List<String> adminControlSubCommands = Arrays.asList(strAdminControlSubCommands);
 
@@ -265,7 +286,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				StringUtil.copyPartialMatches(args[1], adminControlSubCommands, completions);
 
 		} else if (args.length == 3) {
-			if (args[0].equalsIgnoreCase(commandList.get(3))) {
+			if (args[0].equalsIgnoreCase(adminConfigSubCommand)) {
 				if (args[1].equalsIgnoreCase(setDefaultPatternSubCommand))
 					StringUtil.copyPartialMatches(args[2], SortingPattern.getIDList(), completions);
 				else if (args[1].equalsIgnoreCase(evaluatorSubCommand))
@@ -273,6 +294,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 				else if (args[1].equalsIgnoreCase(setDefaultAutoSortSubCommand))
 					StringUtil.copyPartialMatches(args[2], PluginConfigManager.getBooleanValueStringList(),
 							completions);
+				else if (args[1].equalsIgnoreCase(setDefaultCategoriesSubCommand))
+					MessageUtils.copyPartialMatchesCommasNoDuplicates(args[2], Categorizers.getAllNames(), completions);
 			}
 		}
 
@@ -289,11 +312,12 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	private final String setDefaultPatternSubCommand = "setDefaultPattern";
 	private final String setDefaultEvaluatorSubCommand = "setDefaultEvaluator";
 	private final String setDefaultAutoSortSubCommand = "setDefaultAutosort";
+	private final String setDefaultCategoriesSubCommand = "setDefaultCategories";
 
 	/* Syntax Error */
 
 	private final String syntax = "/sortingconfig <pattern/evaluator/setautosort/adminconfig>";
-	private final String adminConfigSyntax = "/sortingconfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>"; // alias
+	private final String adminConfigSyntax = "/sortingconfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort/setdefaultcategories>"; // alias
 																																		// ac
 																																		// for
 																																		// adminconfig
