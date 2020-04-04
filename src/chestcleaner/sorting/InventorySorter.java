@@ -26,43 +26,45 @@ public class InventorySorter {
 	 * @param items an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
 	 */
-	private static List<ItemStack> getFullStacks(List<ItemStack> items) {
+	private static List<ItemStack> reduceStacks(List<ItemStack> items) {
 		// temp list, every item once, amounts get added
-		ArrayList<ItemStack> tempItems = new ArrayList<>();
+		ArrayList<ItemStack> newList = new ArrayList<>();
 
 		for (ItemStack item : items) {
 			if (blacklist.contains(item.getType())) {
-				tempItems.add(item);
+				newList.add(item);
 			} else {
-				ItemStack temp = tempItems.stream()
+				ItemStack existingItem = newList.stream()
 						.filter(tempItem -> tempItem.isSimilar(item))
 						.findFirst().orElse(null);
 
-				if (temp == null) {
-					tempItems.add(item);
+				if (existingItem == null) {
+					newList.add(item);
 				} else {
-					temp.setAmount(temp.getAmount() + item.getAmount());
+					existingItem.setAmount(existingItem.getAmount() + item.getAmount());
 				}
 			}
 		}
+		return newList;
+	}
 
-		ArrayList<ItemStack> out = new ArrayList<>();
+	private static List<ItemStack> expandStacks(List<ItemStack> items) {
+		ArrayList<ItemStack> newList = new ArrayList<>();
 
-		for (ItemStack item : tempItems) {
+		for (ItemStack item : items) {
 			if (blacklist.contains(item.getType())) {
-				out.add(item);
+				newList.add(item);
 			} else if (!item.getType().equals(Material.AIR)){
-				// get / set full stacks
 				while (item.getAmount() > 0) {
 					int amount = Math.min(item.getAmount(), item.getMaxStackSize());
 					ItemStack clone = item.clone();
 					clone.setAmount(amount);
-					out.add(clone);
+					newList.add(clone);
 					item.setAmount(item.getAmount() - amount);
 				}
 			}
 		}
-		return out;
+		return newList;
 	}
 
 	/**
@@ -90,8 +92,9 @@ public class InventorySorter {
 			return true;
 		}
 
+		list = reduceStacks(list);
 		list = Categorizers.sort(list, categorizerConfig);
-		list = getFullStacks(list);
+		list = expandStacks(list);
 
 		InventoryConverter.setItemsOfInventory(inv, list, pattern);
 		return true;
