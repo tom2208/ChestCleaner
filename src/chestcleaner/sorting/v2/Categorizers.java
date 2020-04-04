@@ -14,6 +14,15 @@ public class Categorizers {
         availableCategorizers.add(categorizer);
     }
 
+    public static boolean validateExists(List<String> strings) {
+        try {
+            strings.forEach(Categorizers::getByName);
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
     public static Categorizer getByName(String name) {
 
         Categorizer result = availableCategorizers.stream().filter(
@@ -25,6 +34,10 @@ public class Categorizers {
         }
 
         return result;
+    }
+
+    public static List<String> getAllNames() {
+        return availableCategorizers.stream().map(Categorizer::getName).collect(Collectors.toList());
     }
 
     public static List<ItemStack> sort(List<ItemStack> items, List<String> categorizerNames) {
