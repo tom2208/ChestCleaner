@@ -24,6 +24,8 @@ import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
+import javax.swing.text.StyledEditorKit;
+
 /**
  * A command class representing the SortingConfig command. SortingConfig Command
  * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-sortingconfig
