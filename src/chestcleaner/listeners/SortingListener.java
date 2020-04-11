@@ -53,7 +53,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					e.setCancelled(true);
 
-				} else if (!PluginConfigManager.getInstance().isEventModeActive()) {
+				} else if (!PluginConfigManager.isEventModeActive()) {
 
 					if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
@@ -62,7 +62,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 						if (!InventoryDetector.hasInventoryHolder(b))
 							return;
 
-						if (BlacklistCommand.inventoryBlacklist.contains(b.getType())
+						if (PluginConfigManager.getBlacklistInventory().contains(b.getType())
 								|| !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
 							return;
 						}
@@ -102,7 +102,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 		if (item.getType().equals(Material.AIR)) {
 			return false;
 		}
-		return getCompairableItem(item).isSimilar(ChestCleaner.item);
+		return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
 	}
 
 	private boolean isPlayerHoldingCleaningItemInOffHand(Player player) {
@@ -110,7 +110,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 		if (item.getType().equals(Material.AIR)) {
 			return false;
 		}
-		return getCompairableItem(item).isSimilar(ChestCleaner.item);
+		return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
 	}
 
 	private boolean isPlayerAllowedToCleanOwnInv(Player player) {
@@ -129,7 +129,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 	 */
 	private void damageItem(Player player) {
 
-		if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
+		if (PluginConfigManager.isDurabilityLossActive()) {
 
 			ItemStack item;
 			if (isPlayerHoldingCleaningItemInMainHand(player)) {
@@ -155,7 +155,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onOpenInventory(InventoryOpenEvent e) {
 
-		if (PluginConfigManager.getInstance().isEventModeActive()) {
+		if (PluginConfigManager.isEventModeActive()) {
 
 			Player player = (Player) e.getPlayer();
 
@@ -192,7 +192,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (PlayerDataManager.getInstance().getAutoSortOfPlayer(p)) {
+			if (PlayerDataManager.isAutoSort(p)) {
 
 				if (!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 					return;

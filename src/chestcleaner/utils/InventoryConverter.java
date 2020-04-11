@@ -3,6 +3,7 @@ package chestcleaner.utils;
 import java.util.ArrayList;
 import java.util.List;
 
+import chestcleaner.config.PluginConfigManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -75,7 +76,7 @@ public class InventoryConverter {
 		}
 
 		if (pattern == null)
-			pattern = SortingPattern.DEFAULT;
+			pattern = PluginConfigManager.getDefaultPattern();
 
 		switch (pattern) {
 

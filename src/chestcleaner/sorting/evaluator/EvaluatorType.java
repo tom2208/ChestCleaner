@@ -33,6 +33,4 @@ public enum EvaluatorType {
 		return list;
 	}
 
-	public static EvaluatorType DEFAULT = EvaluatorType.BACK_BEGIN_STRING;
-
 }

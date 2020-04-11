@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import chestcleaner.config.PluginConfigManager;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -30,11 +31,6 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
-	// This List is the global list of blacklisted inventories, it gets used in
-	// other
-	// classes etc.
-	public static ArrayList<Material> inventoryBlacklist = new ArrayList<>();
-
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 
@@ -53,13 +49,13 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		if (args.length >= 2 && args.length <= 3) {
 
 			/* initialize list */
-			ArrayList<Material> list;
+			List<Material> list;
 			int listNumber = -1;
 			if (args[0].equalsIgnoreCase(sortingSubCommand)) {
-				list = InventorySorter.blacklist;
+				list = PluginConfigManager.getBlacklistSorting();
 				listNumber = 0;
 			} else if (args[0].equalsIgnoreCase(inventoriesSubCommand)) {
-				list = inventoryBlacklist;
+				list = PluginConfigManager.getBlacklistInventory();
 				listNumber = 1;
 			} else {
 				sendSyntaxError(sender);
@@ -109,7 +105,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				}
 
 				list.add(material);
-				safeList(listNumber);
+				safeList(listNumber, list);
 
 				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.MATERIAL_ADDED_TO_BLACKLIST,
 						sender, material.name());
@@ -177,7 +173,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				}
 
 				list.remove(material);
-				safeList(listNumber);
+				safeList(listNumber, list);
 
 				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
 						MessageID.MATERIAL_REMOVED_FROM_BLACKLIST, sender, material.name());
@@ -222,7 +218,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			} else if (args[1].equalsIgnoreCase(clearSubCommand)) {
 
 				list.clear();
-				safeList(listNumber);
+				safeList(listNumber, list);
 				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.BLACKLIST_CLEARED, sender);
 				return true;
 
@@ -257,7 +253,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	/**
 	 * Sends the correct syntax the Player {@code p}.
 	 * 
-	 * @param p the player how receives the message.
+	 * @param sender the player who receives the message.
 	 */
 	private void sendSyntaxError(CommandSender sender) {
 		MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxErrorMessage, sender);
@@ -268,31 +264,12 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	 * 
 	 * @param list 0 meaning sortingBlacklist, 1 inventoryBlacklist.
 	 */
-	private void safeList(int list) {
-
+	private void safeList(int list, List<Material> items) {
 		if (list == 0) {
-			PluginConfig.getInstance().setIntoConfig(ConfigPath.BLACKLIST.getPath(),
-					getStringListFormMaterialList(InventorySorter.blacklist));
+			PluginConfigManager.setBlacklistSorting(items);
 		} else if (list == 1) {
-			PluginConfig.getInstance().setIntoConfig(ConfigPath.INVENTORY_BLACKLIST.getPath(),
-					getStringListFormMaterialList(inventoryBlacklist));
+			PluginConfigManager.setBlacklistInventory(items);
 		}
-
-	}
-
-	/**
-	 * Converts an ArrayList of Materials into an ArrayList of Strings.
-	 * 
-	 * @param materialList a ArrayList of Materials.
-	 * @return a ArrayList of Strings.
-	 */
-	private List<String> getStringListFormMaterialList(List<Material> materialList) {
-		List<String> list = new ArrayList<>();
-
-		for (Material material : materialList) {
-			list.add(material.name());
-		}
-		return list;
 	}
 
 	@Override

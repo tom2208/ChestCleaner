@@ -18,7 +18,7 @@ public class MasterCategorizer extends Categorizer{
     @Override
     public List<List<ItemStack>> doCategorization(List<ItemStack> items) {
         List<List<ItemStack>> returnItems = new ArrayList<>();
-        returnItems.add(Categorizers.sort(items, subCategorizers));
+        returnItems.add(CategorizerManager.sort(items, subCategorizers));
         return returnItems;
     }
 }

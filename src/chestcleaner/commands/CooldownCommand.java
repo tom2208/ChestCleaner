@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import chestcleaner.utils.StringUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -70,11 +71,8 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 	private boolean setCooldownSubCommand(String arg, CommandSender sender) {
 
 		try {
-			int time = Integer.valueOf(arg);
-			if (CooldownManager.getInstance().getCooldown() != time) {
-				CooldownManager.getInstance().setCooldown(time * 1000);
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_TIME, time * 1000);
-			}
+			int time = Integer.parseInt(arg);
+			PluginConfigManager.setCooldown(time);
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.TIMER_TIME, sender,
 					String.valueOf(time));
 
@@ -86,33 +84,19 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setActiveSubCommand(String arg, CommandSender sender) {
-		String trueStr = PluginConfigManager.getInstance().getTrueString();
-		String falseStr = PluginConfigManager.getInstance().getFalseString();
+		String trueStr = Boolean.TRUE.toString();
+		String falseStr = Boolean.FALSE.toString();
 
-		if (arg.equalsIgnoreCase(trueStr)) {
-
-			if (!CooldownManager.getInstance().isActive()) {
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, true);
-				CooldownManager.getInstance().setActive(true);
-			}
+		if (arg.equalsIgnoreCase(trueStr) || arg.equalsIgnoreCase(falseStr)) {
+			boolean state = Boolean.getBoolean(arg);
+			PluginConfigManager.setCooldownActive(state);
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, sender,
-					trueStr);
-			return true;
-
-		} else if (arg.equalsIgnoreCase(falseStr)) {
-
-			if (CooldownManager.getInstance().isActive()) {
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.COOLDOWN_ACTIVE, false);
-				CooldownManager.getInstance().setActive(false);
-			}
-			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, sender,
-					falseStr);
-			return true;
+					String.valueOf(state));
 
 		} else {
 			sendSytaxError(sender);
-			return true;
 		}
+		return true;
 	}
 
 	/**
@@ -143,7 +127,7 @@ public class CooldownCommand implements CommandExecutor, TabCompleter {
 			case 2:
 				/* SETACTIVE */
 				if (args[0].equalsIgnoreCase(setActiveSubCommand)) {
-					StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(),
+					StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(),
 							completions);
 				}
 

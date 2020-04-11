@@ -11,12 +11,12 @@ public class DataLoadingListener implements Listener {
 
 	@EventHandler
 	private void onPlayerJoin(PlayerJoinEvent e) {
-		PlayerDataManager.getInstance().loadPlayerData(e.getPlayer());
+		PlayerDataManager.loadPlayerData(e.getPlayer());
 	}
 
 	@EventHandler
 	private void onPlayerLeave(PlayerQuitEvent e) {
-		PlayerDataManager.getInstance().removePlayerDataFormMemory(e.getPlayer());
+		PlayerDataManager.removePlayerDataFormMemory(e.getPlayer());
 	}
 
 }

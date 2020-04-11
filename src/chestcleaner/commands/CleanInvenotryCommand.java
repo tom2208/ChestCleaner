@@ -36,7 +36,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		if (cs instanceof Player) {
 			player = (Player) cs;
 			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
-					&& PluginConfigManager.getInstance().isCleanInvPermission()) {
+					&& PluginConfigManager.isCleanInvPermission()) {
 				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
 						PluginPermissions.CMD_INV_CLEAN.getString(), player);
 				return true;
@@ -52,7 +52,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			
 			Block block = BlockDetector.getTargetBlock(player);
 
-			if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
+			if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
 				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, player);
 				return true;
 			}
@@ -124,7 +124,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		 */
 		Block block = BlockDetector.getBlockByLocation(new Location(world, x, y, z));
 
-		if (BlacklistCommand.inventoryBlacklist.contains(block.getType())) {
+		if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, cs);
 			return true;
 		}

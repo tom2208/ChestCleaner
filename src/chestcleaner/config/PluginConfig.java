@@ -1,28 +1,16 @@
 package chestcleaner.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import chestcleaner.config.serializable.ListCategory;
 import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.sorting.DefaultSortingList;
-import org.bukkit.Material;
+import chestcleaner.main.ChestCleaner;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.commands.BlacklistCommand;
-import chestcleaner.main.ChestCleaner;
-import chestcleaner.sorting.CooldownManager;
-import chestcleaner.sorting.InventorySorter;
-import chestcleaner.sorting.SortingPattern;
-import chestcleaner.sorting.evaluator.EvaluatorType;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * This is a singleton class to combine all configs and their utility methods
@@ -35,138 +23,55 @@ public class PluginConfig {
 
 	private static PluginConfig instance = null;
 
-	private File configFile;
-	private FileConfiguration config;
-	private File playerDataConfigFile;
+	private File playerDataFile;
 	private FileConfiguration playerDataConfig;
 
 	protected PluginConfig() {
-		configFile = new File("plugins/" + ChestCleaner.main.getName(), "config.yml");
-		ConfigurationSerialization.registerClass(WordCategory.class);
-		ConfigurationSerialization.registerClass(ListCategory.class);
-		config = YamlConfiguration.loadConfiguration(configFile);
-		playerDataConfigFile = new File("plugins/" + ChestCleaner.main.getName(), "playerdata.yml");
-		playerDataConfig = YamlConfiguration.loadConfiguration(playerDataConfigFile);
+		ChestCleaner.main.saveDefaultConfig();
+		ChestCleaner.main.getConfig().options().copyDefaults(true);
+		playerDataFile = new File("plugins/" + ChestCleaner.main.getName(), "playerdata.yml");
+		playerDataConfig = YamlConfiguration.loadConfiguration(playerDataFile);
 	}
 
 	/**
-	 * Loads all variables out of the config, if the config does not exist it will
-	 * generate one with the default values for the variables.
+	 * Loads the Locale and Categories from the config.yml,
+	 * or uses the defaults from the jar/default config.yml if not set
 	 */
 	public void loadConfig() {
 
-		save(configFile, config);
-
-		if (!setIfDoesntContains(ConfigPath.DEFAULT_AUTOSORT, PlayerDataManager.getInstance().isDefaultAutoSort())) {
-			PlayerDataManager.getInstance()
-					.setDefaultAutoSort(config.getBoolean(ConfigPath.DEFAULT_AUTOSORT.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.DEFAULT_EVALUATOR, EvaluatorType.DEFAULT.name())) {
-			EvaluatorType.DEFAULT = EvaluatorType
-					.getEvaluatorTypByName(config.getString(ConfigPath.DEFAULT_EVALUATOR.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.DEFAULT_SORTING_PATTERN, SortingPattern.DEFAULT.name())) {
-			SortingPattern.DEFAULT = SortingPattern
-					.getSortingPatternByName(config.getString(ConfigPath.DEFAULT_SORTING_PATTERN.getPath()));
-		}
-
-		if (config.contains(ConfigPath.LOCALE_LANGUAGE.getPath())
-				&& config.contains(ConfigPath.LOCALE_COUNTRY.getPath())) {
-			String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
-			String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
-			ChestCleaner.main.setLocale(language, country, ChestCleaner.main.getDescription().getVersion().replace(".", "-"));
-		} else {
-			config.set(ConfigPath.LOCALE_LANGUAGE.getPath(), Locale.UK.getLanguage());
-			config.set(ConfigPath.LOCALE_COUNTRY.getPath(), Locale.UK.getCountry());
-			ChestCleaner.main.setLocale(Locale.UK.getLanguage(), Locale.UK.getCountry(), ChestCleaner.main.getDescription().getVersion().replace(".", "-"));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM, new ItemStack(Material.IRON_HOE))) {
-			ChestCleaner.item = config.getItemStack(ConfigPath.CLEANING_ITEM.getPath());
-		}
-
-		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_ACTIVE, true)) {
-			PluginConfigManager.getInstance()
-					.setCleaningItemActive(config.getBoolean(ConfigPath.CLEANING_ITEM_ACTIVE.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.CLEANING_ITEM_DURABILITY, true)) {
-			PluginConfigManager.getInstance()
-					.setDurabilityLossActive(config.getBoolean(ConfigPath.CLEANING_ITEM_DURABILITY.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.OPEN_INVENTORY_MODE, false)) {
-			PluginConfigManager.getInstance()
-					.setDurabilityLossActive(config.getBoolean(ConfigPath.OPEN_INVENTORY_MODE.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.CONSUMABLES_REFILL, true)) {
-			PluginConfigManager.getInstance()
-					.setConsumablesRefillActive(config.getBoolean(ConfigPath.CONSUMABLES_REFILL.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.BLOCK_REFILL, true)) {
-			PluginConfigManager.getInstance()
-					.setBlockRefillActive(config.getBoolean(ConfigPath.BLOCK_REFILL.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.INVENTORY_PERMISSION_ACTIVE, true)) {
-			PluginConfigManager.getInstance()
-					.setCleanInvPermission(config.getBoolean(ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath()));
-		}
-
-		if (!setIfDoesntContains(ConfigPath.COOLDOWN_ACTIVE, true)) {
-			CooldownManager.getInstance().setActive(config.getBoolean(ConfigPath.COOLDOWN_ACTIVE.getPath()));
-		}
-
-		setIfDoesntContains(ConfigPath.CATEGORIES_ORDER, DefaultSortingList.DEFAULT_CATEGORIES_ORDER);
-		PluginConfigManager.getInstance().setCategorizationOrder(
-				(List<String>) config.getList(ConfigPath.CATEGORIES_ORDER.getPath()));
-
-		setIfDoesntContains(ConfigPath.CATEGORIES_WORDS, DefaultSortingList.DEFAULT_WORD_CATEGORIES);
-		setIfDoesntContains(ConfigPath.CATEGORIES_LISTS, DefaultSortingList.DEFAULT_LIST_CATEGORIES);
-		setIfDoesntContains(ConfigPath.CATEGORIES_MASTER, DefaultSortingList.DEFAULT_MASTER_CATEGORIES);
-
+		FileConfiguration config = ChestCleaner.main.getConfig();
+	    // Locale
+		String language = config.getString(ConfigPath.LOCALE_LANGUAGE.getPath());
+		String country = config.getString(ConfigPath.LOCALE_COUNTRY.getPath());
+		String variant = ChestCleaner.main.getDescription().getVersion().replace(".", "-");
+		ChestCleaner.main.setLocale(language, country, variant);
+		// Categorizers
 		CategoryLoader.loadCategorizers(
 				(List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()),
 				(List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath()),
 				(List<MasterCategory>) config.getList(ConfigPath.CATEGORIES_MASTER.getPath())
 		);
 
-
-		if (config.contains(ConfigPath.COOLDOWN_TIME.getPath())) {
-			CooldownManager.getInstance().setCooldown(config.getInt(ConfigPath.COOLDOWN_TIME.getPath()));
-		}
-
-		if (config.contains(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())) {
-			PluginConfigManager.getInstance()
-					.setUpdateCheckerActive((config.getBoolean(ConfigPath.UPDATE_CHECKER_ACTIVE.getPath())));
-		}
-
-		if (config.contains(ConfigPath.BLACKLIST.getPath())) {
-			List<String> list = config.getStringList(ConfigPath.BLACKLIST.getPath());
-			ArrayList<Material> materials = new ArrayList<>();
-
-			for (String name : list) {
-				materials.add(Material.getMaterial(name));
-			}
-			InventorySorter.blacklist = materials;
-		}
-
-		if (config.contains(ConfigPath.INVENTORY_BLACKLIST.getPath())) {
-			List<String> list = config.getStringList(ConfigPath.INVENTORY_BLACKLIST.getPath());
-			ArrayList<Material> materials = new ArrayList<>();
-
-			for (String name : list) {
-				materials.add(Material.getMaterial(name));
-			}
-			BlacklistCommand.inventoryBlacklist = materials;
-		}
-		save(configFile, config);
+		ChestCleaner.main.saveConfig();
 	}
 
+	public static FileConfiguration getConfig() {
+		return ChestCleaner.main.getConfig();
+	}
+
+	public static void setIntoConfig(ConfigPath path, Object obj) {
+		ChestCleaner.main.getConfig().set(path.getPath(), obj);
+		ChestCleaner.main.saveConfig();
+	}
+
+	public static FileConfiguration getPlayerData() {
+		return getInstance().playerDataConfig;
+	}
+
+	public static void setIntoPlayerData(Player p, PlayerDataPath path, Object obj) {
+		getPlayerData().set(path.getPath(p), obj);
+		savePlayerData();
+	}
 
 	/**
 	 * Saves this {@code FileConfiguration} to the the ChestCleaner folder. If the
@@ -179,7 +84,7 @@ public class PluginConfig {
 	 * @param configFile the file in which the FileConfiguration should be saved in.
 	 * @param config     the FileCondiguration that should get saved into the file.
 	 */
-	private void save(File configFile, FileConfiguration config) {
+	private static void save(File configFile, FileConfiguration config) {
 
 		try {
 			config.save(configFile);
@@ -189,68 +94,11 @@ public class PluginConfig {
 
 	}
 
-	/* SORTINGPATTERN */
-	public void setSortingPattern(SortingPattern pattern, Player p) {
-		playerDataConfig.set(p.getUniqueId() + ".sortingpattern", pattern.name());
-		save(playerDataConfigFile, playerDataConfig);
+	public static void savePlayerData() {
+		PluginConfig c = getInstance();
+		save(c.playerDataFile, c.playerDataConfig);
 	}
 
-	public SortingPattern getSortingPattern(Player p) {
-		return SortingPattern.getSortingPatternByName(playerDataConfig.getString(p.getUniqueId() + ".sortingpattern"));
-	}
-
-	/* EVALUATORTYP */
-	public void setEvaluatorTyp(EvaluatorType pattern, Player p) {
-		playerDataConfig.set(p.getUniqueId() + ".evaluatortyp", pattern.name());
-		save(playerDataConfigFile, playerDataConfig);
-	}
-
-	public EvaluatorType getEvaluatorType(Player p) {
-		return EvaluatorType.getEvaluatorTypByName(playerDataConfig.getString(p.getUniqueId() + ".evaluatortyp"));
-	}
-
-	/* AUTOSORT */
-	public void setAutoSort(boolean b, Player p) {
-		playerDataConfig.set(p.getUniqueId() + ".autosort", b);
-		save(playerDataConfigFile, playerDataConfig);
-	}
-
-	public boolean containsAutoSort(Player p) {
-		return playerDataConfig.contains(p.getUniqueId() + ".autosort");
-	}
-
-	public boolean getAutoSort(Player p) {
-		return playerDataConfig.getBoolean(p.getUniqueId() + ".autosort");
-	}
-
-	/**
-	 * Sets the {@code value} in the config in the path {@code path}. Returns true
-	 * if i did successfully.
-	 * 
-	 * @param path  a path in the .yml configuration.
-	 * @param value the object you want to check or set.
-	 * @return true if the path was set otherwise false.
-	 */
-	private boolean setIfDoesntContains(ConfigPath path, Object value) {
-		if (!config.contains(path.getPath())) {
-			config.set(path.getPath(), value);
-			return true;
-		}
-		return false;
-	}
-
-	public void setIntoConfig(ConfigPath path, Object obj) {
-		setIntoConfig(path.getPath(), obj);
-	}
-
-	public void setIntoConfig(String path, Object obj) {
-		config.set(path, obj);
-		save(configFile, config);
-	}
-
-	public FileConfiguration getConfig() {
-		return config;
-	}
 
 	/**
 	 * Returns the instance of this singleton if it's null it creates one.
@@ -296,6 +144,21 @@ public class PluginConfig {
 		public String getPath() {
 			return path;
 		}
+	}
 
+	public enum PlayerDataPath {
+
+		AUTOSORT("autosort"),
+		PATTERN("sortingpattern");
+
+		private String path;
+
+		PlayerDataPath(String path) {
+			this.path = path;
+		}
+
+		public String getPath(Player p) {
+			return p.getUniqueId() + "." + path;
+		}
 	}
 }

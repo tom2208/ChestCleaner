@@ -17,7 +17,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onPlacingBlock(BlockPlaceEvent e) {
 
-		if (PluginConfigManager.getInstance().isBlockRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.isBlockRefillActive() && !e.isCancelled()) {
 			Player player = e.getPlayer();
 
 			if (isPlayerAllowedToRefillBlocks(player)) {
@@ -47,7 +47,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onConsuming(PlayerItemConsumeEvent e) {
 
-		if (PluginConfigManager.getInstance().isConsumablesRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.isConsumablesRefillActive() && !e.isCancelled()) {
 
 			Player player = e.getPlayer();
 

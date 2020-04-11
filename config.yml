@@ -7,7 +7,7 @@ locale:
 cleaningItem:
   ==: org.bukkit.inventory.ItemStack
   v: 2230
-  type: LEGACY_IRON_HOE
+  type: IRON_HOE
 active: true
 durability: true
 openinventoryeventmode: false
@@ -16,3 +16,57 @@ blockrefill: true
 cleanInventorypermissionactive: true
 cooldown:
   active: true
+  time: 5000
+blacklist:
+  - AIR
+inventoryblacklist:
+  - FURNACE
+categories:
+  order:
+    - StoneMaster
+    - Stairword
+  words:
+    - ==: WordCategory
+      name: StoneWord
+      word: stone
+    - ==: WordCategory
+      name: StairWord
+      word: stair
+    - ==: WordCategory
+      name: SlabWord
+      word: slab
+    - ==: WordCategory
+      name: CarpetWord
+      word: carpet
+  lists:
+    - ==: ListCategory
+      name: StoneList
+      list:
+        - minecraft:stone
+        - minecraft:stone_bricks
+        - minecraft:mossy_stone_bricks
+        - minecraft:cracked_stone_bricks
+        - minecraft:chiseled_stone_bricks
+        - minecraft:smooth_stone
+        - minecraft:granite
+        - minecraft:polished_granite
+        - minecraft:diorite
+        - minecraft:polished_diorite
+        - minecraft:andesite
+        - minecraft:polished_andesite
+        - minecraft:gravel
+    - ==: ListCategory
+      name: DirtList
+      list:
+        - minecraft:dirt
+        - minecraft:grass_block
+        - minecraft:grass_path
+        - minecraft:coarse_dirt
+        - minecraft:podzol
+        - minecraft:mycelium
+  master:
+    - ==: MasterCategory
+      name: StoneMaster
+      list:
+        - StoneList
+        - StoneWord

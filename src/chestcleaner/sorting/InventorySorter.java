@@ -5,7 +5,7 @@ import java.util.List;
 
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.v2.Categorizers;
+import chestcleaner.sorting.v2.CategorizerManager;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -18,8 +18,6 @@ import chestcleaner.utils.InventoryDetector;
 
 public class InventorySorter {
 
-	public static ArrayList<Material> blacklist = new ArrayList<>();
-
 	/**
 	 * Returns {@code list} sorted in full stacked items.
 	 * 
@@ -31,7 +29,7 @@ public class InventorySorter {
 		ArrayList<ItemStack> newList = new ArrayList<>();
 
 		for (ItemStack item : items) {
-			if (blacklist.contains(item.getType())) {
+			if (PluginConfigManager.getBlacklistSorting().contains(item.getType())) {
 				newList.add(item);
 			} else {
 				ItemStack existingItem = newList.stream()
@@ -52,7 +50,7 @@ public class InventorySorter {
 		ArrayList<ItemStack> newList = new ArrayList<>();
 
 		for (ItemStack item : items) {
-			if (blacklist.contains(item.getType())) {
+			if (PluginConfigManager.getBlacklistSorting().contains(item.getType())) {
 				newList.add(item);
 			} else if (!item.getType().equals(Material.AIR)){
 				while (item.getAmount() > 0) {
@@ -75,8 +73,8 @@ public class InventorySorter {
 	public static boolean sortInventory(Inventory inv, Player p) {
 
 		List<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
-		List<String> categorizerConfig = PluginConfigManager.getInstance().getCategorizationOrder();
-		SortingPattern pattern = SortingPattern.DEFAULT;
+		List<String> categorizerConfig = PluginConfigManager.getCategorizationOrder();
+		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 
 		if(list == null) {
 			return false;
@@ -84,7 +82,7 @@ public class InventorySorter {
 
 		if(p != null) {
 			// categorizerConfig = PlayerDataManager.getInstance().getCategorizationOrder(p);
-			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+			pattern = PlayerDataManager.getSortingPattern(p);
 		}
 
 		if (list.size() <= 1) {
@@ -93,7 +91,7 @@ public class InventorySorter {
 		}
 
 		list = reduceStacks(list);
-		list = Categorizers.sort(list, categorizerConfig);
+		list = CategorizerManager.sort(list, categorizerConfig);
 		list = expandStacks(list);
 
 		InventoryConverter.setItemsOfInventory(inv, list, pattern);

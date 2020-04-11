@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-public class MessageUtils {
+public class StringUtils {
 
     /**
      * Same basic functionality as org.bukkit.util.StringUtil copyPartialMatches
@@ -50,5 +50,13 @@ public class MessageUtils {
                 collection.add(prefix + string);
             }
         }
+    }
+
+    public static boolean isStringTrueOrFalse(String str) {
+        return Boolean.parseBoolean(str) || str.equalsIgnoreCase(Boolean.FALSE.toString());
+    }
+
+    public static List<String> getBooleanValueStringList(){
+        return Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString());
     }
 }

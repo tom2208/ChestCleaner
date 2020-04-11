@@ -1,10 +1,11 @@
 package chestcleaner.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
+import chestcleaner.config.PluginConfigManager;
+import chestcleaner.utils.PluginPermissions;
+import chestcleaner.utils.StringUtils;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -16,14 +17,10 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.main.ChestCleaner;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A command class representing the CleaningItem command. CleaningItem Command
@@ -69,11 +66,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_NAME,
 						sender, newname);
 
-				ItemStack is = ChestCleaner.item;
-				ItemMeta im = is.getItemMeta();
-				im.setDisplayName(newname);
-				ChestCleaner.item.setItemMeta(im);
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
+				ItemStack is = PluginConfigManager.getCleaningItem();
+				is.getItemMeta().setDisplayName(newname);
+				PluginConfigManager.setCleaningItem(is);
 
 				return true;
 
@@ -104,10 +99,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				}
 
-				ItemMeta im = ChestCleaner.item.getItemMeta();
-				im.setLore(lorelist);
-				ChestCleaner.item.setItemMeta(im);
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, ChestCleaner.item);
+				ItemStack is = PluginConfigManager.getCleaningItem();
+				is.getItemMeta().setLore(lorelist);
+				PluginConfigManager.setCleaningItem(is);
 
 				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_LORE, sender);
 				return true;
@@ -141,9 +135,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						damageable.setDamage(0);
 						item.setItemMeta(itemMeta);
 						item.setAmount(1);
-						PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM, item);
 
-						ChestCleaner.item = item;
+						PluginConfigManager.setCleaningItem(item);
 						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
 								MessageID.SET_CLEANING_ITEM, player, item.toString());
 
@@ -170,7 +163,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
 
-					player.getInventory().addItem(ChestCleaner.item);
+					player.getInventory().addItem(PluginConfigManager.getCleaningItem());
 					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.YOU_GOT_CLEANING_ITEM, player);
 					return true;
 
@@ -200,14 +193,11 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				}
 
-				if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
+				if (StringUtils.isStringTrueOrFalse(args[1])) {
 
-					boolean b = false;
-					if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
-						b = true;
+					boolean b = Boolean.parseBoolean(args[1]);
 
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_ACTIVE, b);
-					PluginConfigManager.getInstance().setCleaningItemActive(b);
+					PluginConfigManager.setCleaningItemActive(b);
 
 					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.CLEANING_ITEM_TOGGLED,
 							sender, String.valueOf(b));
@@ -230,15 +220,12 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 
-				if (PluginConfigManager.isStringTrueOrFalse(args[1])) {
+				if (StringUtils.isStringTrueOrFalse(args[1])) {
 
-					boolean b = false;
-					if (args[1].equalsIgnoreCase(PluginConfigManager.getInstance().getTrueString()))
-						b = true;
+					boolean b = Boolean.parseBoolean(args[1]);
 
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.CLEANING_ITEM_DURABILITY, b);
-					PluginConfigManager.getInstance().setDurabilityLossActive(b);
-					if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
+					PluginConfigManager.setDurabilityLossActive(b);
+					if (PluginConfigManager.isDurabilityLossActive()) {
 						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DURABILITYLOSS_AVTIVATED, sender);
 					} else {
 						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DURABILITYLOSS_DEACTIVATED,
@@ -266,7 +253,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player2 != null) {
 
-					player2.getInventory().addItem(ChestCleaner.item);
+					player2.getInventory().addItem(PluginConfigManager.getCleaningItem());
 					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
 							MessageID.PLAYER_GOT_CLEANING_ITEM, sender, player2.getName());
 
@@ -280,7 +267,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 						for (Object p : players) {
 							Player pl = (Player) p;
-							pl.getInventory().addItem(ChestCleaner.item);
+							pl.getInventory().addItem(PluginConfigManager.getCleaningItem());
 							MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
 									MessageID.PLAYER_GOT_CLEANING_ITEM, sender, pl.getName());
 
@@ -306,11 +293,10 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 					}
 				}
 				boolean b = Boolean.parseBoolean(args[1]);
-				PluginConfigManager.getInstance().setEventModeActive(b);
+				PluginConfigManager.setEventModeActive(b);
 				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.OPEN_INV_MODE_TOGGLED,
 						sender, String.valueOf(b));
 
-				PluginConfig.getInstance().setIntoConfig(ConfigPath.OPEN_INVENTORY_MODE, b);
 				return true;
 
 			} else {
@@ -345,7 +331,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			if (args[0].equalsIgnoreCase(setActiveSubCommand) || args[0].equalsIgnoreCase(setDurabilityLossSubCommand)
 					|| args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
-				StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(), completions);
+				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			}
 
 		}
