@@ -1,7 +1,11 @@
 package chestcleaner.utils;
 
 import org.apache.commons.lang.Validate;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -58,5 +62,54 @@ public class StringUtils {
 
     public static List<String> getBooleanValueStringList(){
         return Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString());
+    }
+
+
+    public static ItemStack getAsBook(String string) {
+        ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
+        BookMeta bm = (BookMeta) book.getItemMeta();
+        bm.setPages(seperateIntoPages(string));
+        book.setItemMeta(bm);
+        return book;
+    }
+
+    public static List<String> seperateIntoPages(String string) {
+        List<String> pages = new ArrayList<>();
+        String curPage = "";
+        int maxLines = 14;
+        int curPageLines = 0;
+        // pages
+        for (String line : string.split("\n")) {
+            int lineCount = countLinesNeeded(line);
+            if (curPageLines + lineCount <= maxLines) {
+                curPageLines += lineCount;
+                curPage = curPage.concat(line).concat("\n");
+            } else {
+                pages.add(curPage);
+                curPage = line.concat("\n");
+                curPageLines = lineCount;
+            }
+        }
+        return pages;
+    }
+
+    private static int countLinesNeeded(String string) {
+        double maxCharsPerLine = 19;
+        int countLines = 1;
+        int curLineChars = 0;
+
+        for (String part : string.split(" ")) {
+            if (part.length() + curLineChars < maxCharsPerLine) {
+                curLineChars += part.length() + 1; // +1 for the space that belongs between the parts
+            } else if (part.length() <= maxCharsPerLine) {
+                countLines++;
+                curLineChars = part.length();
+            } else {
+                double lineRatio = part.length() / maxCharsPerLine;
+                countLines += Math.ceil(lineRatio);
+                curLineChars = (int) (part.length() - ((int)lineRatio * maxCharsPerLine));
+            }
+        }
+        return countLines;
     }
 }

@@ -1,5 +1,9 @@
 package chestcleaner.config;
 
+import chestcleaner.config.serializable.Category;
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
 import chestcleaner.sorting.SortingPattern;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -7,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PluginConfigManager {
 
@@ -95,14 +100,66 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME, time * 1000);
 	}
 
-
-	public static List<String> getCategorizationOrder() {
-		return (List<String>) PluginConfig.getConfig()
-				.getList(PluginConfig.ConfigPath.CATEGORIES_ORDER.getPath());
+	public static List<String> getCategoryOrder() {
+		return PluginConfig.getConfig().getStringList(PluginConfig.ConfigPath.CATEGORIES_ORDER.getPath());
 	}
 
-	public static void setCategorizationOrder(List<String> categorizationOrder) {
+	public static void setCategoryOrder(List<String> categorizationOrder) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_ORDER, categorizationOrder);
+	}
+
+	public static Category getCategoryByName(String name) {
+		for (WordCategory category : getWordCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		for (ListCategory category : getListCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		for (MasterCategory category : getMasterCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		return null;
+	}
+
+	public static List<Category> getAllCategories() {
+		List<Category> list = new ArrayList<>();
+		list.addAll(getWordCategories());
+		list.addAll(getListCategories());
+		list.addAll(getMasterCategories());
+		return list;
+	}
+
+	public static List<WordCategory> getWordCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath(), new ArrayList<WordCategory>()));
+	}
+
+	public static void addWordCategory(WordCategory category) {
+		List<WordCategory> categories = getWordCategories();
+		categories.add(category);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_WORDS, categories);
+	}
+
+	public static List<ListCategory> getListCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_LISTS.getPath(), new ArrayList<ListCategory>()));
+	}
+
+	public static void addListCategory(ListCategory category) {
+		List<ListCategory> categories = getListCategories();
+		categories.add(category);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_LISTS, categories);
+	}
+
+	public static List<MasterCategory> getMasterCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_MASTER.getPath(), new ArrayList<MasterCategory>()));
+	}
+
+	public static void addMasterCategory(MasterCategory category) {
+		List<MasterCategory> categories = getMasterCategories();
+		categories.add(category);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_MASTER, categories);
 	}
 
 	public static void setDefaultPattern(SortingPattern pattern) {
@@ -163,5 +220,12 @@ public class PluginConfigManager {
 			list.add(material.name());
 		}
 		return list;
+	}
+
+	private static <T> List<T> getCastList(List<?> input) {
+		if (input == null) {
+			return new ArrayList<>();
+		}
+		return input.stream().map(o -> (T) o).collect(Collectors.toList());
 	}
 }

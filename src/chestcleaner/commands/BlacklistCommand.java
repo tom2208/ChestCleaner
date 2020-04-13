@@ -3,6 +3,7 @@ package chestcleaner.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import chestcleaner.config.PluginConfigManager;
 import org.bukkit.Material;
@@ -13,10 +14,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.sorting.InventorySorter;
-import chestcleaner.utils.MaterialListUtils;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
@@ -39,7 +36,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			player = (Player) sender;
 
 			if (!player.hasPermission(PluginPermissions.CMD_BLACKLIST.getString())) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+				MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 						PluginPermissions.CMD_BLACKLIST.getString(), player);
 				return true;
 			}
@@ -84,14 +81,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				} else {
 
 					if (player == null) {
-						MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage);
+						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage, sender);
 						return true;
 					}
 
 					material = getMaterialFormPlayerHand(player);
 
 					if (material.equals(Material.AIR)) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
+						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
 								player);
 						return true;
 					}
@@ -152,14 +149,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				} else {
 					
 					if (player == null) {
-						MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage);
+						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage, sender);
 						return true;
 					}
 					
 					material = getMaterialFormPlayerHand(player);
 
 					if (material.equals(Material.AIR)) {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
+						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
 								player);
 						return true;
 					}
@@ -188,30 +185,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 					return true;
 				}
 
-				int page = 1;
-				int pages = (list.size() - 1) / LIST_PAGE_LENGTH + 1;
+				String pageString = args.length == 3 ? args[2] : "1";
 
-				if (args.length == 3) {
-
-					try {
-
-						page = Integer.valueOf(args[2]);
-
-					} catch (NumberFormatException ex) {
-						MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.NOT_AN_INTEGER,
-								sender, args[1]);
-						return true;
-					}
-
-					if (!(page > 0 && page <= pages)) {
-						MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-								MessageID.INVALID_PAGE_NUMBER, sender, "1 - " + pages);
-						return true;
-					}
-
-				}
-
-				MaterialListUtils.sendListPageToCS(list, sender, page, LIST_PAGE_LENGTH, pages);
+				List<String> names  = list.stream().map(Enum::name).collect(Collectors.toList());
+				MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
 				return true;
 
 				/*--------------- clear ---------------*/

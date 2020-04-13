@@ -1,6 +1,10 @@
 package chestcleaner.config.serializable;
 
-public interface Category<T> {
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.inventory.ItemStack;
+
+public interface Category<T> extends ConfigurationSerializable {
     String getName();
     T getValue();
+    ItemStack getAsBook();
 }

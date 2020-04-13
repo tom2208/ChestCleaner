@@ -1,5 +1,6 @@
-package chestcleaner.sorting.v2;
+package chestcleaner.sorting.categorizer;
 
+import chestcleaner.utils.Quicksort;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class ComparatorCategorizer extends Categorizer {
     public List<ItemStack> doCategorizationGetList(List<ItemStack> items) {
         //items.sort(comparator);
         //return items;
-        return QuicksortV2.sort(items, comparator, 0, items.size() - 1);
+        return Quicksort.sort(items, comparator, 0, items.size() - 1);
     }
 
 }

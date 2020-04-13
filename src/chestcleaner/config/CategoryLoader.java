@@ -3,9 +3,11 @@ package chestcleaner.config;
 import chestcleaner.config.serializable.ListCategory;
 import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.sorting.v2.CategorizerManager;
-import chestcleaner.sorting.v2.ComparatorCategorizer;
-import chestcleaner.sorting.v2.PredicateCategorizer;
+import chestcleaner.sorting.CategorizerManager;
+import chestcleaner.sorting.categorizer.ComparatorCategorizer;
+import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
+import chestcleaner.sorting.categorizer.MasterCategorizer;
+import chestcleaner.sorting.categorizer.PredicateCategorizer;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
@@ -37,36 +39,36 @@ public class CategoryLoader {
     }
 
     private static void loadStaticCategorizers() {
-        CategorizerManager.addInternalCategorizer(new PredicateCategorizer("is_block", is_block));
-        CategorizerManager.addInternalCategorizer(new PredicateCategorizer("is_item", is_item));
-        CategorizerManager.addInternalCategorizer(new PredicateCategorizer("is_edible", is_edible));
-        CategorizerManager.addInternalCategorizer(new PredicateCategorizer("is_fuel", is_fuel));
-        CategorizerManager.addInternalCategorizer(new PredicateCategorizer("is_flammable", is_flammable));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("is_block", is_block));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("is_item", is_item));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("is_edible", is_edible));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("is_fuel", is_fuel));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("is_flammable", is_flammable));
 
-        CategorizerManager.addInternalCategorizer(new ComparatorCategorizer("alpha_asc", alphabet_asc));
-        CategorizerManager.addInternalCategorizer(new ComparatorCategorizer("alpha_desc", alphabet_desc));
-        CategorizerManager.addInternalCategorizer(new ComparatorCategorizer("alpha_back_asc", alphabet_back_asc));
-        CategorizerManager.addInternalCategorizer(new ComparatorCategorizer("alpha_back_desc", alphabet_back_desc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_asc", alphabet_asc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_desc", alphabet_desc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_back_asc", alphabet_back_asc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_back_desc", alphabet_back_desc));
     }
 
     private static void loadWordCategorizers(List<WordCategory> categories) {
         if (categories == null) {
             return;
         }
-        categories.forEach(CategorizerManager::addCategory);
+        categories.stream().map(PredicateCategorizer::new).forEach(CategorizerManager::addCategorizer);
     }
 
     private static void loadListCategorizers(List<ListCategory> categories) {
         if (categories == null) {
             return;
         }
-        categories.forEach(CategorizerManager::addCategory);
+        categories.stream().map(ListCategoryCategorizer::new).forEach(CategorizerManager::addCategorizer);
     }
 
     private static void loadMasterCategorizers(List<MasterCategory> categories) {
         if (categories == null) {
             return;
         }
-        categories.forEach(CategorizerManager::addCategory);
+        categories.stream().map(MasterCategorizer::new).forEach(CategorizerManager::addCategorizer);
     }
 }

@@ -37,7 +37,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 			player = (Player) cs;
 			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
 					&& PluginConfigManager.isCleanInvPermission()) {
-				MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+				MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 						PluginPermissions.CMD_INV_CLEAN.getString(), player);
 				return true;
 			}
@@ -46,14 +46,14 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		if (args.length == 0) {
 			
 			if(player == null) {
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxConsole);
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxConsole, cs);
 				return true;
 			}
 			
 			Block block = BlockDetector.getTargetBlock(player);
 
 			if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
-				MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, player);
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVENTORY_ON_BLACKLIST, player);
 				return true;
 			}
 
@@ -62,13 +62,13 @@ public class CleanInvenotryCommand implements CommandExecutor {
 				// if the block has no inventory
 				if (!InventorySorter.sortPlayerBlock(block, player)) {
 
-					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR,
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
 							MessageID.BLOCK_HAS_NO_INVENTORY, player, "(" + block.getX() + " / " + block.getY() + " / "
 									+ block.getZ() + ", " + block.getType().name() + ")");
 					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 					return true;
 				}
 
@@ -106,7 +106,7 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		 */
 		if (worldStr == null) {
 			if (player == null) {
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, syntaxConsole);
+				MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxConsole, cs);
 				return true;
 			} else {
 				world = player.getWorld();
@@ -136,26 +136,15 @@ public class CleanInvenotryCommand implements CommandExecutor {
 		/**
 		 * Sorting inventory
 		 */
-		if (player == null) {
+		CommandSender sender = player == null ? cs : player;
 
-			if (InventorySorter.sortPlayerBlock(block, null)) {
-				MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.INVENTORY_SORTED);
-				return true;
-			} else {
-				MessageSystem.sendConsoleMessageWithReplacement(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
-						"(" + x + " / " + y + " / " + z + ")");
-				return true;
-			}
-
+		if (InventorySorter.sortPlayerBlock(block, player)) {
+			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, sender);
+			return true;
 		} else {
-			if (InventorySorter.sortPlayerBlock(block, player)) {
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
-				return true;
-			} else {
-				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY,
-						player, "(" + x + " / " + y + " / " + z + ")");
-				return true;
-			}
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.BLOCK_HAS_NO_INVENTORY, sender,
+					"(" + x + " / " + y + " / " + z + ")");
+			return true;
 		}
 	}
 

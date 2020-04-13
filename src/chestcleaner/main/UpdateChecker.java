@@ -70,7 +70,7 @@ public class UpdateChecker {
 									if (!player.hasPermission(UPDATE_PERM))
 										return;
 
-									MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE, player);
+									MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE, player);
 								}
 							}, javaPlugin));
 

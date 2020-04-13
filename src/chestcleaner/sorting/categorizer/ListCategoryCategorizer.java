@@ -1,4 +1,4 @@
-package chestcleaner.sorting.v2;
+package chestcleaner.sorting.categorizer;
 
 import chestcleaner.config.serializable.ListCategory;
 import org.bukkit.inventory.ItemStack;

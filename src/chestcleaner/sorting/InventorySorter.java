@@ -5,7 +5,6 @@ import java.util.List;
 
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.v2.CategorizerManager;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -73,7 +72,7 @@ public class InventorySorter {
 	public static boolean sortInventory(Inventory inv, Player p) {
 
 		List<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
-		List<String> categorizerConfig = PluginConfigManager.getCategorizationOrder();
+		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
 		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 
 		if(list == null) {
@@ -81,7 +80,7 @@ public class InventorySorter {
 		}
 
 		if(p != null) {
-			// categorizerConfig = PlayerDataManager.getInstance().getCategorizationOrder(p);
+			// categoryNames = PlayerDataManager.getInstance().getCategorizationOrder(p);
 			pattern = PlayerDataManager.getSortingPattern(p);
 		}
 
@@ -91,7 +90,7 @@ public class InventorySorter {
 		}
 
 		list = reduceStacks(list);
-		list = CategorizerManager.sort(list, categorizerConfig);
+		list = CategorizerManager.sort(list, categoryNames);
 		list = expandStacks(list);
 
 		InventoryConverter.setItemsOfInventory(inv, list, pattern);

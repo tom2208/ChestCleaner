@@ -1,14 +1,15 @@
 package chestcleaner.config.serializable;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import chestcleaner.utils.StringUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @SerializableAs("ListCategory")
-public class ListCategory implements Category<List<String>>, ConfigurationSerializable {
+public class ListCategory implements Category<List<String>> {
 
     public String name;
     public List<String> list;
@@ -44,4 +45,18 @@ public class ListCategory implements Category<List<String>>, ConfigurationSerial
 
         return new ListCategory(name, list);
     }
+
+    @Override
+    public ItemStack getAsBook() {
+        return getAsBook("==: ListCategory");
+    }
+
+    protected ItemStack getAsBook(String firstLine) {
+        StringBuilder book = new StringBuilder(firstLine).append("\n");
+        book.append(nameKey + ": ").append(name).append("\n");
+        book.append(listKey + ":\n");
+        list.forEach(item -> book.append("- ").append(item).append("\n"));
+        return StringUtils.getAsBook(book.toString());
+    }
+
 }

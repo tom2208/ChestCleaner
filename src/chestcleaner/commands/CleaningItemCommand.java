@@ -46,7 +46,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player != null) {
 					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString())) {
-						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString(), player);
 						return true;
 					}
@@ -67,7 +67,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						sender, newname);
 
 				ItemStack is = PluginConfigManager.getCleaningItem();
-				is.getItemMeta().setDisplayName(newname);
+				ItemMeta im = is.getItemMeta();
+				im.setDisplayName(newname);
+				is.setItemMeta(im);
 				PluginConfigManager.setCleaningItem(is);
 
 				return true;
@@ -77,7 +79,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player != null) {
 					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString())) {
-						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString(), player);
 						return true;
 					}
@@ -100,7 +102,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				}
 
 				ItemStack is = PluginConfigManager.getCleaningItem();
-				is.getItemMeta().setLore(lorelist);
+				ItemMeta im = is.getItemMeta();
+				im.setLore(lorelist);
+				is.setItemMeta(im);
 				PluginConfigManager.setCleaningItem(is);
 
 				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.SET_CLEANING_ITEM_LORE, sender);
@@ -122,7 +126,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			else if (args[0].equalsIgnoreCase(setItemSubCommand)) {
 
 				if (player == null) {
-					MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
+					MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER, sender);
 					return true;
 				}
 
@@ -137,18 +141,18 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						item.setAmount(1);
 
 						PluginConfigManager.setCleaningItem(item);
-						MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS,
+						MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
 								MessageID.SET_CLEANING_ITEM, player, item.toString());
 
 						return true;
 
 					} else {
-						MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
+						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
 								player);
 						return true;
 					}
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 							PluginPermissions.CMD_CLEANING_ITEM_SET_ITEM.getString(), player);
 					return true;
 				}
@@ -157,18 +161,18 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(getSubCommand)) {
 
 				if (player == null) {
-					MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER);
+					MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER, sender);
 					return true;
 				}
 
 				if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
 
 					player.getInventory().addItem(PluginConfigManager.getCleaningItem());
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.YOU_GOT_CLEANING_ITEM, player);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.YOU_GOT_CLEANING_ITEM, player);
 					return true;
 
 				} else {
-					MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 							PluginPermissions.CMD_CLEANING_ITEM_GET.getString(), player);
 					return true;
 				}
@@ -185,7 +189,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				if (player != null) {
 
-					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
 						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString(), sender);
 						return true;
@@ -213,8 +217,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(setDurabilityLossSubCommand)) {
 
 				if (player != null) {
-					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
-						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString(), player);
 						return true;
 					}
@@ -242,8 +246,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(giveSubCommand)) {
 
 				if (player != null) {
-					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
-						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString(), player);
 						return true;
 					}
@@ -275,7 +279,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 						return true;
 					}
 
-					MessageSystem.sendMessageToPlayerWithReplacement(MessageType.ERROR, MessageID.PLAYER_NOT_ONLINE,
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.PLAYER_NOT_ONLINE,
 							player2, args[1]);
 
 					return true;
@@ -285,8 +289,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(setEventDetectionModeSubCommand)) {
 
 				if (player != null) {
-					if (player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
-						MessageSystem.sendMessageToPlayer(MessageType.MISSING_PERMISSION,
+					if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
+						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
 								PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString(), player);
 						return true;
 

@@ -1,13 +1,14 @@
 package chestcleaner.config.serializable;
 
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import chestcleaner.utils.StringUtils;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @SerializableAs("WordCategory")
-public class WordCategory implements Category<String>, ConfigurationSerializable {
+public class WordCategory implements Category<String> {
 
     private String name;
     private String word;
@@ -42,5 +43,13 @@ public class WordCategory implements Category<String>, ConfigurationSerializable
         String word = map.containsKey(wordKey) ? ((String)map.get(wordKey)) : "";
 
         return new WordCategory(name, word);
+    }
+
+    @Override
+    public ItemStack getAsBook() {
+        String book = "==: WordCategory\n"
+                + nameKey + ": " + name + "\n"
+                + wordKey + ": " + word;
+        return StringUtils.getAsBook(book);
     }
 }

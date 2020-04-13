@@ -1,11 +1,11 @@
-package chestcleaner.sorting.v2;
+package chestcleaner.utils;
 
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Comparator;
 import java.util.List;
 
-public class QuicksortV2 {
+public class Quicksort {
 
 	public static List<ItemStack> sort(List<ItemStack> items, Comparator<ItemStack> comparator, int l, int r) {
 		int q;

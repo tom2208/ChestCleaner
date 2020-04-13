@@ -1,10 +1,11 @@
 package chestcleaner.main;
 
+import chestcleaner.commands.AdminConfigCommand;
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.CleanInvenotryCommand;
 import chestcleaner.commands.CleaningItemCommand;
-import chestcleaner.commands.CooldownCommand;
 import chestcleaner.commands.SortingConfigCommand;
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.ListCategory;
@@ -37,6 +38,7 @@ public class ChestCleaner extends JavaPlugin {
 		ConfigurationSerialization.registerClass(ListCategory.class);
 		ConfigurationSerialization.registerClass(MasterCategory.class);
 		PluginConfig.getInstance().loadConfig();
+		this.getServer().getOnlinePlayers().forEach(PlayerDataManager::loadPlayerData);
 
 		String version = getDescription().getVersion().replace(".", "-");
 		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);
@@ -50,10 +52,10 @@ public class ChestCleaner extends JavaPlugin {
 			e.printStackTrace();
 		}
 		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
-		getCommand("cooldown").setExecutor(new CooldownCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
 		getCommand("blacklist").setExecutor(new BlacklistCommand());
 		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
+		getCommand("adminconfig").setExecutor(new AdminConfigCommand());
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);

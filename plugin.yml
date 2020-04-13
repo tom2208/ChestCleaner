@@ -10,10 +10,6 @@ commands:
     description: Cleans an inventory of a block.
     usage: /<command> <x> <y> <z>
     aliases: [cleaninv, cinv]
-  cooldown:
-    description: Configures the cooldown time of the sorting.
-    usage: /<command> <setActive/setCooldown>
-    aliases: cd
   cleaningitem:
     description: Configuration of the cleaningitem.
     usage: /<command> <get/give/rename/setActive/setDurabilityLoss/setEventDetectionMode/setItem/setLore>
@@ -23,6 +19,10 @@ commands:
     usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
     aliases: bl
   sortingconfig:
-    description: Configuration of the sorting algorithm.
-    usage: /<command> <pattern/evaluator/setautosort/adminconfig>
+    description: Configuration of the sorting algorithm for players.
+    usage: /<command> <autosort/categories/pattern>
     aliases: [sconfig, sc]
+  adminconfig:
+    description: Configuration for admins
+    usage: /<command> <autosort/categories/cooldown/pattern>
+    aliases: [aconfig, ac]

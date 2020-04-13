@@ -3,6 +3,8 @@ package chestcleaner.config;
 import chestcleaner.sorting.SortingPattern;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 /**
  * A singleton class to organize the player data.
  * 
@@ -45,5 +47,14 @@ public class PlayerDataManager {
 		return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.AUTOSORT.getPath(p))
 				? PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.AUTOSORT.getPath(p))
 				: PluginConfigManager.isDefaultAutoSort();
+	}
+
+	public static List<String> getCategoryOrder(Player p) {
+		List<String> list = PluginConfig.getConfig().getStringList(PluginConfig.ConfigPath.CATEGORIES_ORDER.getPath());
+		return !list.isEmpty() ? list : PluginConfigManager.getCategoryOrder();
+	}
+
+	public static void setCategoryOrder(Player p, List<String> categorizationOrder) {
+		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.CATEGORIES_ORDER, categorizationOrder);
 	}
 }

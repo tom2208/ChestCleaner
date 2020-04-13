@@ -38,9 +38,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-			if (isPlayerHoldingACleaningItem(player)) {
+			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
 
-				if (isPlayerAllowedToCleanOwnInv(player)) {
+				if (isPlayerAllowedToCleanOwnInv(player) ) {
 
 					if (!CooldownManager.getInstance().isPlayerOnCooldown(player))
 						return;
@@ -49,7 +49,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 					InventorySorter.sortInventory(player.getInventory(), player);
 					InventorySorter.playSortingSound(player);
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 
 					e.setCancelled(true);
 
@@ -71,7 +71,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 						if (InventorySorter.sortPlayerBlock(b, player)) {
 
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+							MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 							e.setCancelled(true);
 						}
 
@@ -155,6 +155,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onOpenInventory(InventoryOpenEvent e) {
 
+		if (!PluginConfigManager.isCleaningItemActive()) {
+			return;
+		}
 		if (PluginConfigManager.isEventModeActive()) {
 
 			Player player = (Player) e.getPlayer();
@@ -170,7 +173,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 					InventorySorter.playSortingSound(player);
 
 					e.setCancelled(true);
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
 
 					damageItem(player);
 
@@ -200,7 +203,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				InventorySorter.sortInventory(e.getInventory(), p);
 				InventorySorter.playSortingSound(p);
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
 
 			}
 

@@ -149,7 +149,8 @@ public class PluginConfig {
 	public enum PlayerDataPath {
 
 		AUTOSORT("autosort"),
-		PATTERN("sortingpattern");
+		PATTERN("sortingpattern"),
+		CATEGORIES_ORDER("categories.order");
 
 		private String path;
 
