@@ -1,5 +1,4 @@
 defaultautosort: false
-defaultevaluator: BACK_BEGIN_STRING
 defaultsortingpattern: LEFT_TO_RIGHT_TOP_TO_BOTTOM
 locale:
   lang: en
@@ -23,8 +22,7 @@ inventoryblacklist:
   - FURNACE
 categories:
   order:
-    - StoneMaster
-    - Stairword
+    - alpha_back_asc
   words:
     - ==: WordCategory
       name: StoneWord

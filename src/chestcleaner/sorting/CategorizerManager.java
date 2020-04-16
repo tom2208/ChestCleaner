@@ -44,7 +44,7 @@ public class CategorizerManager {
         if (getByName(categorizer.getName()) == null) {
             availableCategorizers.add(categorizer);
         } else {
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.INVALID_CATEGORY_NAME);
+            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME);
         }
     }
 
@@ -61,14 +61,13 @@ public class CategorizerManager {
                 PluginConfigManager.addWordCategory((WordCategory) category);
             }
         } else {
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.INVALID_CATEGORY_NAME);
+            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME);
         }
     }
 
     public static String addFromBook(List<String> pages) throws IllegalArgumentException {
         if (pages.isEmpty() || pages.get(0).isEmpty()) {
-            // todo: book invalid
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.INVALID_CATEGORY_NAME);
+            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK);
         }
 
         String allPages = String.join("\n", pages);

@@ -59,7 +59,7 @@ public class UpdateChecker {
 					if (localPluginVersion.equals(spigotPluginVersion))
 						return;
 
-					MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE);
+					MessageSystem.sendConsoleMessage(MessageType.SUCCESS, MessageID.INFO_UPDATE_AVAILABLE);
 
 					// Register the PlayerJoinEvent
 					Bukkit.getScheduler().runTask(javaPlugin,
@@ -70,7 +70,7 @@ public class UpdateChecker {
 									if (!player.hasPermission(UPDATE_PERM))
 										return;
 
-									MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.NEW_UPDATE_AVAILABLE, player);
+									MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_UPDATE_AVAILABLE, player);
 								}
 							}, javaPlugin));
 

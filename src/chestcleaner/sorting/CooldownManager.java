@@ -24,12 +24,12 @@ public class CooldownManager {
 	public boolean isPlayerOnCooldown(Player player) {
 		
 		if(player == null) {
-			return true;
+			return false;
 		}
 
 		if (!PluginConfigManager.isCooldownActive()
 				|| player.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
-			return true;
+			return false;
 		}
 
 		if (times.containsKey(player.getUniqueId())) {
@@ -38,15 +38,15 @@ public class CooldownManager {
 
 			if (differnce >= cooldown) {
 				times.put(player.getUniqueId(), System.currentTimeMillis());
-				return true;
+				return false;
 			}
-			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.SORTING_ON_COOLDOWN, player,
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_YOU_COOLDOWN, player,
 					String.valueOf((cooldown - differnce) / 1000 + 1));
-			return false;
+			return true;
 
 		} else {
 			times.put(player.getUniqueId(), System.currentTimeMillis());
-			return true;
+			return false;
 		}
 
 	}

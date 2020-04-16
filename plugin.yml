@@ -8,21 +8,23 @@ main: chestcleaner.main.ChestCleaner
 commands:
   cleaninventory:
     description: Cleans an inventory of a block.
-    usage: /<command> <x> <y> <z>
+    usage: /<command> <x> <y> <z> <world>
     aliases: [cleaninv, cinv]
   cleaningitem:
     description: Configuration of the cleaningitem.
-    usage: /<command> <get/give/rename/setActive/setDurabilityLoss/setEventDetectionMode/setItem/setLore>
+    usage: /<command> <get/set/give/name/lore/active/durabilityLoss/eventDetectionMode> [<true/false> | <name/lore> | <player/@a>]
     aliases: ci
   blacklist:
     description: Avoiding items to get stacked while sorting.
-    usage: /<command> <sorting/inventories> <list/clear/addMaterial/removeMaterial>
+    usage: /<command> <sorting/inventory> <list/clear/add/remove> [<material>]
     aliases: bl
+    permission: chestcleaner.cmd.blacklist
   sortingconfig:
     description: Configuration of the sorting algorithm for players.
-    usage: /<command> <autosort/categories/pattern>
+    usage: /<command> <autosort/categories/pattern> [<true/false> | list | set <category,category,..> | <pattern>]
     aliases: [sconfig, sc]
   adminconfig:
     description: Configuration for admins
-    usage: /<command> <autosort/categories/cooldown/pattern>
+    usage: /<command> <autosort/categories/cooldown/pattern> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern>]
     aliases: [aconfig, ac]
+    permission: chestcleaner.cmd.sorting.config.admincontrol

@@ -29,7 +29,7 @@ public class StringUtils {
 
         List<String> list = Arrays.asList(token.split(",", -1));
         token = list.get(list.size() - 1);
-        String prefix = list.size() > 1 ? String.join(",", list.subList(0, list.size() - 1)) : "";
+        String prefix = list.size() > 1 ? String.join(",", list.subList(0, list.size() - 1)) + "," : "";
 
         for (String string : originals) {
             if(string.toLowerCase().startsWith(token.toLowerCase())) {

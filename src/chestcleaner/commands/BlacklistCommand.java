@@ -14,7 +14,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
@@ -27,188 +26,165 @@ import chestcleaner.utils.messages.enums.MessageType;
  *
  */
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
+	// The lineNumbers of a page when the list gets displayed in the in game chat.
+	private final int LIST_PAGE_LENGTH = 8;
+	/* sub-commands */
+	private final String addSubCommand = "add";
+	private final String removeSubCommand = "remove";
+	private final String listSubCommand = "list";
+	private final String clearSubCommand = "clear";
+
+	private final String sortingSubCommand = "sorting";
+	private final String inventorySubCommand = "inventory";
+
+	private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand };
+	private final String[] strList = { sortingSubCommand, inventorySubCommand};
+
+	private enum BlacklistType {SORTING, INVENTORY}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
 
 		Player player = null;
+		List<Material> list = null;
+		BlacklistType listType = null;
+
 		if (sender instanceof Player) {
 			player = (Player) sender;
-
-			if (!player.hasPermission(PluginPermissions.CMD_BLACKLIST.getString())) {
-				MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
-						PluginPermissions.CMD_BLACKLIST.getString(), player);
-				return true;
-			}
-
 		}
 
 		if (args.length >= 2 && args.length <= 3) {
-
-			/* initialize list */
-			List<Material> list;
-			int listNumber = -1;
 			if (args[0].equalsIgnoreCase(sortingSubCommand)) {
 				list = PluginConfigManager.getBlacklistSorting();
-				listNumber = 0;
-			} else if (args[0].equalsIgnoreCase(inventoriesSubCommand)) {
+				listType = BlacklistType.SORTING;
+			} else if (args[0].equalsIgnoreCase(inventorySubCommand)) {
 				list = PluginConfigManager.getBlacklistInventory();
-				listNumber = 1;
+				listType = BlacklistType.INVENTORY;
 			} else {
-				sendSyntaxError(sender);
-				return true;
+				return false;
 			}
-
-			/** subCommands */
-
-			/*--------------- addMaterial ---------------*/
-			if (args[1].equalsIgnoreCase(addMaterialSubCommand)) {
-
-				Material material;
-
-				// addMaterial with name
-				if (args.length == 3) {
-
-					material = Material.getMaterial(args[2]);
-
-					if (material == null) {
-						MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-								MessageID.MATERIAL_NAME_NOT_EXISTING, sender, args[2]);
-						return true;
-					}
-
-					// addMaterial with item in hand
-				} else {
-
-					if (player == null) {
-						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage, sender);
-						return true;
-					}
-
-					material = getMaterialFormPlayerHand(player);
-
-					if (material.equals(Material.AIR)) {
-						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
-								player);
-						return true;
-					}
-
-				}
-
-				if (list.contains(material)) {
-					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-							MessageID.MATERIAL_ALREADY_ON_BLACKLIST, sender, material.name());
-					return true;
-				}
-
-				list.add(material);
-				safeList(listNumber, list);
-
-				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.MATERIAL_ADDED_TO_BLACKLIST,
-						sender, material.name());
-
-				return true;
-
-				/*--------------- removeMaterial ---------------*/
-			} else if (args[1].equalsIgnoreCase(removeMaterialSubCommand)) {
-
-				Material material;
-
-				// removeMaterial with name
-				if (args.length == 3) {
-
-					material = Material.getMaterial(args[2]);
-
-					if (material == null) {
-
-						try {
-
-							int index = Integer.valueOf(args[2]);
-
-							if (index - 1 >= 0 && index - 1 < list.size()) {
-
-								material = list.get(index - 1);
-
-							} else {
-								MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-										MessageID.INDEX_OUT_OF_BOUNDS, sender, String.valueOf(index));
-								return true;
-							}
-
-						} catch (NumberFormatException ex) {
-
-							MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-									MessageID.MATERIAL_NAME_NOT_EXISTING, sender, args[2]);
-							return true;
-
-						}
-
-					}
-
-					// removeMaterial with item in hand
-				} else {
-					
-					if (player == null) {
-						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxMaterialErrorMessage, sender);
-						return true;
-					}
-					
-					material = getMaterialFormPlayerHand(player);
-
-					if (material.equals(Material.AIR)) {
-						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_HOLD_AN_ITEM,
-								player);
-						return true;
-					}
-
-				}
-
-				if (!list.contains(material)) {
-					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-							MessageID.BLACKLIST_DOESNT_CONTAIN_MATERIAL, sender, material.name());
-					return true;
-				}
-
-				list.remove(material);
-				safeList(listNumber, list);
-
-				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-						MessageID.MATERIAL_REMOVED_FROM_BLACKLIST, sender, material.name());
-
-				return true;
-
-				/*--------------- list ---------------*/
-			} else if (args[1].equalsIgnoreCase(listSubCommand)) {
-
-				if (list.size() == 0) {
-					MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.BLACKLIST_EMPTY, sender);
-					return true;
-				}
-
-				String pageString = args.length == 3 ? args[2] : "1";
-
-				List<String> names  = list.stream().map(Enum::name).collect(Collectors.toList());
-				MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
-				return true;
-
-				/*--------------- clear ---------------*/
-			} else if (args[1].equalsIgnoreCase(clearSubCommand)) {
-
-				list.clear();
-				safeList(listNumber, list);
-				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.BLACKLIST_CLEARED, sender);
-				return true;
-
-			} else {
-				sendSyntaxError(sender);
-				return true;
-			}
-
-		} else {
-			sendSyntaxError(sender);
-			return true;
 		}
 
+		// subCommands
+		if (args.length == 2) {
+			if (listSubCommand.equalsIgnoreCase(args[1])) {
+				return printBlacklist(sender, "1", list);
+			} else if (clearSubCommand.equalsIgnoreCase(args[1])) {
+				return clearBlacklist(sender, listType, list);
+			}
+			if (player == null) {
+				return false;
+
+			} else if (addSubCommand.equalsIgnoreCase(args[1])) {
+				return addMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+			} else if (removeSubCommand.equalsIgnoreCase(args[1])) {
+				return removeMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+			}
+		}
+		if (args.length == 3) {
+			if (listSubCommand.equalsIgnoreCase(args[1])) {
+				return printBlacklist(sender, args[2], list);
+			} else if (addSubCommand.equalsIgnoreCase(args[1])) {
+				return addMaterialName(sender, listType, list, args[2]);
+			} else if (removeSubCommand.equalsIgnoreCase(args[1])) {
+				return removeMaterialName(sender, listType, list, args[2]);
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+		final List<String> completions = new ArrayList<>();
+		final List<String> commandList = Arrays.asList(subCommandList);
+		final List<String> lists = Arrays.asList(strList);
+
+		if (args.length <= 1) {
+			StringUtil.copyPartialMatches(args[0], lists, completions);
+		} else if (args.length == 2) {
+			StringUtil.copyPartialMatches(args[1], commandList, completions);
+		} else if (args.length == 3) {
+			if (addSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
+				StringUtil.copyPartialMatches(
+						args[2],
+						Arrays.stream(Material.values()).map(Enum::name).collect(Collectors.toList()),
+						completions);
+		}
+
+		return completions;
+	}
+
+	private boolean addMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
+		Material material = Material.getMaterial(name);
+		if (material == null) {
+			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+					MessageID.ERROR_MATERIAL_NAME, sender, name);
+		}
+		return addMaterial(sender, type, list, material);
+	}
+
+	private boolean addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
+		if (list.contains(material)) {
+			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+					MessageID.ERROR_BLACKLIST_EXISTS, sender, material.name());
+		}
+
+		list.add(material);
+		saveList(type, list);
+
+		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+				MessageID.INFO_BLACKLIST_ADD, sender, material.name());
+	}
+
+	private boolean removeMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
+		Material material = Material.getMaterial(name);
+
+		if (material == null) {
+			try {
+				int index = Integer.parseInt(name);
+				// expect 1 based index input, bc not all players are programmers
+				if (index > 0 && index <= list.size()) {
+					material = list.get(index - 1);
+				} else {
+					return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+							MessageID.ERROR_VALIDATION_INDEX_BOUNDS, sender, String.valueOf(index));
+				}
+			} catch (NumberFormatException ex) {
+				return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+						MessageID.ERROR_MATERIAL_NAME, sender, name);
+			}
+
+		}
+		return removeMaterial(sender, type, list, material);
+	}
+
+	private boolean removeMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
+		if (!list.contains(material)) {
+			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+					MessageID.ERROR_BLACKLIST_NOT_EXISTS, sender, material.name());
+		}
+
+		list.remove(material);
+		saveList(type, list);
+
+		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+				MessageID.INFO_BLACKLIST_DEL, sender, material.name());
+	}
+
+	private boolean printBlacklist(CommandSender sender, String pageString, List<Material> list) {
+		if (list.size() == 0) {
+			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender);
+		}
+
+		List<String> names  = list.stream().map(Enum::name).collect(Collectors.toList());
+		return MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
+	}
+
+	private boolean clearBlacklist(CommandSender sender, BlacklistType type, List<Material> list) {
+		list.clear();
+		saveList(type, list);
+		return MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_CLEARED, sender);
 	}
 
 	/**
@@ -218,7 +194,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	 * @return It returns the material of you main hand if it is not AIR otherwise
 	 *         the Material of your off hand.
 	 */
-	private Material getMaterialFormPlayerHand(Player p) {
+	private Material getMaterialFromPlayerHand(Player p) {
 		if (p.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
 			if (!p.getInventory().getItemInOffHand().getType().equals(Material.AIR)) {
 				return p.getInventory().getItemInOffHand().getType();
@@ -228,64 +204,13 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	}
 
 	/**
-	 * Sends the correct syntax the Player {@code p}.
-	 * 
-	 * @param sender the player who receives the message.
-	 */
-	private void sendSyntaxError(CommandSender sender) {
-		MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntaxErrorMessage, sender);
-	}
-
-	/**
 	 * Saves the list in to the config.yml .
-	 * 
-	 * @param list 0 meaning sortingBlacklist, 1 inventoryBlacklist.
 	 */
-	private void safeList(int list, List<Material> items) {
-		if (list == 0) {
+	private void saveList(BlacklistType type, List<Material> items) {
+		if (type == BlacklistType.SORTING) {
 			PluginConfigManager.setBlacklistSorting(items);
-		} else if (list == 1) {
+		} else if (type == BlacklistType.INVENTORY) {
 			PluginConfigManager.setBlacklistInventory(items);
 		}
 	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-		final List<String> completions = new ArrayList<>();
-		final String[] strCommandList = { addMaterialSubCommand, removeMaterialSubCommand, listSubCommand,
-				clearSubCommand };
-		final String[] strLists = { sortingSubCommand, inventoriesSubCommand };
-		final List<String> commandList = Arrays.asList(strCommandList);
-		final List<String> lists = Arrays.asList(strLists);
-
-		if (args.length <= 1) {
-
-			StringUtil.copyPartialMatches(args[0], lists, completions);
-
-		} else if (args.length == 2) {
-
-			StringUtil.copyPartialMatches(args[1], commandList, completions);
-
-		}
-
-		return completions;
-	}
-
-	// The length of a page one the list if it gets displayed in the in game chat.
-	private final int LIST_PAGE_LENGTH = 8;
-
-	/* sub-commands */
-	private final String addMaterialSubCommand = "addMaterial";
-	private final String removeMaterialSubCommand = "removeMaterial";
-	private final String listSubCommand = "list";
-	private final String clearSubCommand = "clear";
-
-	private final String sortingSubCommand = "sorting";
-	private final String inventoriesSubCommand = "inventory";
-
-	/* syntax messages */
-	private final String syntaxErrorMessage = "/blacklist <sorting/inventory> <addMaterial/removeMaterial/list>";
-	private final String syntaxMaterialErrorMessage = "/blacklist <sorting/inventory> <addMaterial/removeMaterial> <material>";
-
 }

@@ -1,6 +1,6 @@
 package chestcleaner.utils.messages;
 
-import org.bukkit.entity.Player;
+import chestcleaner.utils.PluginPermissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 
@@ -12,16 +12,17 @@ import java.util.List;
 
 public class MessageSystem {
 
-	public static void sendMessageToCS(MessageType type, String arg, CommandSender cs) {
+	public static boolean sendMessageToCS(MessageType type, String arg, CommandSender cs) {
 		cs.sendMessage(getMessageString(type, arg));
+		return true;
 	}
 
-	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
-		sendMessageToCS(type, ChestCleaner.main.getRB().getString(messageID.getID()), cs);
+	public static boolean sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
+		return sendMessageToCS(type, ChestCleaner.main.getRB().getString(messageID.getID()), cs);
 	}
 
-	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
-		sendMessageToCS(type, messageID, ChestCleaner.main.getServer().getConsoleSender());
+	public static boolean sendConsoleMessage(MessageType type, MessageID messageID) {
+		return sendMessageToCS(type, messageID, ChestCleaner.main.getServer().getConsoleSender());
 	}
 
 	/**
@@ -35,13 +36,23 @@ public class MessageSystem {
 	 * @param cs      the player who should receive the message.
 	 * @param replacement the replacement variables
 	 */
-	public static void sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
+	public static boolean sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
 			Object... replacement) {
 		String message = ChestCleaner.main.getRB().getString(messageID.getID());
-		sendMessageToCS(type, String.format(message, replacement), cs);
+		return sendMessageToCS(type, String.format(message, replacement), cs);
 	}
 
-	public static void sendListPageToCS(List<String> list, CommandSender sender, String pageNrAsString, int maxPageLines) {
+	public static boolean sendPermissionError(CommandSender sender, PluginPermissions permission) {
+		return MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION, permission.getString(), sender);
+	}
+
+	public static boolean sendChangedValue(CommandSender sender, String key, String value) {
+		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_VALUE_CHANGED,
+				sender,key, value);
+	}
+
+	public static boolean sendListPageToCS(List<String> list, CommandSender sender, String pageNrAsString,
+									  int maxPageLines) {
 
 		int pages = (int) Math.ceil(list.size() / (double) maxPageLines);
 		int page;
@@ -49,18 +60,16 @@ public class MessageSystem {
 		try {
 			page = Integer.parseInt(pageNrAsString);
 		} catch (NumberFormatException ex) {
-			sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.NOT_AN_INTEGER, sender, pageNrAsString);
-			return;
+			return sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_VALIDATION_INTEGER, sender, pageNrAsString);
 		}
 
 		if (page < 0 || page > pages) {
-			sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.INVALID_PAGE_NUMBER, sender, "1 - " + pages);
-			return;
+			return sendMessageToCSWithReplacement(MessageType.ERROR,
+					MessageID.ERROR_PAGE_NUMBER, sender, "1 - " + pages);
 		}
 
 		sendMessageToCSWithReplacement(MessageType.SUCCESS,
-				MessageID.BLACKLIST_PAGE, sender, page + " / " + pages);
+				MessageID.COMMON_PAGE, sender, page + " / " + pages);
 
 		for (int i = (page - 1) * maxPageLines; i < page * maxPageLines; i++) {
 			if (list.size() == i) {
@@ -72,26 +81,27 @@ public class MessageSystem {
 
 		if (pages > page) {
 			sendMessageToCSWithReplacement(MessageType.SUCCESS,
-					MessageID.BLACKLIST_NEXT_PAGE, sender, String.valueOf(page + 1));
+					MessageID.COMMON_PAGE_NEXT, sender, String.valueOf(page + 1));
 		}
+		return true;
 	}
 
 	private static String getMessageString(MessageType type, String arg) {
 
-		String out = ChestCleaner.main.getRB().getString(MessageID.PREFIX.getID()) + " ";
+		String out = ChestCleaner.main.getRB().getString(MessageID.COMMON_PREFIX.getID()) + " ";
 
 		switch (type) {
 		case SYNTAX_ERROR:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.SYNTAX_ERROR.getID()) + ": " + arg;
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.COMMON_ERROR_SYNTAX.getID()) + ": " + arg;
 			break;
 		case ERROR:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.ERROR.getID()) + ": " + arg;
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.COMMON_ERROR.getID()) + ": " + arg;
 			break;
 		case SUCCESS:
 			out += ChatColor.GREEN + arg;
 			break;
 		case MISSING_PERMISSION:
-			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.NO_PERMISSION_FOR_COMMAND.getID())
+			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
 					+ " ( " + arg + " )";
 			break;
 		case UNHEADED_INFORMATION:

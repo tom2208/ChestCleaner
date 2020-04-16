@@ -43,12 +43,15 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
     private final String addFromBookSubCommand = "addFromBook";
     private final String getAsBookSubCommand = "getAsBook";
 
+    private final String autosortProperty = "default autosort";
+    private final String categoriesProperty = "default categoryOrder";
+    private final String cooldownProperty = "cooldown (in ms)";
+    private final String patternProperty = "default sortingpattern";
+    private final String activeProperty = "cooldownActive";
+
     private final String[] strCommandList = {autosortSubCommand, categoriesSubCommand, cooldownSubCommand, patternSubCommand};
     private final String[] categoriesSubCommandList = {setSubCommand, addFromBookSubCommand, getAsBookSubCommand};
     private final String[] cooldownSubCommandList = {setSubCommand, activeSubCommand};
-
-    private final String syntax = "/adminconfig <" + String.join("/", strCommandList) + ">";
-
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -56,11 +59,6 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
         Player player = null;
         if (sender instanceof Player) {
             player = (Player) sender;
-            if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
-                MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
-                        PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), sender);
-                return true;
-            }
         }
 
         if (args.length == 1) {
@@ -106,8 +104,7 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
                 return setCooldownTime(sender, args[2]);
             }
         }
-        MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntax, sender);
-        return true;
+        return false;
     }
 
     @Override
@@ -152,138 +149,114 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
         String value = "";
         switch (command) {
             case autosortSubCommand:
-                key = "defaultautosort";
+                key = autosortProperty;
                 value = String.valueOf(PluginConfigManager.isDefaultAutoSort());
                 break;
             case categoriesSubCommand:
-                key = "categories";
+                key = categoriesProperty;
                 value = PluginConfigManager.getCategoryOrder().toString();
                 break;
             case cooldownSubCommand:
-                key = "cooldown";
+                key = cooldownProperty;
                 value = String.valueOf(PluginConfigManager.getCooldown());
                 break;
             case activeSubCommand:
-                key = "cooldownActive";
+                key = activeProperty;
                 value = String.valueOf(PluginConfigManager.isCooldownActive());
                 break;
             case patternSubCommand:
-                key = "defaultsortingpattern";
+                key = patternProperty;
                 value = PluginConfigManager.getDefaultPattern().name();
                 break;
         }
-        MessageSystem.sendMessageToCSWithReplacement(
-                MessageType.SUCCESS, MessageID.CURRENT_VALUE, sender, key, value);
-        return true;
+        return MessageSystem.sendMessageToCSWithReplacement(
+                MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key, value);
     }
 
     private boolean setDefaultAutoSort(CommandSender sender, String bool) {
-        if (StringUtils.isStringTrueOrFalse(bool)) {
-            boolean b = Boolean.parseBoolean(bool);
-
-            PluginConfigManager.setDefaultAutoSort(b);
-
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, sender,
-                    String.valueOf(b));
-        } else {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.NOT_A_BOOLEAN, sender);
+        if (!StringUtils.isStringTrueOrFalse(bool)) {
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         }
-        return true;
+
+        boolean b = Boolean.parseBoolean(bool);
+        PluginConfigManager.setDefaultAutoSort(b);
+        return MessageSystem.sendChangedValue(sender, autosortProperty, String.valueOf(b));
     }
 
     private boolean setDefaultPattern(CommandSender sender, String patternName) {
         SortingPattern pattern = SortingPattern.getSortingPatternByName(patternName);
 
-        if (pattern != null) {
-            PluginConfigManager.setDefaultPattern(pattern);
-            MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_PATTER_SET, sender);
-        } else {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, sender);
+        if (pattern == null) {
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PATTERN_ID, sender);
         }
-        return true;
+        PluginConfigManager.setDefaultPattern(pattern);
+        return MessageSystem.sendChangedValue(sender, patternProperty, pattern.name());
     }
 
     private boolean setDefaultCategories(CommandSender sender, String commaSeperatedCategories) {
         List<String> categories = Arrays.asList(commaSeperatedCategories.split(","));
 
-        if (CategorizerManager.validateExists(categories)) {
-            PluginConfigManager.setCategoryOrder(categories);
-            MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_CATEGORIES_SET, sender);
-        } else {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_CATEGORY_NAME, sender);
+        if (!CategorizerManager.validateExists(categories)) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
         }
-        return true;
+        PluginConfigManager.setCategoryOrder(categories);
+        return MessageSystem.sendChangedValue(sender, categoriesProperty, categories.toString());
     }
 
 
     private boolean addFromBook(CommandSender sender, Player player) {
         if (player == null) {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER, sender);
-        } else {
-            ItemStack itemInHand = player.getInventory().getItemInMainHand();
-            if (itemInHand.getType().equals(Material.WRITABLE_BOOK) || itemInHand.getType().equals(Material.WRITTEN_BOOK)) {
-                String name = CategorizerManager.addFromBook(((BookMeta) itemInHand.getItemMeta()).getPages());
-                MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.NEW_CATEGORY, sender, name);
-            }
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
         }
-        return true;
+        ItemStack itemInHand = player.getInventory().getItemInMainHand();
+        if (itemInHand.getType().equals(Material.WRITABLE_BOOK) || itemInHand.getType().equals(Material.WRITTEN_BOOK)) {
+            String name = CategorizerManager.addFromBook(((BookMeta) itemInHand.getItemMeta()).getPages());
+            return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CATEGORY_NEW, sender, name);
+        }
+        return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK, sender);
     }
 
     private boolean getBook(CommandSender sender, Player player, String categoryString) {
         if (player == null) {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.YOU_HAVE_TO_BE_PLAYER, sender);
-        } else {
-            Category category = PluginConfigManager.getCategoryByName(categoryString);
-            if (category != null) {
-                ItemStack book = category.getAsBook();
-                player.getWorld().dropItem(player.getLocation(), book);
-            } else {
-                MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_CATEGORY_NAME, sender);
-            }
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
         }
+        Category category = PluginConfigManager.getCategoryByName(categoryString);
+        if (category == null) {
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
+        }
+        ItemStack book = category.getAsBook();
+        player.getWorld().dropItem(player.getLocation(), book);
         return true;
     }
 
     private boolean setCooldownTime(CommandSender sender, String arg) {
 
         if (!sender.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
-            MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
-                    PluginPermissions.CMD_COOLDOWN.getString(), sender);
-            return true;
+            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_COOLDOWN);
         }
 
         try {
             int time = Integer.parseInt(arg);
             PluginConfigManager.setCooldown(time);
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.TIMER_TIME, sender,
-                    String.valueOf(time));
+            return MessageSystem.sendChangedValue(sender, cooldownProperty, String.valueOf(time));
 
         } catch (NumberFormatException ex) {
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.NOT_AN_INTEGER, sender, arg);
+            return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_VALIDATION_INTEGER, sender, arg);
         }
-
-        return true;
     }
 
     private boolean setCooldownActive(CommandSender sender, String arg) {
         if (!sender.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
-            MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
-                    PluginPermissions.CMD_COOLDOWN.getString(), sender);
-            return true;
+            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_COOLDOWN);
         }
 
-        String trueStr = Boolean.TRUE.toString();
-        String falseStr = Boolean.FALSE.toString();
-
-        if (arg.equalsIgnoreCase(trueStr) || arg.equalsIgnoreCase(falseStr)) {
-            boolean state = Boolean.getBoolean(arg);
-            PluginConfigManager.setCooldownActive(state);
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.COOLDOWN_TOGGLE, sender,
-                    String.valueOf(state));
-        } else {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.NOT_A_BOOLEAN, sender);
+        if (!StringUtils.isStringTrueOrFalse(arg)) {
+            return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         }
-        return true;
+
+        boolean state = Boolean.getBoolean(arg);
+        PluginConfigManager.setCooldownActive(state);
+        return MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(state));
     }
 
 }

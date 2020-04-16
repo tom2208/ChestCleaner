@@ -97,7 +97,7 @@ public class PluginConfigManager {
 	}
 
 	public static void setCooldown(int time) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME, time * 1000);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME, time);
 	}
 
 	public static List<String> getCategoryOrder() {

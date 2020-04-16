@@ -2,7 +2,7 @@ package chestcleaner.main;
 
 import chestcleaner.commands.AdminConfigCommand;
 import chestcleaner.commands.BlacklistCommand;
-import chestcleaner.commands.CleanInvenotryCommand;
+import chestcleaner.commands.CleanInventoryCommand;
 import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.SortingConfigCommand;
 import chestcleaner.config.PlayerDataManager;
@@ -51,7 +51,7 @@ public class ChestCleaner extends JavaPlugin {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		getCommand("cleaninventory").setExecutor(new CleanInvenotryCommand());
+		getCommand("cleaninventory").setExecutor(new CleanInventoryCommand());
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
 		getCommand("blacklist").setExecutor(new BlacklistCommand());
 		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());

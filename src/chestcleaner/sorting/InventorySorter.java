@@ -80,7 +80,7 @@ public class InventorySorter {
 		}
 
 		if(p != null) {
-			// categoryNames = PlayerDataManager.getInstance().getCategorizationOrder(p);
+			categoryNames = PlayerDataManager.getCategoryOrder(p);
 			pattern = PlayerDataManager.getSortingPattern(p);
 		}
 
