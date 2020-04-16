@@ -1,6 +1,6 @@
 name: ChestCleaner
 version: 1.8.A1
-author: Tom2208
+author: [Tom2208, leanNiki]
 api-version: "1.13" # we need this otherwise new blocks e.g. mossy cobble slabs get deleted
 
 main: chestcleaner.main.ChestCleaner
