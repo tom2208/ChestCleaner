@@ -16,18 +16,18 @@ import java.util.function.Predicate;
 
 public class CategoryLoader {
 
-    private static Predicate<ItemStack> is_block = item -> item.getType().isBlock();
-    private static Predicate<ItemStack> is_item = item -> item.getType().isItem();
-    private static Predicate<ItemStack> is_edible = item -> item.getType().isEdible();
-    private static Predicate<ItemStack> is_fuel = item -> item.getType().isFuel();
-    private static Predicate<ItemStack> is_flammable = item -> item.getType().isFlammable();
+    private static Predicate<ItemStack> isBlock = item -> item.getType().isBlock();
+    private static Predicate<ItemStack> isItem = item -> item.getType().isItem();
+    private static Predicate<ItemStack> isEdible = item -> item.getType().isEdible();
+    private static Predicate<ItemStack> isFuel = item -> item.getType().isFuel();
+    private static Predicate<ItemStack> isFlammable = item -> item.getType().isFlammable();
 
-    private static Comparator<ItemStack> alphabet_asc = Comparator.comparing(item -> item.getType().name());
-    private static Comparator<ItemStack> alphabet_desc = alphabet_asc.reversed();
+    private static Comparator<ItemStack> alphabetAsc = Comparator.comparing(item -> item.getType().name());
+    private static Comparator<ItemStack> alphabetDesc = alphabetAsc.reversed();
 
-    private static Comparator<ItemStack> alphabet_back_asc = Comparator.comparing(
+    private static Comparator<ItemStack> alphabetBackAsc = Comparator.comparing(
             item -> new StringBuilder(item.getType().name()).reverse().toString());
-    private static Comparator<ItemStack> alphabet_back_desc = alphabet_back_asc.reversed();
+    private static Comparator<ItemStack> alphabetBackDesc = alphabetBackAsc.reversed();
 
 
     public static void loadCategorizers(List<WordCategory> wordCategories, List<ListCategory> listCategories,
@@ -39,16 +39,16 @@ public class CategoryLoader {
     }
 
     private static void loadStaticCategorizers() {
-        CategorizerManager.addCategorizer(new PredicateCategorizer("is_block", is_block));
-        CategorizerManager.addCategorizer(new PredicateCategorizer("is_item", is_item));
-        CategorizerManager.addCategorizer(new PredicateCategorizer("is_edible", is_edible));
-        CategorizerManager.addCategorizer(new PredicateCategorizer("is_fuel", is_fuel));
-        CategorizerManager.addCategorizer(new PredicateCategorizer("is_flammable", is_flammable));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsBlock", isBlock));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsItem", isItem));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsEdible", isEdible));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsFuel", isFuel));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsFlammable", isFlammable));
 
-        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_asc", alphabet_asc));
-        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_desc", alphabet_desc));
-        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_back_asc", alphabet_back_asc));
-        CategorizerManager.addCategorizer(new ComparatorCategorizer("alpha_back_desc", alphabet_back_desc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("AlphaAsc", alphabetAsc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("AlphaDesc", alphabetDesc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("AlphaBackAsc", alphabetBackAsc));
+        CategorizerManager.addCategorizer(new ComparatorCategorizer("AlphaBackDesc", alphabetBackDesc));
     }
 
     private static void loadWordCategorizers(List<WordCategory> categories) {

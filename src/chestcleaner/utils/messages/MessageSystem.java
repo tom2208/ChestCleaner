@@ -13,7 +13,11 @@ import java.util.List;
 public class MessageSystem {
 
 	public static boolean sendMessageToCS(MessageType type, String arg, CommandSender cs) {
-		cs.sendMessage(getMessageString(type, arg));
+		if (cs != null) {
+			cs.sendMessage(getMessageString(type, arg));
+		} else {
+			ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
+		}
 		return true;
 	}
 
@@ -22,7 +26,7 @@ public class MessageSystem {
 	}
 
 	public static boolean sendConsoleMessage(MessageType type, MessageID messageID) {
-		return sendMessageToCS(type, messageID, ChestCleaner.main.getServer().getConsoleSender());
+		return sendMessageToCS(type, messageID, null);
 	}
 
 	/**

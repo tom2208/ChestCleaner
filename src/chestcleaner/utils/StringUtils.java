@@ -90,6 +90,7 @@ public class StringUtils {
                 curPageLines = lineCount;
             }
         }
+        pages.add(curPage);
         return pages;
     }
 

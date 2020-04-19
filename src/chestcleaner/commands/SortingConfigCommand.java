@@ -52,7 +52,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			player = (Player) sender;
 		}
 
-		if (categoriesSubCommand.equalsIgnoreCase(args[0]) && listSubCommand.equalsIgnoreCase(args[1])) {
+		if (args.length >= 2
+				&& categoriesSubCommand.equalsIgnoreCase(args[0])
+				&& listSubCommand.equalsIgnoreCase(args[1])) {
 			return getCategoryList(sender, args.length > 2 ? args[2] : "1");
 		}
 

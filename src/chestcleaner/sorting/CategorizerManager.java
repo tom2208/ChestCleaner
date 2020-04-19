@@ -12,6 +12,7 @@ import chestcleaner.sorting.categorizer.PredicateCategorizer;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -34,7 +35,9 @@ public class CategorizerManager {
         categories.add(items);
 
         for (Categorizer categorizer : categorizers) {
-            categories = categorizer.categorize(categories);
+            if (categorizer != null) {
+                categories = categorizer.categorize(categories);
+            }
         }
 
         return categories.stream().flatMap(List::stream).collect(Collectors.toList());
@@ -48,7 +51,7 @@ public class CategorizerManager {
         }
     }
 
-    public static void addCategoryAndSave(Category<?> category) {
+    public static void addCategoryAndSave(Category<?> category, CommandSender sender) {
         if (category != null && getByName(category.getName()) == null) {
             if (category instanceof MasterCategory) {
                 availableCategorizers.add(new MasterCategorizer((MasterCategory) category));
@@ -61,13 +64,13 @@ public class CategorizerManager {
                 PluginConfigManager.addWordCategory((WordCategory) category);
             }
         } else {
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME);
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
         }
     }
 
-    public static String addFromBook(List<String> pages) throws IllegalArgumentException {
+    public static String addFromBook(List<String> pages, CommandSender sender) {
         if (pages.isEmpty() || pages.get(0).isEmpty()) {
-            MessageSystem.sendConsoleMessage(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK);
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK, sender);
         }
 
         String allPages = String.join("\n", pages);
@@ -79,7 +82,7 @@ public class CategorizerManager {
 
         YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new StringReader(allPages));
         Object category = yamlConfiguration.get("category");
-        addCategoryAndSave((Category<?>) category);
+        addCategoryAndSave((Category<?>) category, sender);
         return ((Category<?>) category).getName();
     }
 

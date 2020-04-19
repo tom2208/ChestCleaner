@@ -5,6 +5,9 @@ import java.util.List;
 
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -28,7 +31,7 @@ public class InventorySorter {
 		ArrayList<ItemStack> newList = new ArrayList<>();
 
 		for (ItemStack item : items) {
-			if (PluginConfigManager.getBlacklistSorting().contains(item.getType())) {
+			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
 				newList.add(item);
 			} else {
 				ItemStack existingItem = newList.stream()
@@ -49,7 +52,7 @@ public class InventorySorter {
 		ArrayList<ItemStack> newList = new ArrayList<>();
 
 		for (ItemStack item : items) {
-			if (PluginConfigManager.getBlacklistSorting().contains(item.getType())) {
+			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
 				newList.add(item);
 			} else if (!item.getType().equals(Material.AIR)){
 				while (item.getAmount() > 0) {
@@ -82,6 +85,11 @@ public class InventorySorter {
 		if(p != null) {
 			categoryNames = PlayerDataManager.getCategoryOrder(p);
 			pattern = PlayerDataManager.getSortingPattern(p);
+		}
+
+		if (!CategorizerManager.validateExists(categoryNames)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, p);
+			return false;
 		}
 
 		if (list.size() <= 1) {

@@ -17,12 +17,14 @@ cooldown:
   active: true
   time: 5000
 blacklist:
-  - AIR
-inventoryblacklist:
-  - FURNACE
+  stacking:
+    - air
+  inventory:
+    - furnace
 categories:
   order:
-    - alpha_back_asc
+    - AlphaBackAsc
+    - IsBlock
   words:
     - ==: WordCategory
       name: StoneWord
@@ -40,28 +42,28 @@ categories:
     - ==: ListCategory
       name: StoneList
       list:
-        - minecraft:stone
-        - minecraft:stone_bricks
-        - minecraft:mossy_stone_bricks
-        - minecraft:cracked_stone_bricks
-        - minecraft:chiseled_stone_bricks
-        - minecraft:smooth_stone
-        - minecraft:granite
-        - minecraft:polished_granite
-        - minecraft:diorite
-        - minecraft:polished_diorite
-        - minecraft:andesite
-        - minecraft:polished_andesite
-        - minecraft:gravel
+        - stone
+        - stone_bricks
+        - mossy_stone_bricks
+        - cracked_stone_bricks
+        - chiseled_stone_bricks
+        - smooth_stone
+        - granite
+        - polished_granite
+        - diorite
+        - polished_diorite
+        - andesite
+        - polished_andesite
+        - gravel
     - ==: ListCategory
       name: DirtList
       list:
-        - minecraft:dirt
-        - minecraft:grass_block
-        - minecraft:grass_path
-        - minecraft:coarse_dirt
-        - minecraft:podzol
-        - minecraft:mycelium
+        - dirt
+        - grass_block
+        - grass_path
+        - coarse_dirt
+        - podzol
+        - mycelium
   master:
     - ==: MasterCategory
       name: StoneMaster

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class ListCategoryCategorizer extends Categorizer {
@@ -17,13 +18,13 @@ public class ListCategoryCategorizer extends Categorizer {
 
     public ListCategoryCategorizer(ListCategory listCategory) {
         this.name = listCategory.getName();
-        this.list = listCategory.getValue();
+        this.list = listCategory.getValue().stream().map(String::toLowerCase).collect(Collectors.toList());
 
         this.predicateCategorizer = new PredicateCategorizer("",
-                item -> list.indexOf(getMaterialName(item)) >= 0);
+                item -> list.indexOf(item.getType().name().toLowerCase()) >= 0);
 
         this.comparatorCategorizer = new ComparatorCategorizer("",
-                Comparator.comparing(item -> list.indexOf(getMaterialName(item))));
+                Comparator.comparing(item -> list.indexOf(item.getType().name().toLowerCase())));
     }
 
     @Override
@@ -34,13 +35,5 @@ public class ListCategoryCategorizer extends Categorizer {
         returnItems.add(sortedList);
         returnItems.add(map.get(Boolean.FALSE));
         return returnItems;
-    }
-
-    private static String getMaterialName(ItemStack item) {
-        try {
-            return item.getType().getKey().toString();
-        } catch (IllegalArgumentException e) { // cannot getKey of Legacy Material
-            return "minecraft:" + item.getType().name().toLowerCase();
-        }
     }
 }

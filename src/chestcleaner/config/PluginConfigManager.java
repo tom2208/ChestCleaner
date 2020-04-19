@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class PluginConfigManager {
 
-	private static List<Material> blacklistSorting = null;
+	private static List<Material> blacklistStacking = null;
 	private static List<Material> blacklistInventory = null;
 
 	private PluginConfigManager() {}
@@ -181,26 +181,26 @@ public class PluginConfigManager {
 
 	public static List<Material> getBlacklistInventory() {
 		if (blacklistInventory == null) {
-			blacklistInventory = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.INVENTORY_BLACKLIST);
+			blacklistInventory = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_INVENTORY);
 		}
 		return blacklistInventory;
 	}
 
 	public static void setBlacklistInventory(List<Material> blacklistInventory) {
 	    PluginConfigManager.blacklistInventory = blacklistInventory;
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.INVENTORY_BLACKLIST, getStringList(blacklistInventory));
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_INVENTORY, getStringList(blacklistInventory));
 	}
 
-	public static List<Material> getBlacklistSorting() {
-	    if (blacklistSorting == null) {
-			blacklistSorting = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST);
+	public static List<Material> getBlacklistStacking() {
+	    if (blacklistStacking == null) {
+			blacklistStacking = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_STACKING);
 		}
-		return blacklistSorting;
+		return blacklistStacking;
 	}
 
-	public static void setBlacklistSorting(List<Material> blacklistSorting) {
-	    PluginConfigManager.blacklistSorting = blacklistSorting;
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.INVENTORY_BLACKLIST, getStringList(blacklistSorting));
+	public static void setBlacklistStacking(List<Material> blacklistStacking) {
+	    PluginConfigManager.blacklistStacking = blacklistStacking;
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_STACKING, getStringList(blacklistStacking));
 	}
 
 	private static ArrayList<Material> getMaterialList(FileConfiguration config, PluginConfig.ConfigPath path) {
@@ -208,7 +208,7 @@ public class PluginConfigManager {
 		ArrayList<Material> materials = new ArrayList<>();
 
 		for (String name : list) {
-			materials.add(Material.getMaterial(name));
+			materials.add(Material.getMaterial(name.toUpperCase()));
 		}
 		return materials;
 	}
@@ -217,7 +217,7 @@ public class PluginConfigManager {
 		List<String> list = new ArrayList<>();
 
 		for (Material material : materialList) {
-			list.add(material.name());
+			list.add(material.name().toLowerCase());
 		}
 		return list;
 	}

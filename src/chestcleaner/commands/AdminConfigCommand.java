@@ -210,7 +210,7 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
         }
         ItemStack itemInHand = player.getInventory().getItemInMainHand();
         if (itemInHand.getType().equals(Material.WRITABLE_BOOK) || itemInHand.getType().equals(Material.WRITTEN_BOOK)) {
-            String name = CategorizerManager.addFromBook(((BookMeta) itemInHand.getItemMeta()).getPages());
+            String name = CategorizerManager.addFromBook(((BookMeta) itemInHand.getItemMeta()).getPages(), sender);
             return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CATEGORY_NEW, sender, name);
         }
         return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK, sender);

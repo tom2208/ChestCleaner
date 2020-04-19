@@ -34,13 +34,13 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private final String listSubCommand = "list";
 	private final String clearSubCommand = "clear";
 
-	private final String sortingSubCommand = "sorting";
+	private final String stackingSubCommand = "stacking";
 	private final String inventorySubCommand = "inventory";
 
 	private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand };
-	private final String[] strList = { sortingSubCommand, inventorySubCommand};
+	private final String[] strList = {stackingSubCommand, inventorySubCommand};
 
-	private enum BlacklistType {SORTING, INVENTORY}
+	private enum BlacklistType {STACKING, INVENTORY}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -54,9 +54,9 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 
 		if (args.length >= 2 && args.length <= 3) {
-			if (args[0].equalsIgnoreCase(sortingSubCommand)) {
-				list = PluginConfigManager.getBlacklistSorting();
-				listType = BlacklistType.SORTING;
+			if (args[0].equalsIgnoreCase(stackingSubCommand)) {
+				list = PluginConfigManager.getBlacklistStacking();
+				listType = BlacklistType.STACKING;
 			} else if (args[0].equalsIgnoreCase(inventorySubCommand)) {
 				list = PluginConfigManager.getBlacklistInventory();
 				listType = BlacklistType.INVENTORY;
@@ -108,7 +108,9 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			if (addSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
 				StringUtil.copyPartialMatches(
 						args[2],
-						Arrays.stream(Material.values()).map(Enum::name).collect(Collectors.toList()),
+						Arrays.stream(Material.values())
+								.map(material -> material.name().toLowerCase())
+								.collect(Collectors.toList()),
 						completions);
 		}
 
@@ -116,7 +118,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean addMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
-		Material material = Material.getMaterial(name);
+		Material material = Material.getMaterial(name.toUpperCase());
 		if (material == null) {
 			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
 					MessageID.ERROR_MATERIAL_NAME, sender, name);
@@ -127,23 +129,23 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private boolean addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (list.contains(material)) {
 			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.ERROR_BLACKLIST_EXISTS, sender, material.name());
+					MessageID.ERROR_BLACKLIST_EXISTS, sender, material.name().toLowerCase());
 		}
 
 		list.add(material);
 		saveList(type, list);
 
 		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-				MessageID.INFO_BLACKLIST_ADD, sender, material.name());
+				MessageID.INFO_BLACKLIST_ADD, sender, material.name().toLowerCase());
 	}
 
 	private boolean removeMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
-		Material material = Material.getMaterial(name);
+		Material material = Material.getMaterial(name.toUpperCase());
 
 		if (material == null) {
 			try {
 				int index = Integer.parseInt(name);
-				// expect 1 based index input, bc not all players are programmers
+				// expect 1 based index input, bc of list and not all players are programmers
 				if (index > 0 && index <= list.size()) {
 					material = list.get(index - 1);
 				} else {
@@ -162,14 +164,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private boolean removeMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (!list.contains(material)) {
 			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.ERROR_BLACKLIST_NOT_EXISTS, sender, material.name());
+					MessageID.ERROR_BLACKLIST_NOT_EXISTS, sender, material.name().toLowerCase());
 		}
 
 		list.remove(material);
 		saveList(type, list);
 
 		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-				MessageID.INFO_BLACKLIST_DEL, sender, material.name());
+				MessageID.INFO_BLACKLIST_DEL, sender, material.name().toLowerCase());
 	}
 
 	private boolean printBlacklist(CommandSender sender, String pageString, List<Material> list) {
@@ -177,7 +179,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender);
 		}
 
-		List<String> names  = list.stream().map(Enum::name).collect(Collectors.toList());
+		List<String> names  = list.stream().map(item -> item.name().toLowerCase()).collect(Collectors.toList());
 		return MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
 	}
 
@@ -207,8 +209,8 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	 * Saves the list in to the config.yml .
 	 */
 	private void saveList(BlacklistType type, List<Material> items) {
-		if (type == BlacklistType.SORTING) {
-			PluginConfigManager.setBlacklistSorting(items);
+		if (type == BlacklistType.STACKING) {
+			PluginConfigManager.setBlacklistStacking(items);
 		} else if (type == BlacklistType.INVENTORY) {
 			PluginConfigManager.setBlacklistInventory(items);
 		}
