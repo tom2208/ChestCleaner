@@ -149,8 +149,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 	private boolean setCleaningItem(Player player) {
 
-		if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ITEM.getString())) {
-			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_SET_ITEM);
+		if (!player.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET.getString())) {
+			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_ADMIN_ITEM_SET);
 		}
 
 		ItemStack item = player.getInventory().getItemInMainHand().clone();
@@ -199,8 +199,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setCleaningItemActive(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_SET_ACTIVE);
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
+			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
 
 		} else if (!StringUtils.isStringTrueOrFalse(value)) {
 			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
@@ -211,8 +211,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setDurabilityLoss(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_SET_DURABILITYLOSS);
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
+			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
 		} else if (!StringUtils.isStringTrueOrFalse(value)) {
 			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
 		}
@@ -223,8 +223,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setEventDetectionMode(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_SET_EVENT_MODE);
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
+			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
 		}
 		boolean b = Boolean.parseBoolean(value);
 		PluginConfigManager.setEventModeActive(b);
@@ -232,8 +232,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setItemLore(CommandSender sender, String[] args) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_SET_LORE.getString())) {
-		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_SET_LORE);
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
+		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
 		}
 
 		String lore = args[1];
@@ -260,8 +260,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private boolean setItemName(CommandSender sender, String[] args, Player player) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_RENAME.getString())) {
-		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_RENAME);
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_RENAME.getString())) {
+		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
 		}
 
 		String newname = args[1];

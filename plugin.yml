@@ -18,13 +18,95 @@ commands:
     description: Avoiding items to get stacked while sorting.
     usage: /<command> <stacking/inventory> <list/clear/add/remove> [<material>]
     aliases: bl
-    permission: chestcleaner.cmd.blacklist
+    permission: chestcleaner.cmd.admin.blacklist
   sortingconfig:
     description: Configuration of the sorting algorithm for players.
     usage: /<command> <autosort/categories/pattern> [<true/false> | list | set <category,category,..> | <pattern>]
     aliases: [sconfig, sc]
-  adminconfig:
+  sortingadmin:
     description: Configuration for admins
     usage: /<command> <autosort/categories/cooldown/pattern> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern>]
     aliases: [aconfig, ac]
-    permission: chestcleaner.cmd.sorting.config.admincontrol
+    permission: chestcleaner.cmd.admin.config
+
+permissions:
+  chestcleaner.autorefill.*:
+    description: allow all autorefills
+    children:
+      chestcleaner.autorefill.blocks: true
+      chestcleaner.autorefill.consumables: true
+  chestcleaner.autorefill.blocks:
+    description: allows the player to automatically get blocks refilled in the hotbar
+    default: true
+  chestcleaner.autorefill.consumables:
+    description: allows the player to automatically get blocks refilled in the hotbar
+    default: true
+  chestcleaner.cleaningitem.use:
+    description: allows the player to sort inventories of blocks
+    default: true
+  chestcleaner.cleaningitem.use.owninventory:
+    description: allows the player to sort their own inventory
+    default: true
+  chestcleaner.cooldown.immune:
+    description: whether the player is unaffected by the cooldown
+  chestcleaner.update:
+    description: whether the player gets a notification when a ChestCleaner update is available
+
+  chestcleaner.cmd.sortingconfig.*:
+    description: parent permission for sortingconfig
+    children:
+      chestcleaner.cmd.sortingconfig.categories: true
+      chestcleaner.cmd.sortingconfig.pattern: true
+      chestcleaner.cmd.sortingconfig.setautosort: true
+  chestcleaner.cmd.sortingconfig.categories:
+    description: allow player to override the category order for themself using the /sortingconfig categories command
+  chestcleaner.cmd.sortingconfig.pattern:
+    description: allow player to override the sorting pattern for themself using the /sortingconfig pattern command
+  chestcleaner.cmd.sortingconfig.setautosort:
+    description: allow player to override the autosort toggle for themself using the /sortingconfig autosort command
+
+  chestcleaner.cmd.cleaningitem.get:
+    description: allow player to get a cleaningitem using the /cleaningitem get command
+  chestcleaner.cmd.cleaningitem.give:
+    description: allow player to give a player/all players a cleaningitem using the /cleaningitem give command
+  chestcleaner.cmd.cleaninventory:
+    description: allow player to use the /cleaninventory command
+
+  chestcleaner.cmd.admin.*:
+    description: allow all changes to the defaults
+    children:
+      chestcleaner.cmd.cleaningitem.get: true
+      chestcleaner.cmd.cleaningitem.give: true
+      chestcleaner.cmd.cleaninventory: true
+      chestcleaner.cmd.admin.config: true
+      chestcleaner.cmd.admin.cooldown: true
+      chestcleaner.cmd.admin.blacklist: true
+      chestcleaner.cmd.admin.cleaningitem.*: true
+  chestcleaner.cmd.admin.config:
+    description: whether the player can use the /sortingadmin command
+  chestcleaner.cmd.admin.cooldown:
+    description: whether the player can use the /sortingadmin cooldown command
+  chestcleaner.cmd.admin.blacklist:
+    description: whether the player can use the /blacklist command
+  chestcleaner.cmd.admin.cleaningitem.*:
+    description: allow all changes to the default cleaningitem and get & give commands
+    children:
+      chestcleaner.cmd.admin.cleaningitem.rename: true
+      chestcleaner.cmd.admin.cleaningitem.setactive: true
+      chestcleaner.cmd.admin.cleaningitem.setdurabilityloss: true
+      chestcleaner.cmd.admin.cleaningitem.seteventdetectionmode: true
+      chestcleaner.cmd.admin.cleaningitem.setitem: true
+      chestcleaner.cmd.admin.cleaningitem.setlore: true
+  chestcleaner.cmd.admin.cleaningitem.rename:
+    description: whether the player can use the /cleaningitem rename command
+  chestcleaner.cmd.admin.cleaningitem.setactive:
+    description: whether the player can use the /cleaningitem active command
+  chestcleaner.cmd.admin.cleaningitem.setdurabilityloss:
+    description: whether the player can use the /cleaningitem durabilityLoss command
+  chestcleaner.cmd.admin.cleaningitem.seteventdetectionmode:
+    description: whether the player can use the /cleaningitem eventDetectionMode command
+  chestcleaner.cmd.admin.cleaningitem.setitem:
+    description: whether the player can use the /cleaningitem set command
+  chestcleaner.cmd.admin.cleaningitem.setlore:
+    description: whether the player can use the /cleaningitem lore command
+

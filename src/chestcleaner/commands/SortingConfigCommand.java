@@ -165,7 +165,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 	private boolean setCategories(Player player, String commaSeperatedCategories) {
 		List<String> categories = Arrays.asList(commaSeperatedCategories.split(","));
-		if (!CategorizerManager.validateExists(categories)) {
+
+		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
+			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES);
+		} else if (!CategorizerManager.validateExists(categories)) {
 			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, player);
 		}
 		PlayerDataManager.setCategoryOrder(player, categories);

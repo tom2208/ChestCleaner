@@ -5,6 +5,7 @@ import java.util.List;
 
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
+import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
@@ -83,8 +84,12 @@ public class InventorySorter {
 		}
 
 		if(p != null) {
-			categoryNames = PlayerDataManager.getCategoryOrder(p);
-			pattern = PlayerDataManager.getSortingPattern(p);
+			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
+				categoryNames = PlayerDataManager.getCategoryOrder(p);
+			}
+			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
+				pattern = PlayerDataManager.getSortingPattern(p);
+			}
 		}
 
 		if (!CategorizerManager.validateExists(categoryNames)) {

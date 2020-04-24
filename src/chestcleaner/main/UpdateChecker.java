@@ -7,6 +7,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import chestcleaner.utils.PluginPermissions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,7 +30,6 @@ public class UpdateChecker {
 	private String spigotPluginVersion;
 	
 	private static final int ID = 40313;
-	private static final Permission UPDATE_PERM = new Permission("chestcleaner.update", PermissionDefault.TRUE);
 	private static final long CHECK_INTERVAL = 12_000; // In ticks.
 	
 	public UpdateChecker(final JavaPlugin javaPlugin) {
@@ -67,7 +67,7 @@ public class UpdateChecker {
 								@EventHandler(priority = EventPriority.MONITOR)
 								public void onPlayerJoin(final PlayerJoinEvent event) {
 									final Player player = event.getPlayer();
-									if (!player.hasPermission(UPDATE_PERM))
+									if (!player.hasPermission(PluginPermissions.UPDATE_PLUGIN.getString()))
 										return;
 
 									MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_UPDATE_AVAILABLE, player);

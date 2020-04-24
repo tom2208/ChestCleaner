@@ -1,6 +1,6 @@
 package chestcleaner.main;
 
-import chestcleaner.commands.AdminConfigCommand;
+import chestcleaner.commands.SortingAdminCommand;
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.CleanInventoryCommand;
 import chestcleaner.commands.CleaningItemCommand;
@@ -55,7 +55,7 @@ public class ChestCleaner extends JavaPlugin {
 		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
 		getCommand("blacklist").setExecutor(new BlacklistCommand());
 		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
-		getCommand("adminconfig").setExecutor(new AdminConfigCommand());
+		getCommand("sortingadmin").setExecutor(new SortingAdminCommand());
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);

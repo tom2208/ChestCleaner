@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  *
  * @author Tom2208
  */
-public class AdminConfigCommand implements CommandExecutor, TabCompleter {
+public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
     /* sub-commands */
     private final String autosortSubCommand = "autosort";
@@ -231,8 +231,8 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
 
     private boolean setCooldownTime(CommandSender sender, String arg) {
 
-        if (!sender.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
-            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_COOLDOWN);
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
+            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
         }
 
         try {
@@ -246,8 +246,8 @@ public class AdminConfigCommand implements CommandExecutor, TabCompleter {
     }
 
     private boolean setCooldownActive(CommandSender sender, String arg) {
-        if (!sender.hasPermission(PluginPermissions.CMD_COOLDOWN.getString())) {
-            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_COOLDOWN);
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
+            return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
         }
 
         if (!StringUtils.isStringTrueOrFalse(arg)) {

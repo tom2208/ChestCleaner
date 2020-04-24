@@ -36,50 +36,36 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 
-			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
+			if (PluginConfigManager.isCleaningItemActive()
+					&& isPlayerHoldingACleaningItem(player)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
 
 				if (isPlayerAllowedToCleanOwnInv(player) ) {
-
-					if (CooldownManager.getInstance().isPlayerOnCooldown(player))
-						return;
 
 					damageItem(player);
 					InventorySorter.sortInventory(player.getInventory(), player);
 					InventorySorter.playSortingSound(player);
 
 					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
-
 					e.setCancelled(true);
 
-				} else if (!PluginConfigManager.isEventModeActive()) {
+				} else if (!PluginConfigManager.isEventModeActive()
+						&& player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
-					if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
+					Block b = BlockDetector.getTargetBlock(player);
 
-						Block b = BlockDetector.getTargetBlock(player);
+					if (!InventoryDetector.hasInventoryHolder(b)
+							|| PluginConfigManager.getBlacklistInventory().contains(b.getType()))
+						return;
 
-						if (!InventoryDetector.hasInventoryHolder(b))
-							return;
-
-						if (PluginConfigManager.getBlacklistInventory().contains(b.getType())
-								|| CooldownManager.getInstance().isPlayerOnCooldown(player)) {
-							return;
-						}
-
+					if (InventorySorter.sortPlayerBlock(b, player)) {
 						damageItem(player);
-
-						if (InventorySorter.sortPlayerBlock(b, player)) {
-
-							MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
-							e.setCancelled(true);
-						}
-
+						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+						e.setCancelled(true);
 					}
-
 				}
 			}
-
 		}
-
 	}
 
 	private boolean isPlayerHoldingACleaningItem(Player player) {
@@ -153,34 +139,24 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onOpenInventory(InventoryOpenEvent e) {
 
-		if (!PluginConfigManager.isCleaningItemActive()) {
-			return;
-		}
-		if (PluginConfigManager.isEventModeActive()) {
+		if (PluginConfigManager.isCleaningItemActive()
+				&& PluginConfigManager.isEventModeActive()) {
 
 			Player player = (Player) e.getPlayer();
 
-			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
+			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())
+					&& isPlayerHoldingACleaningItem(player)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
 
-				if (isPlayerHoldingACleaningItem(player)) {
+				InventorySorter.sortInventory(e.getInventory(), player);
+				InventorySorter.playSortingSound(player);
 
-					if (CooldownManager.getInstance().isPlayerOnCooldown(player))
-						return;
+				e.setCancelled(true);
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
 
-					InventorySorter.sortInventory(e.getInventory(), player);
-					InventorySorter.playSortingSound(player);
-
-					e.setCancelled(true);
-					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
-
-					damageItem(player);
-
-				}
-
+				damageItem(player);
 			}
-
 		}
-
 	}
 
 	@EventHandler
@@ -191,20 +167,13 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (PlayerDataManager.isAutoSort(p)) {
-
-				if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
-					return;
-				}
+			if (PlayerDataManager.isAutoSort(p) &&
+					!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
 
 				InventorySorter.sortInventory(e.getInventory(), p);
 				InventorySorter.playSortingSound(p);
 				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, p);
-
 			}
-
 		}
-
 	}
-
 }
