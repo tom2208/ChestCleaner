@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: 1.8.A1
+version: "2.0"
 author: Tom2208, leanNiki
 api-version: "1.13" # we need this otherwise new blocks e.g. mossy cobble slabs get deleted
 
@@ -12,7 +12,7 @@ commands:
     aliases: [cleaninv, cinv]
   cleaningitem:
     description: Configuration of the cleaningitem.
-    usage: /<command> <get/set/give/name/lore/active/durabilityLoss/eventDetectionMode> [<true/false> | <name/lore> | <player/@a>]
+    usage: /<command> <get/set/give/name/lore/active/durabilityLoss/openEvent> [<true/false> | <name/lore> | <player/@a>]
     aliases: ci
   blacklist:
     description: Avoiding items to get stacked while sorting.
@@ -94,7 +94,7 @@ permissions:
       chestcleaner.cmd.admin.cleaningitem.rename: true
       chestcleaner.cmd.admin.cleaningitem.setactive: true
       chestcleaner.cmd.admin.cleaningitem.setdurabilityloss: true
-      chestcleaner.cmd.admin.cleaningitem.seteventdetectionmode: true
+      chestcleaner.cmd.admin.cleaningitem.setopenevent: true
       chestcleaner.cmd.admin.cleaningitem.setitem: true
       chestcleaner.cmd.admin.cleaningitem.setlore: true
   chestcleaner.cmd.admin.cleaningitem.rename:
@@ -103,8 +103,8 @@ permissions:
     description: whether the player can use the /cleaningitem active command
   chestcleaner.cmd.admin.cleaningitem.setdurabilityloss:
     description: whether the player can use the /cleaningitem durabilityLoss command
-  chestcleaner.cmd.admin.cleaningitem.seteventdetectionmode:
-    description: whether the player can use the /cleaningitem eventDetectionMode command
+  chestcleaner.cmd.admin.cleaningitem.setopenevent:
+    description: whether the player can use the /cleaningitem openEvent command
   chestcleaner.cmd.admin.cleaningitem.setitem:
     description: whether the player can use the /cleaningitem set command
   chestcleaner.cmd.admin.cleaningitem.setlore:

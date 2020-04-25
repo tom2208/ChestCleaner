@@ -40,16 +40,14 @@ public class SortingListener implements org.bukkit.event.Listener {
 					&& isPlayerHoldingACleaningItem(player)
 					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
 
-				if (isPlayerAllowedToCleanOwnInv(player) ) {
-
+				if (isPlayerAllowedToCleanOwnInv(player) && InventorySorter.sortPlayerInventory(player)) {
 					damageItem(player);
-					InventorySorter.sortInventory(player.getInventory(), player);
 					InventorySorter.playSortingSound(player);
 
 					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
 					e.setCancelled(true);
 
-				} else if (!PluginConfigManager.isEventModeActive()
+				} else if (!PluginConfigManager.isOpenEvent()
 						&& player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
 					Block b = BlockDetector.getTargetBlock(player);
@@ -140,21 +138,19 @@ public class SortingListener implements org.bukkit.event.Listener {
 	private void onOpenInventory(InventoryOpenEvent e) {
 
 		if (PluginConfigManager.isCleaningItemActive()
-				&& PluginConfigManager.isEventModeActive()) {
+				&& PluginConfigManager.isOpenEvent()) {
 
 			Player player = (Player) e.getPlayer();
 
 			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())
 					&& isPlayerHoldingACleaningItem(player)
-					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
-
-				InventorySorter.sortInventory(e.getInventory(), player);
-				InventorySorter.playSortingSound(player);
-
-				e.setCancelled(true);
-				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+					&& InventorySorter.sortInventory(e.getInventory(), player)) {
 
 				damageItem(player);
+				InventorySorter.playSortingSound(player);
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+				e.setCancelled(true);
 			}
 		}
 	}
@@ -167,10 +163,10 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player p = (Player) e.getPlayer();
 
-			if (PlayerDataManager.isAutoSort(p) &&
-					!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
+			if (PlayerDataManager.isAutoSort(p)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(p)
+					&& InventorySorter.sortInventory(e.getInventory(), p)) {
 
-				InventorySorter.sortInventory(e.getInventory(), p);
 				InventorySorter.playSortingSound(p);
 				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, p);
 			}

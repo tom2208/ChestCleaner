@@ -41,13 +41,14 @@ public class ChestCleaner extends JavaPlugin {
 		this.getServer().getOnlinePlayers().forEach(PlayerDataManager::loadPlayerData);
 
 		String version = getDescription().getVersion().replace(".", "-");
-		getPlugin(this.getClass()).saveResource(getName() + "_en_GB_" + version + ".properties", false);
-		getPlugin(this.getClass()).saveResource(getName() + "_de_DE_" + version + ".properties", false);
+		String bundleName = getName() + "_" + version;
+		getPlugin(this.getClass()).saveResource(bundleName + "_en_GB.properties", false);
+		getPlugin(this.getClass()).saveResource(bundleName + "_de_DE.properties", false);
 
 		try {
 			URL fileUrl = new File(this.getDataFolder().toString()).toURI().toURL();
 			ClassLoader loader = new URLClassLoader(new URL[] { fileUrl });
-			rb = ResourceBundle.getBundle(getName(), locale, loader);
+			rb = ResourceBundle.getBundle(bundleName, locale, loader);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

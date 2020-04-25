@@ -1,18 +1,24 @@
-defaultautosort: false
-defaultsortingpattern: LEFT_TO_RIGHT_TOP_TO_BOTTOM
+updateMessage: true
 locale:
   lang: en
   country: GB
+default:
+  autosort: false
+  pattern: LEFT_TO_RIGHT_TOP_TO_BOTTOM
+  categories:
+    - AlphaBackAsc
+    - IsBlock
 cleaningItem:
-  ==: org.bukkit.inventory.ItemStack
-  v: 2230
-  type: IRON_HOE
-active: true
-durability: true
-openinventoryeventmode: false
-consumablesrefill: true
-blockrefill: true
-cleanInventorypermissionactive: true
+  active: true
+  durability: true
+  openEvent: true
+  item:
+    ==: org.bukkit.inventory.ItemStack
+    v: 2230
+    type: IRON_HOE
+refill:
+  blocks: true
+  consumables: true
 cooldown:
   active: true
   time: 5000
@@ -22,9 +28,6 @@ blacklist:
   inventory:
     - furnace
 categories:
-  order:
-    - AlphaBackAsc
-    - IsBlock
   words:
     - ==: WordCategory
       name: StoneWord

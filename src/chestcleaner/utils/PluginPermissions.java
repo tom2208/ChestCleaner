@@ -25,7 +25,7 @@ public enum PluginPermissions {
     CMD_ADMIN_ITEM_SET_LORE("chestcleaner.cmd.admin.cleaningitem.setlore"),
     CMD_ADMIN_ITEM_SET_ACTIVE("chestcleaner.cmd.admin.cleaningitem.setactive"),
     CMD_ADMIN_ITEM_SET_DURABILITYLOSS("chestcleaner.cmd.admin.cleaningitem.setdurabilityloss"),
-    CMD_ADMIN_ITEM_SET_EVENT_MODE("chestcleaner.cmd.admin.cleaningitem.seteventdetectionmode"),
+    CMD_ADMIN_ITEM_SET_EVENT_MODE("chestcleaner.cmd.admin.cleaningitem.setopenevent"),
     ;
 
     private String permission;

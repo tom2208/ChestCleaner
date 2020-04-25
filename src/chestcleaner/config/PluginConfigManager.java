@@ -44,28 +44,28 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM, item);
 	}
 
-	public static boolean isEventModeActive() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.OPEN_INVENTORY_MODE.getPath());
+	public static boolean isOpenEvent() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_OPEN_EVENT.getPath());
 	}
 
-	public static void setEventModeActive(boolean eventModeActive) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.OPEN_INVENTORY_MODE, eventModeActive);
+	public static void setOpenEvent(boolean openEvent) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM_OPEN_EVENT, openEvent);
 	}
 
 	public static boolean isBlockRefillActive() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.BLOCK_REFILL.getPath());
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_BLOCKS.getPath());
 	}
 
 	public static void setBlockRefillActive(boolean blockRefillActive) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLOCK_REFILL, blockRefillActive);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_BLOCKS, blockRefillActive);
 	}
 
 	public static boolean isConsumablesRefillActive() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CONSUMABLES_REFILL.getPath());
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_CONSUMABLES.getPath());
 	}
 
 	public static void setConsumablesRefillActive(boolean consumablesRefillActive) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CONSUMABLES_REFILL, consumablesRefillActive);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_CONSUMABLES, consumablesRefillActive);
 	}
 
 	public static boolean isUpdateCheckerActive() {
@@ -74,14 +74,6 @@ public class PluginConfigManager {
 
 	public static void setUpdateCheckerActive(boolean updateCheckerActive) {
 	 	PluginConfig.setIntoConfig(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE, updateCheckerActive);
-	}
-
-	public static boolean isCleanInvPermission() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.INVENTORY_PERMISSION_ACTIVE.getPath());
-	}
-
-	public static void setCleanInvPermission(boolean cleanInvPermission) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.INVENTORY_PERMISSION_ACTIVE, cleanInvPermission);
 	}
 
 	public static boolean isCooldownActive() {
@@ -101,11 +93,11 @@ public class PluginConfigManager {
 	}
 
 	public static List<String> getCategoryOrder() {
-		return PluginConfig.getConfig().getStringList(PluginConfig.ConfigPath.CATEGORIES_ORDER.getPath());
+		return PluginConfig.getConfig().getStringList(PluginConfig.ConfigPath.DEFAULT_CATEGORIES.getPath());
 	}
 
 	public static void setCategoryOrder(List<String> categorizationOrder) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_ORDER, categorizationOrder);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_CATEGORIES, categorizationOrder);
 	}
 
 	public static Category getCategoryByName(String name) {
@@ -134,21 +126,9 @@ public class PluginConfigManager {
 				PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath(), new ArrayList<WordCategory>()));
 	}
 
-	public static void addWordCategory(WordCategory category) {
-		List<WordCategory> categories = getWordCategories();
-		categories.add(category);
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_WORDS, categories);
-	}
-
 	public static List<ListCategory> getListCategories() {
 		return getCastList(PluginConfig.getConfig().getList(
 				PluginConfig.ConfigPath.CATEGORIES_LISTS.getPath(), new ArrayList<ListCategory>()));
-	}
-
-	public static void addListCategory(ListCategory category) {
-		List<ListCategory> categories = getListCategories();
-		categories.add(category);
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_LISTS, categories);
 	}
 
 	public static List<MasterCategory> getMasterCategories() {
@@ -156,19 +136,41 @@ public class PluginConfigManager {
 				PluginConfig.ConfigPath.CATEGORIES_MASTER.getPath(), new ArrayList<MasterCategory>()));
 	}
 
+	public static void addWordCategory(WordCategory category) {
+		List<WordCategory> categories = addOrUpdateCategory(category, getWordCategories());
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_WORDS, categories);
+	}
+
+	public static void addListCategory(ListCategory category) {
+		List<ListCategory> categories = addOrUpdateCategory(category, getListCategories());
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_LISTS, categories);
+	}
+
+
 	public static void addMasterCategory(MasterCategory category) {
-		List<MasterCategory> categories = getMasterCategories();
-		categories.add(category);
+		List<MasterCategory> categories = addOrUpdateCategory(category, getMasterCategories());
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_MASTER, categories);
 	}
 
+	private static <T extends Category> List<T> addOrUpdateCategory(T category, List<T> categories) {
+		T existingCategory = categories.stream()
+				.filter(cat -> cat.getName().equalsIgnoreCase(category.getName()))
+				.findFirst().orElse(null);
+		if (existingCategory != null) {
+			existingCategory.setValue(category.getValue());
+		} else {
+			categories.add(category);
+		}
+		return categories;
+	}
+
 	public static void setDefaultPattern(SortingPattern pattern) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_PATTERN, pattern);
 	}
 
 	public static SortingPattern getDefaultPattern() {
 		return SortingPattern.getSortingPatternByName(PluginConfig.getConfig()
-				.getString(PluginConfig.ConfigPath.DEFAULT_SORTING_PATTERN.getPath()));
+				.getString(PluginConfig.ConfigPath.DEFAULT_PATTERN.getPath()));
 	}
 
 	public static boolean isDefaultAutoSort() {

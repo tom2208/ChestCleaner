@@ -29,6 +29,10 @@ public class WordCategory implements Category<String> {
         return word;
     }
 
+    public void setValue(String value) {
+         this.word = value;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> result = new HashMap<>();

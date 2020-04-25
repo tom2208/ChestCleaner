@@ -30,6 +30,10 @@ public class ListCategory implements Category<List<String>> {
         return list;
     }
 
+    public void setValue(List<String> value) {
+        this.list = value;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> result = new HashMap<>();

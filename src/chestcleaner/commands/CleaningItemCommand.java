@@ -43,16 +43,16 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	private final String loreSubCommand = "lore";
 	private final String activeSubCommand = "active";
 	private final String durabilityLossSubCommand = "durabilityLoss";
-	private final String eventDetectionModeSubCommand = "eventDetectionMode";
+	private final String openEventSubCommand = "openEvent";
 
 	private final String nameProperty = command.concat(" ").concat(nameSubCommand);
 	private final String loreProperty = command.concat(" ").concat(loreSubCommand);
 	private final String activeProperty = command.concat(" ").concat(activeSubCommand);
 	private final String durabilityProperty = command.concat(" ").concat(durabilityLossSubCommand);
-	private final String eventDetectionProperty = eventDetectionModeSubCommand;
+	private final String openEventProperty = openEventSubCommand;
 
 	private final String[] strCommandList = {getSubCommand, setSubCommand, giveSubCommand, nameSubCommand,
-			loreSubCommand, activeSubCommand, durabilityLossSubCommand, eventDetectionModeSubCommand};
+			loreSubCommand, activeSubCommand, durabilityLossSubCommand, openEventSubCommand};
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -71,8 +71,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				return getConfig(sender, activeSubCommand);
 			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
 				return getConfig(sender, durabilityLossSubCommand);
-			} else if (eventDetectionModeSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, eventDetectionModeSubCommand);
+			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
+				return getConfig(sender, openEventSubCommand);
 
 			} else if (player == null) {
 				return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
@@ -96,8 +96,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				return setCleaningItemActive(sender, args[1]);
 			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
 				return setDurabilityLoss(sender, args[1]);
-			} else if (eventDetectionModeSubCommand.equalsIgnoreCase(args[0])) {
-				return setEventDetectionMode(sender, args[1]);
+			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
+				return setOpenEventMode(sender, args[1]);
 			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {
 				return giveCleaningItem(sender, args[1]);
 			}
@@ -129,9 +129,9 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				key = durabilityProperty;
 				value = String.valueOf(PluginConfigManager.isDurabilityLossActive());
 				break;
-			case eventDetectionModeSubCommand:
-				key = eventDetectionProperty;
-				value = String.valueOf(PluginConfigManager.isEventModeActive());
+			case openEventSubCommand:
+				key = openEventProperty;
+				value = String.valueOf(PluginConfigManager.isOpenEvent());
 				break;
 		}
 		return MessageSystem.sendMessageToCSWithReplacement(
@@ -222,13 +222,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		return MessageSystem.sendChangedValue(sender, durabilityProperty, String.valueOf(b));
 	}
 
-	private boolean setEventDetectionMode(CommandSender sender, String value) {
+	private boolean setOpenEventMode(CommandSender sender, String value) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
 			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
 		}
 		boolean b = Boolean.parseBoolean(value);
-		PluginConfigManager.setEventModeActive(b);
-		return MessageSystem.sendChangedValue(sender, eventDetectionProperty, String.valueOf(b));
+		PluginConfigManager.setOpenEvent(b);
+		return MessageSystem.sendChangedValue(sender, openEventProperty, String.valueOf(b));
 	}
 
 	private boolean setItemLore(CommandSender sender, String[] args) {
@@ -292,7 +292,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 			break;
 		case 2:
 			if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
-					|| args[0].equalsIgnoreCase(eventDetectionModeSubCommand)) {
+					|| args[0].equalsIgnoreCase(openEventSubCommand)) {
 
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {

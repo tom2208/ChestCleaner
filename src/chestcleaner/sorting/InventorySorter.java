@@ -68,18 +68,24 @@ public class InventorySorter {
 		return newList;
 	}
 
+	public static boolean sortPlayerInventory(Player p) {
+		return sortInventory(p.getInventory(), p, InventoryDetector.getPlayerInventoryList(p));
+	}
+
+	public static boolean sortInventory(Inventory inv, Player p) {
+		return sortInventory(inv, p, InventoryConverter.getArrayListFromInventory(inv));
+	}
+
 	/**
 	 * Sorts any kind of inventory.
 	 * 
 	 * @param inv the inventory you want to sort.
 	 */
-	public static boolean sortInventory(Inventory inv, Player p) {
-
-		List<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
+	private static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
 		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
 		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 
-		if(list == null) {
+		if(items == null || items.isEmpty()) {
 			return false;
 		}
 
@@ -97,18 +103,17 @@ public class InventorySorter {
 			return false;
 		}
 
-		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, list, pattern);
+		if (items.size() <= 1) {
+			InventoryConverter.setItemsOfInventory(inv, items, pattern);
 			return true;
 		}
 
-		list = reduceStacks(list);
-		list = CategorizerManager.sort(list, categoryNames);
-		list = expandStacks(list);
+		items = reduceStacks(items);
+		items = CategorizerManager.sort(items, categoryNames);
+		items = expandStacks(items);
 
-		InventoryConverter.setItemsOfInventory(inv, list, pattern);
+		InventoryConverter.setItemsOfInventory(inv, items, pattern);
 		return true;
-		
 	}
 
 	/**
@@ -126,15 +131,13 @@ public class InventorySorter {
 			if (p != null) {
 				playSortingSound(p);
 			}
-			sortInventory(inv, p);
-			return true;
+			return sortInventory(inv, p);
 		}
 
 		if (p != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
 				playSortingSound(p);
-				sortInventory(p.getEnderChest(), p);
-				return true;
+				return sortInventory(p.getEnderChest(), p);
 			}
 		}
 

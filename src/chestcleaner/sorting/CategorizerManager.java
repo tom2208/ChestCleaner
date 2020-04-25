@@ -52,7 +52,8 @@ public class CategorizerManager {
     }
 
     public static void addCategoryAndSave(Category<?> category, CommandSender sender) {
-        if (category != null && getByName(category.getName()) == null) {
+        if (category != null) {
+            availableCategorizers.removeIf(cat -> cat.getName().equals(category.getName()));
             if (category instanceof MasterCategory) {
                 availableCategorizers.add(new MasterCategorizer((MasterCategory) category));
                 PluginConfigManager.addMasterCategory((MasterCategory) category);
@@ -64,7 +65,7 @@ public class CategorizerManager {
                 PluginConfigManager.addWordCategory((WordCategory) category);
             }
         } else {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_BOOK, sender);
         }
     }
 

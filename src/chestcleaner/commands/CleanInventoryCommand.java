@@ -36,8 +36,7 @@ public class CleanInventoryCommand implements CommandExecutor {
             player = (Player) sender;
         }
 
-        if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())
-                && PluginConfigManager.isCleanInvPermission()) {
+        if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())) {
             return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_INV_CLEAN);
         }
 
