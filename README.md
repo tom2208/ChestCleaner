@@ -1,5 +1,5 @@
 # ATTENTION
-when migrating to version 2.0. A lot of things have changed, that is why it is a new major version. Read the [Migration Guide](Migration-Guide-2.0) **BEFORE** upgrading. If you are not upgrading, but installing this plugin for the first time, you can disregard this.
+when migrating to version 2.0. A lot of things have changed, that is why it is a new major version. Read the [Migration Guide](https://github.com/tom2208/ChestCleaner/wiki/Migration-Guide-2.0) **BEFORE** upgrading. If you are not upgrading, but installing this plugin for the first time, you can disregard this.
 
 # ChestCleaner
 
