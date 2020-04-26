@@ -1,7 +1,8 @@
 package chestcleaner.sorting;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum SortingPattern {
 
@@ -31,17 +32,6 @@ public enum SortingPattern {
 	}
 
 	public static List<String> getIDList() {
-
-		List<String> list = new ArrayList<String>();
-
-		list.add(LEFT_TO_RIGHT_TOP_TO_BOTTOM.name());
-		list.add(RIGHT_TO_LEFT_BOTTOM_TO_TOP.name());
-		list.add(TOP_TO_BOTTOM_LEFT_TO_RIGHT.name());
-		list.add(BOTTOM_TO_TOP_LEFT_TO_RIGHT.name());
-
-		return list;
+		return Arrays.stream(values()).map(Enum::name).collect(Collectors.toList());
 	}
-
-	public static SortingPattern DEFAULT = SortingPattern.LEFT_TO_RIGHT_TOP_TO_BOTTOM;
-
 }

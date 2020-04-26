@@ -17,7 +17,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onPlacingBlock(BlockPlaceEvent e) {
 
-		if (PluginConfigManager.getInstance().isBlockRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.isBlockRefillActive() && !e.isCancelled()) {
 			Player player = e.getPlayer();
 
 			if (isPlayerAllowedToRefillBlocks(player)) {
@@ -47,7 +47,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onConsuming(PlayerItemConsumeEvent e) {
 
-		if (PluginConfigManager.getInstance().isConsumablesRefillActive() && !e.isCancelled()) {
+		if (PluginConfigManager.isConsumablesRefillActive() && !e.isCancelled()) {
 
 			Player player = e.getPlayer();
 
@@ -110,7 +110,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 */
 	private boolean isPlayerAllowedToRefillBlocks(Player player) {
 		return player.getGameMode().equals(GameMode.SURVIVAL)
-				&& player.hasPermission(PluginPermissions.REFILL_BLOCKS.getString());
+				&& player.hasPermission(PluginPermissions.AUTOFILL_BLOCKS.getString());
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 * @return true if the player holds an item in his off hand otherwise false.
 	 */
 	private boolean isPlayerHoldingAItemInOffHand(Player player) {
-		return player.getInventory().getItemInOffHand() != null;
+		return !player.getInventory().getItemInOffHand().getType().isAir();
 	}
 
 	/**

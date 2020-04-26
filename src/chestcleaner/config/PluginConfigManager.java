@@ -1,115 +1,233 @@
 package chestcleaner.config;
 
+import chestcleaner.config.serializable.Category;
+import chestcleaner.config.serializable.ListCategory;
+import chestcleaner.config.serializable.MasterCategory;
+import chestcleaner.config.serializable.WordCategory;
+import chestcleaner.sorting.SortingPattern;
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.inventory.ItemStack;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PluginConfigManager {
 
-	private static PluginConfigManager instance = null;
+	private static List<Material> blacklistStacking = null;
+	private static List<Material> blacklistInventory = null;
 
-	private boolean durabilityLossActive = true;
-	private boolean cleaningItemActive = true;
-	private boolean eventModeActive = false;
-	private boolean blockRefillActive = true;
-	private boolean consumablesRefillActive = true;
-	private boolean updateCheckerActive = true;
-	private boolean cleanInvPermission = true;
-	private final String falseString = "false";
-	private final String trueString = "true";
+	private PluginConfigManager() {}
 
-	protected PluginConfigManager() {
-
+	public static boolean isDurabilityLossActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_DURABILITY.getPath());
 	}
 
-	public static PluginConfigManager getInstance() {
-		if (instance == null) {
-			instance = new PluginConfigManager();
-		}
-
-		return instance;
+	public static void setDurabilityLossActive(boolean durabilityLossActive) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM_DURABILITY, durabilityLossActive);
 	}
 
-	public boolean isDurabilityLossActive() {
-		return durabilityLossActive;
+	public static boolean isCleaningItemActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_ACTIVE.getPath());
 	}
 
-	public void setDurabilityLossActive(boolean durabilityLossActive) {
-		this.durabilityLossActive = durabilityLossActive;
+	public static void setCleaningItemActive(boolean cleaningItemActive) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM_ACTIVE, cleaningItemActive);
 	}
 
-	public boolean isCleaningItemActive() {
-		return cleaningItemActive;
+	public static ItemStack getCleaningItem() {
+		return PluginConfig.getConfig().getItemStack(PluginConfig.ConfigPath.CLEANING_ITEM.getPath());
 	}
 
-	public void setCleaningItemActive(boolean cleaningItemActive) {
-		this.cleaningItemActive = cleaningItemActive;
+	public static void setCleaningItem(ItemStack item) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM, item);
 	}
 
-	public boolean isEventModeActive() {
-		return eventModeActive;
+	public static boolean isOpenEvent() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_OPEN_EVENT.getPath());
 	}
 
-	public void setEventModeActive(boolean eventModeActive) {
-		this.eventModeActive = eventModeActive;
+	public static void setOpenEvent(boolean openEvent) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM_OPEN_EVENT, openEvent);
 	}
 
-	public boolean isBlockRefillActive() {
-		return blockRefillActive;
+	public static boolean isBlockRefillActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_BLOCKS.getPath());
 	}
 
-	public void setBlockRefillActive(boolean blockRefillActive) {
-		this.blockRefillActive = blockRefillActive;
+	public static void setBlockRefillActive(boolean blockRefillActive) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_BLOCKS, blockRefillActive);
 	}
 
-	public boolean isConsumablesRefillActive() {
-		return consumablesRefillActive;
+	public static boolean isConsumablesRefillActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_CONSUMABLES.getPath());
 	}
 
-	public void setConsumablesRefillActive(boolean consumablesRefillActive) {
-		this.consumablesRefillActive = consumablesRefillActive;
+	public static void setConsumablesRefillActive(boolean consumablesRefillActive) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_CONSUMABLES, consumablesRefillActive);
 	}
 
-	public boolean isUpdateCheckerActive() {
-		return updateCheckerActive;
+	public static boolean isUpdateCheckerActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE.getPath());
 	}
 
-	public void setUpdateCheckerActive(boolean updateCheckerActive) {
-		this.updateCheckerActive = updateCheckerActive;
+	public static void setUpdateCheckerActive(boolean updateCheckerActive) {
+	 	PluginConfig.setIntoConfig(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE, updateCheckerActive);
 	}
 
-	public boolean isCleanInvPermission() {
-		return cleanInvPermission;
+	public static boolean isCooldownActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath());
 	}
 
-	public void setCleanInvPermission(boolean cleanInvPermission) {
-		this.cleanInvPermission = cleanInvPermission;
+	public static void setCooldownActive(boolean active) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_ACTIVE, active);
 	}
 
-	public String getFalseString() {
-		return falseString;
+	public static int getCooldown() {
+		return PluginConfig.getConfig().getInt(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath());
 	}
 
-	public String getTrueString() {
-		return trueString;
+	public static void setCooldown(int time) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME, time);
 	}
 
-	public static boolean isStringTrueOrFalse(String str) {
-		return isStringTrue(str) || isStringFalse(str);
+	public static List<String> getCategoryOrder() {
+		return PluginConfig.getConfig().getStringList(PluginConfig.ConfigPath.DEFAULT_CATEGORIES.getPath());
 	}
 
-	public static boolean isStringTrue(String str) {
-		return str.equalsIgnoreCase(getInstance().getTrueString());
+	public static void setCategoryOrder(List<String> categorizationOrder) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_CATEGORIES, categorizationOrder);
 	}
 
-	public static boolean isStringFalse(String str) {
-		return str.equalsIgnoreCase(getInstance().getFalseString());
+	public static Category getCategoryByName(String name) {
+		for (WordCategory category : getWordCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		for (ListCategory category : getListCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		for (MasterCategory category : getMasterCategories())
+			if (category.getName().equalsIgnoreCase(name))
+				return category;
+		return null;
 	}
-	
-	public static List<String> getBooleanValueStringList(){
-		List<String> list = new ArrayList<String>();
-		list.add(getInstance().getTrueString());
-		list.add(getInstance().getFalseString());
+
+	public static List<Category> getAllCategories() {
+		List<Category> list = new ArrayList<>();
+		list.addAll(getWordCategories());
+		list.addAll(getListCategories());
+		list.addAll(getMasterCategories());
 		return list;
 	}
 
+	public static List<WordCategory> getWordCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath(), new ArrayList<WordCategory>()));
+	}
+
+	public static List<ListCategory> getListCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_LISTS.getPath(), new ArrayList<ListCategory>()));
+	}
+
+	public static List<MasterCategory> getMasterCategories() {
+		return getCastList(PluginConfig.getConfig().getList(
+				PluginConfig.ConfigPath.CATEGORIES_MASTER.getPath(), new ArrayList<MasterCategory>()));
+	}
+
+	public static void addWordCategory(WordCategory category) {
+		List<WordCategory> categories = addOrUpdateCategory(category, getWordCategories());
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_WORDS, categories);
+	}
+
+	public static void addListCategory(ListCategory category) {
+		List<ListCategory> categories = addOrUpdateCategory(category, getListCategories());
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_LISTS, categories);
+	}
+
+
+	public static void addMasterCategory(MasterCategory category) {
+		List<MasterCategory> categories = addOrUpdateCategory(category, getMasterCategories());
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_MASTER, categories);
+	}
+
+	private static <T extends Category> List<T> addOrUpdateCategory(T category, List<T> categories) {
+		T existingCategory = categories.stream()
+				.filter(cat -> cat.getName().equalsIgnoreCase(category.getName()))
+				.findFirst().orElse(null);
+		if (existingCategory != null) {
+			existingCategory.setValue(category.getValue());
+		} else {
+			categories.add(category);
+		}
+		return categories;
+	}
+
+	public static void setDefaultPattern(SortingPattern pattern) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_PATTERN, pattern);
+	}
+
+	public static SortingPattern getDefaultPattern() {
+		return SortingPattern.getSortingPatternByName(PluginConfig.getConfig()
+				.getString(PluginConfig.ConfigPath.DEFAULT_PATTERN.getPath()));
+	}
+
+	public static boolean isDefaultAutoSort() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_AUTOSORT.getPath());
+	}
+
+	public static void setDefaultAutoSort(boolean defaultAutoSort) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_AUTOSORT, defaultAutoSort);
+	}
+
+	public static List<Material> getBlacklistInventory() {
+		if (blacklistInventory == null) {
+			blacklistInventory = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_INVENTORY);
+		}
+		return blacklistInventory;
+	}
+
+	public static void setBlacklistInventory(List<Material> blacklistInventory) {
+	    PluginConfigManager.blacklistInventory = blacklistInventory;
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_INVENTORY, getStringList(blacklistInventory));
+	}
+
+	public static List<Material> getBlacklistStacking() {
+	    if (blacklistStacking == null) {
+			blacklistStacking = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_STACKING);
+		}
+		return blacklistStacking;
+	}
+
+	public static void setBlacklistStacking(List<Material> blacklistStacking) {
+	    PluginConfigManager.blacklistStacking = blacklistStacking;
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_STACKING, getStringList(blacklistStacking));
+	}
+
+	private static ArrayList<Material> getMaterialList(FileConfiguration config, PluginConfig.ConfigPath path) {
+		List<String> list = config.getStringList(path.getPath());
+		ArrayList<Material> materials = new ArrayList<>();
+
+		for (String name : list) {
+			materials.add(Material.getMaterial(name.toUpperCase()));
+		}
+		return materials;
+	}
+
+	private static List<String> getStringList(List<Material> materialList) {
+		List<String> list = new ArrayList<>();
+
+		for (Material material : materialList) {
+			list.add(material.name().toLowerCase());
+		}
+		return list;
+	}
+
+	private static <T> List<T> getCastList(List<?> input) {
+		if (input == null) {
+			return new ArrayList<>();
+		}
+		return input.stream().map(o -> (T) o).collect(Collectors.toList());
+	}
 }

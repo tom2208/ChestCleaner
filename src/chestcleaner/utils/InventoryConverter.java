@@ -1,7 +1,9 @@
 package chestcleaner.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import chestcleaner.config.PluginConfigManager;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -49,13 +51,13 @@ public class InventoryConverter {
 	 *                                  {@code items} or the Inventory {@code inv}
 	 *                                  is equal to null.
 	 */
-	public static void setItemsOfInventory(Inventory inv, ArrayList<ItemStack> items, SortingPattern pattern) {
-
-		boolean isPlayer = inv.getType() == InventoryType.PLAYER;
+	public static void setItemsOfInventory(Inventory inv, List<ItemStack> items, SortingPattern pattern) {
 
 		if (items == null || inv == null) {
 			throw new IllegalArgumentException();
 		}
+
+		boolean isPlayer = inv.getType() == InventoryType.PLAYER;
 
 		if (!isPlayer)
 			inv.clear();
@@ -74,7 +76,7 @@ public class InventoryConverter {
 		}
 
 		if (pattern == null)
-			pattern = SortingPattern.DEFAULT;
+			pattern = PluginConfigManager.getDefaultPattern();
 
 		switch (pattern) {
 
@@ -138,28 +140,4 @@ public class InventoryConverter {
 		}
 
 	}
-
-	/**
-	 * Sets the Item Stacks of the ArrayList into the slots of the player-inventory,
-	 * just effects index 9 (including) to index 35 (including).That means the
-	 * hotbar or other important slots (armor slots, second hand slot) are getting
-	 * avoided.
-	 * 
-	 * @param items The list of ItemStacks you want to put into the player
-	 *              inventory. Its size should be <= 27.
-	 * @param p     the player whose inventory will get effected.
-	 * @throws IllegalArgumentException throws if the argument ItemStack
-	 *                                  {@code items} or the Inventory {@code inv}
-	 *                                  is equal to null.
-	 */
-	public static void setPlayerInventory(ArrayList<ItemStack> items, Player p, SortingPattern pattern) {
-
-		if (items == null || p == null) {
-			throw new IllegalArgumentException();
-		}
-
-		setItemsOfInventory(p.getInventory(), items, pattern);
-
-	}
-
 }

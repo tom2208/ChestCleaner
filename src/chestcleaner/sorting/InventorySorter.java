@@ -1,7 +1,14 @@
 package chestcleaner.sorting;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import chestcleaner.config.PlayerDataManager;
+import chestcleaner.config.PluginConfigManager;
+import chestcleaner.utils.PluginPermissions;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -9,88 +16,72 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import chestcleaner.sorting.evaluator.EvaluatorType;
 import chestcleaner.utils.InventoryConverter;
 import chestcleaner.utils.InventoryDetector;
-import chestcleaner.utils.PlayerDataManager;
 
 public class InventorySorter {
 
-	public static ArrayList<Material> blacklist = new ArrayList<>();
-
 	/**
 	 * Returns {@code list} sorted in full stacked items.
+	 * The amount of the ItemStack is increased beyond MaxStackSize, but only one ItemStack exists for each Material.
+	 * Items on the stacking blacklist dont get their ammount increased. They are simply added to the list.
+	 * So there may be multiple ItemStacks for materials on the stacking blacklist.
 	 * 
-	 * @param list an ArrayList of ItemStacks you want to sort
+	 * @param items an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
 	 */
-	private static ArrayList<ItemStack> getFullStacks(ArrayList<ItemStack> list) {
+	private static List<ItemStack> reduceStacks(List<ItemStack> items) {
+		// temp list, every item once, amounts get added
+		ArrayList<ItemStack> newList = new ArrayList<>();
 
-		ArrayList<ItemStack> items = new ArrayList<>();
-		ArrayList<Integer> amounts = new ArrayList<>();
-
-		boolean blackListedItemUsed = false;
-
-		for (int i = 0; i < list.size(); i++) {
-
-			ItemStack item = list.get(i);
-			int amount = item.getAmount();
-
-			item.setAmount(1);
-
-			if (blacklist.contains(list.get(i).getType())) {
-				items.add(item);
-				amounts.add(amount);
-				blackListedItemUsed = true;
+		for (ItemStack item : items) {
+			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
+				newList.add(item);
 			} else {
+				ItemStack existingItem = newList.stream()
+						.filter(tempItem -> tempItem.isSimilar(item))
+						.findFirst().orElse(null);
 
-				int index = -1;
-				for (int j = 0; j < items.size(); j++) {
-					if (items.get(j).isSimilar(list.get(i))) {
-						index = j;
-						break;
-					}
-				}
-
-				if (index >= 0) {
-					amounts.set(index, amounts.get(index) + amount);
+				if (existingItem == null) {
+					newList.add(item);
 				} else {
-					items.add(item);
-					amounts.add(amount);
+					existingItem.setAmount(existingItem.getAmount() + item.getAmount());
 				}
 			}
-
 		}
+		return newList;
+	}
 
-		ArrayList<ItemStack> out = new ArrayList<>();
+	/**
+	 * Returns {@code list} sorted in maxStackSize ItemStacks.
+	 * If the amount is larger than maxStackSize, it will create a new ItemStack for that material.
+	 * Items on the stacking blacklist are simply added to the list.
+	 */
+	private static List<ItemStack> expandStacks(List<ItemStack> items) {
+		ArrayList<ItemStack> newList = new ArrayList<>();
 
-		for (int i = 0; i < items.size(); i++) {
-			if(items.get(i).getType().equals(Material.AIR)) {
-				continue;
+		for (ItemStack item : items) {
+			if (PluginConfigManager.getBlacklistStacking().contains(item.getType())) {
+				newList.add(item);
+			} else if (!item.getType().equals(Material.AIR)){
+				while (item.getAmount() > 0) {
+					int amount = Math.min(item.getAmount(), item.getMaxStackSize());
+					ItemStack clone = item.clone();
+					clone.setAmount(amount);
+					newList.add(clone);
+					item.setAmount(item.getAmount() - amount);
+				}
 			}
-			int stacks = (amounts.get(i) / items.get(i).getType().getMaxStackSize());
-			for (int j = 0; j < stacks; j++) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(items.get(i).getMaxStackSize());
-				out.add(item);
-			}
-
-			int remainingItems = amounts.get(i) % items.get(i).getMaxStackSize();
-			if (remainingItems > 0) {
-				ItemStack item = items.get(i).clone();
-				item.setAmount(remainingItems);
-				out.add(item);
-			}
-
 		}
+		return newList;
+	}
 
-		if (blackListedItemUsed) {
-			AmountSorter sorter = new AmountSorter(out);
-			return sorter.sortArray();
-		}
+	public static boolean sortPlayerInventory(Player p) {
+		return sortInventory(p.getInventory(), p, InventoryDetector.getPlayerInventoryList(p));
+	}
 
-		return out;
-
+	public static boolean sortInventory(Inventory inv, Player p) {
+		return sortInventory(inv, p, InventoryConverter.getArrayListFromInventory(inv));
 	}
 
 	/**
@@ -98,35 +89,40 @@ public class InventorySorter {
 	 * 
 	 * @param inv the inventory you want to sort.
 	 */
-	public static boolean sortInventory(Inventory inv, Player p) {
+	private static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
+		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
+		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 
-		ArrayList<ItemStack> list = InventoryConverter.getArrayListFromInventory(inv);
-		ArrayList<ItemStack> temp;
-		EvaluatorType evaluator = EvaluatorType.DEFAULT;
-		SortingPattern pattern = SortingPattern.DEFAULT;
-
-		if(list == null) {
+		if(items == null || items.isEmpty()) {
 			return false;
 		}
 
 		if(p != null) {
-			evaluator = PlayerDataManager.getInstance().getEvaluatorTypOfPlayer(p);
-			pattern = PlayerDataManager.getInstance().getSortingPatternOfPlayer(p);
+			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
+				categoryNames = PlayerDataManager.getCategoryOrder(p);
+			}
+			if (p.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
+				pattern = PlayerDataManager.getSortingPattern(p);
+			}
 		}
 
-		if (list.size() <= 1) {
-			InventoryConverter.setItemsOfInventory(inv, list, pattern);
+		if (!CategorizerManager.validateExists(categoryNames)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, p);
+			return false;
 		}
 
-		Quicksort sorter = new Quicksort(list, EvaluatorType.getEvaluator(evaluator));
-		temp = sorter.sort(0, list.size() - 1);
-		ArrayList<ItemStack> out = getFullStacks(temp);
+		if (items.size() <= 1) {
+			InventoryConverter.setItemsOfInventory(inv, items, pattern);
+			return true;
+		}
 
-		InventoryConverter.setItemsOfInventory(inv, out, pattern);
+		items = reduceStacks(items);
+		items = CategorizerManager.sort(items, categoryNames);
+		items = expandStacks(items);
+
+		InventoryConverter.setItemsOfInventory(inv, items, pattern);
 		return true;
-		
 	}
-
 
 	/**
 	 * Checks if the block has an inventory or if it is an enderchest and sorts it.
@@ -143,15 +139,13 @@ public class InventorySorter {
 			if (p != null) {
 				playSortingSound(p);
 			}
-			sortInventory(inv, p);
-			return true;
+			return sortInventory(inv, p);
 		}
 
 		if (p != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
 				playSortingSound(p);
-				sortInventory(p.getEnderChest(), p);
-				return true;
+				return sortInventory(p.getEnderChest(), p);
 			}
 		}
 

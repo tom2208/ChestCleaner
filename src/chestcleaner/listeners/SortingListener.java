@@ -13,15 +13,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import chestcleaner.commands.BlacklistCommand;
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.main.ChestCleaner;
 import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.PlayerDataManager;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
@@ -37,51 +35,34 @@ public class SortingListener implements org.bukkit.event.Listener {
 		Player player = e.getPlayer();
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
-			if (isPlayerHoldingACleaningItem(player)) {
-
-				if (isPlayerAllowedToCleanOwnInv(player)) {
-
-					if (!CooldownManager.getInstance().isPlayerOnCooldown(player))
-						return;
-
+			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
+				if (isPlayerAllowedToCleanOwnInv(player)
+						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+						&& InventorySorter.sortPlayerInventory(player)) {
 					damageItem(player);
-					InventorySorter.sortInventory(player.getInventory(), player);
 					InventorySorter.playSortingSound(player);
 
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
-
+					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
 					e.setCancelled(true);
 
-				} else if (!PluginConfigManager.getInstance().isEventModeActive()) {
+				} else if (!PluginConfigManager.isOpenEvent()
+						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+						&& player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
-					if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
+					Block b = BlockDetector.getTargetBlock(player);
 
-						Block b = BlockDetector.getTargetBlock(player);
+					if (!InventoryDetector.hasInventoryHolder(b)
+							|| PluginConfigManager.getBlacklistInventory().contains(b.getType()))
+						return;
 
-						if (!InventoryDetector.hasInventoryHolder(b))
-							return;
-
-						if (BlacklistCommand.inventoryBlacklist.contains(b.getType())
-								|| !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
-							return;
-						}
-
+					if (InventorySorter.sortPlayerBlock(b, player)) {
 						damageItem(player);
-
-						if (InventorySorter.sortPlayerBlock(b, player)) {
-
-							MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
-							e.setCancelled(true);
-						}
-
+						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+						e.setCancelled(true);
 					}
-
 				}
 			}
-
 		}
-
 	}
 
 	private boolean isPlayerHoldingACleaningItem(Player player) {
@@ -102,7 +83,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 		if (item.getType().equals(Material.AIR)) {
 			return false;
 		}
-		return getCompairableItem(item).isSimilar(ChestCleaner.item);
+		return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
 	}
 
 	private boolean isPlayerHoldingCleaningItemInOffHand(Player player) {
@@ -110,7 +91,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 		if (item.getType().equals(Material.AIR)) {
 			return false;
 		}
-		return getCompairableItem(item).isSimilar(ChestCleaner.item);
+		return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
 	}
 
 	private boolean isPlayerAllowedToCleanOwnInv(Player player) {
@@ -129,7 +110,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 	 */
 	private void damageItem(Player player) {
 
-		if (PluginConfigManager.getInstance().isDurabilityLossActive()) {
+		if (PluginConfigManager.isDurabilityLossActive()) {
 
 			ItemStack item;
 			if (isPlayerHoldingCleaningItemInMainHand(player)) {
@@ -155,57 +136,39 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onOpenInventory(InventoryOpenEvent e) {
 
-		if (PluginConfigManager.getInstance().isEventModeActive()) {
+		if (PluginConfigManager.isCleaningItemActive()
+				&& PluginConfigManager.isOpenEvent()) {
 
 			Player player = (Player) e.getPlayer();
 
-			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
+			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())
+					&& isPlayerHoldingACleaningItem(player)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+					&& InventorySorter.sortInventory(e.getInventory(), player)) {
 
-				if (isPlayerHoldingACleaningItem(player)) {
-
-					if (!CooldownManager.getInstance().isPlayerOnCooldown(player))
-						return;
-
-					InventorySorter.sortInventory(e.getInventory(), player);
-					InventorySorter.playSortingSound(player);
-
-					e.setCancelled(true);
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, player);
-
-					damageItem(player);
-
-				}
-
+				damageItem(player);
+				InventorySorter.playSortingSound(player);
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+				e.setCancelled(true);
 			}
-
 		}
-
 	}
 
 	@EventHandler
 	private void onCloseInventory(InventoryCloseEvent e) {
-		/**
-		 * Doing the auto sorting here
-		 */
+		// Doing the auto sorting here
 		if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST)
 				|| e.getInventory().getType().equals(InventoryType.CHEST)) {
 
 			Player p = (Player) e.getPlayer();
 
-			if (PlayerDataManager.getInstance().getAutoSortOfPlayer(p)) {
+			if (PlayerDataManager.isAutoSort(p)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(p)
+					&& InventorySorter.sortInventory(e.getInventory(), p)) {
 
-				if (!CooldownManager.getInstance().isPlayerOnCooldown(p)) {
-					return;
-				}
-
-				InventorySorter.sortInventory(e.getInventory(), p);
 				InventorySorter.playSortingSound(p);
-				MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.INVENTORY_SORTED, p);
-
+				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, p);
 			}
-
 		}
-
 	}
-
 }

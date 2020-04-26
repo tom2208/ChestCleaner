@@ -1,9 +1,13 @@
 package chestcleaner.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import chestcleaner.config.PlayerDataManager;
+import chestcleaner.sorting.SortingPattern;
+import chestcleaner.sorting.CategorizerManager;
+import chestcleaner.utils.PluginPermissions;
+import chestcleaner.utils.StringUtils;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -11,16 +15,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
-import chestcleaner.config.PluginConfig;
-import chestcleaner.config.PluginConfig.ConfigPath;
-import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.SortingPattern;
-import chestcleaner.sorting.evaluator.EvaluatorType;
-import chestcleaner.utils.PluginPermissions;
-import chestcleaner.utils.PlayerDataManager;
-import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A command class representing the SortingConfig command. SortingConfig Command
@@ -31,244 +28,150 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
+    private final int MAX_LINES_PER_PAGE = 8;
+	/* sub-commands */
+	private final String autosortSubCommand = "autosort";
+	private final String categoriesSubCommand = "categories";
+	private final String patternSubCommand = "pattern";
+
+	private final String autosortProperty = autosortSubCommand;
+	private final String categoriesProperty = "categoryOrder";
+	private final String patternProperty = "sortingpattern";
+
+	private final String listSubCommand = "list";
+	private final String setSubCommand = "set";
+
+	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, patternSubCommand };
+	private final String[] categoriesSubCommandList = { listSubCommand, setSubCommand };
+
 	@Override
-	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
 		Player player = null;
-		if(cs instanceof Player) {
-			player = (Player) cs;
+		if (sender instanceof Player) {
+			player = (Player) sender;
 		}
-		
-		if(player == null) {
-			if(args.length != 3) {
-				MessageSystem.sendConsoleMessage(MessageType.SYNTAX_ERROR, adminConfigSyntax);
-				return true;
+
+		if (args.length >= 2
+				&& categoriesSubCommand.equalsIgnoreCase(args[0])
+				&& listSubCommand.equalsIgnoreCase(args[1])) {
+			return getCategoryList(sender, args.length > 2 ? args[2] : "1");
+		}
+
+		if (player == null) {
+			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
+		}
+
+		if (args.length == 1) {
+			if (autosortSubCommand.equalsIgnoreCase(args[0])) {
+				return getConfig(player, autosortSubCommand);
+			} else if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
+				return getConfig(player, categoriesSubCommand);
+			} else if (patternSubCommand.equalsIgnoreCase(args[0])) {
+				return getConfig(player, patternSubCommand);
 			}
 		}
-		
 		if (args.length == 2) {
-
-			/* PATTERN */
-			if (args[0].equalsIgnoreCase(patternSubCommand)) {
-				
-				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString());
-					return true;
-				}
-
-				SortingPattern pattern = SortingPattern.getSortingPatternByName(args[1]);
-
-				if (pattern == null) {
-
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, player);
-					return true;
-
-				} else {
-
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.PATTERN_SET, player);
-					PluginConfig.getInstance().setSortingPattern(pattern, player);
-					PlayerDataManager.getInstance().loadPlayerData(player);
-					return true;
-
-				}
-
-				/* EVALUATOR */
-			} else if (args[0].equalsIgnoreCase(evaluatorSubCommand)) {
-
-				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString())) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_SORTING_CONFIG_EVALUATOR.getString());
-					return true;
-				}
-
-				EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(args[1]);
-
-				if (evaluator == null) {
-
-					MessageSystem.sendMessageToPlayer(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, player);
-					return true;
-
-				} else {
-
-					MessageSystem.sendMessageToPlayer(MessageType.SUCCESS, MessageID.EVALUATOR_SET, player);
-					PluginConfig.getInstance().setEvaluatorTyp(evaluator, player);
-					PlayerDataManager.getInstance().loadPlayerData(player);
-					return true;
-
-				}
-
-				/* SETAUTOSORT */
-			} else if (args[0].equalsIgnoreCase(setAutoSortSubCommand)) {
-
-				if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
-					MessageSystem.sendConsoleMessage(MessageType.MISSING_PERMISSION,
-							PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString());
-					return true;
-				}
-
-				boolean b = false;
-				if (PluginConfigManager.isStringTrue(args[1])) {
-					b = true;
-				} else if (!PluginConfigManager.isStringFalse(args[1])) {
-					MessageSystem.sendMessageToPlayer(MessageType.SYNTAX_ERROR, setAutoSortSyntax, player);
-					return true;
-				}
-
-				MessageSystem.sendMessageToPlayerWithReplacement(MessageType.SUCCESS, MessageID.AUTOSORTING_TOGGLED, player,
-						String.valueOf(b));
-				PluginConfig.getInstance().setAutoSort(b, player);
-				PlayerDataManager.getInstance().loadPlayerData(player);
-				return true;
-
-			} else {
-				sendSyntaxErrorMessage(player);
-				return true;
+			if (autosortSubCommand.equalsIgnoreCase(args[0])) {
+				return setAutoSort(player, args[1]);
+			} else if (patternSubCommand.equalsIgnoreCase(args[0])) {
+				return setPattern(player, args[1]);
 			}
-
-		} else if (args.length == 3) {
-
-			/* ADMINCONFIG */
-			if (args[0].equalsIgnoreCase(adminConfigSubCommand)) {
-				
-				if(player != null) {
-					if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString())) {
-						MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION,
-								PluginPermissions.CMD_SORTING_CONFIG_ADMIN_CONTROL.getString(), cs);
-						return true;
-					}
-				}
-					
-				/* SETDEFAULTPATTERN */
-				if (args[1].equalsIgnoreCase(setDefaultPatternSubCommand)) {
-
-					SortingPattern pattern = SortingPattern.getSortingPatternByName(args[2]);
-
-					if (pattern == null) {
-						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INVALID_PATTERN_ID, cs);
-						return true;
-					}
-
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_SORTING_PATTERN, pattern);
-
-					SortingPattern.DEFAULT = pattern;
-					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_PATTER_SET, cs);
-					return true;
-
-					/* SETDEFAULTEVALUATOR */
-				} else if (args[1].equalsIgnoreCase(setDefaultEvaluatorSubCommand)) {
-
-					EvaluatorType evaluator = EvaluatorType.getEvaluatorTypByName(args[2]);
-
-					if (evaluator == null) {
-						MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.INAVLID_EVALUATOR_ID, cs);
-						return true;
-					}
-
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_EVALUATOR, evaluator);
-
-					EvaluatorType.DEFAULT = evaluator;
-					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.DEFAULT_EVALUATOR_SET, cs);
-					return true;
-
-					/* SETDEFAULTAUTOSORTING */
-				} else if (args[1].equalsIgnoreCase(setDefaultAutoSortSubCommand)) {
-
-					Boolean b = false;
-
-					if (PluginConfigManager.isStringTrue(args[2])) {
-						b = true;
-					} else if (!PluginConfigManager.isStringFalse(args[2])) {
-						MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSetDefaultSortSyntax, cs);
-						return true;
-					}
-
-					PlayerDataManager.getInstance().setDefaultAutoSort(b);
-
-					PluginConfig.getInstance().setIntoConfig(ConfigPath.DEFAULT_AUTOSORT, b);
-					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-							MessageID.AUTOSORTING_TOGGLED, cs, String.valueOf(b));
-
-					return true;
-
-				} else {
-					MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, adminConfigSyntax, cs);
-					return true;
-				}
-
-			} else {
-				sendSyntaxErrorMessage(cs);
-				return true;
-			}
-
-		} else {
-			sendSyntaxErrorMessage(cs);
-			return true;
 		}
-
-	}
-
-	private void sendSyntaxErrorMessage(CommandSender sender) {
-		MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, syntax, sender);
+		if (args.length == 3) {
+			if (categoriesSubCommand.equalsIgnoreCase(args[0])
+					&& setSubCommand.equalsIgnoreCase(args[1])) {
+				return setCategories(player, args[2]);
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
-		final String[] strCommandList = { patternSubCommand, evaluatorSubCommand, setAutoSortSubCommand,
-				adminConfigSubCommand };
-		final String[] strAdminControlSubCommands = { setDefaultPatternSubCommand, setDefaultEvaluatorSubCommand,
-				setDefaultAutoSortSubCommand };
 		final List<String> commandList = Arrays.asList(strCommandList);
-		final List<String> adminControlSubCommands = Arrays.asList(strAdminControlSubCommands);
+		final List<String> categoriesSubCommands = Arrays.asList(categoriesSubCommandList);
 
 		if (args.length <= 1) {
-
 			StringUtil.copyPartialMatches(args[0], commandList, completions);
 
 		} else if (args.length == 2) {
-
-			if (args[0].equalsIgnoreCase(patternSubCommand))
+			if (args[0].equalsIgnoreCase(autosortSubCommand))
+				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
+			else if (args[0].equalsIgnoreCase(categoriesSubCommand))
+				StringUtil.copyPartialMatches(args[1], categoriesSubCommands, completions);
+			else if (args[0].equalsIgnoreCase(patternSubCommand))
 				StringUtil.copyPartialMatches(args[1], SortingPattern.getIDList(), completions);
-			else if (args[0].equalsIgnoreCase(evaluatorSubCommand))
-				StringUtil.copyPartialMatches(args[1], EvaluatorType.getIDList(), completions);
-			else if (args[0].equalsIgnoreCase(setAutoSortSubCommand))
-				StringUtil.copyPartialMatches(args[1], PluginConfigManager.getBooleanValueStringList(), completions);
-			else if (args[0].equalsIgnoreCase(adminConfigSubCommand))
-				StringUtil.copyPartialMatches(args[1], adminControlSubCommands, completions);
 
 		} else if (args.length == 3) {
-			if (args[0].equalsIgnoreCase(commandList.get(3))) {
-				if (args[1].equalsIgnoreCase(setDefaultPatternSubCommand))
-					StringUtil.copyPartialMatches(args[2], SortingPattern.getIDList(), completions);
-				else if (args[1].equalsIgnoreCase(evaluatorSubCommand))
-					StringUtil.copyPartialMatches(args[2], EvaluatorType.getIDList(), completions);
-				else if (args[1].equalsIgnoreCase(setDefaultAutoSortSubCommand))
-					StringUtil.copyPartialMatches(args[2], PluginConfigManager.getBooleanValueStringList(),
-							completions);
-			}
+			if (categoriesSubCommand.equalsIgnoreCase(args[0])
+					&& setSubCommand.equalsIgnoreCase(args[1]))
+				StringUtils.copyPartialMatchesCommasNoDuplicates(args[2], CategorizerManager.getAllNames(), completions);
 		}
-
 		return completions;
-
 	}
 
-	/* sub-commands */
-	private final String patternSubCommand = "pattern";
-	private final String evaluatorSubCommand = "evaluator";
-	private final String setAutoSortSubCommand = "setAutoSort";
-	private final String adminConfigSubCommand = "adminConfig";
+	private boolean getConfig(Player p, String command) {
+		String key = "";
+		String value = "";
+		switch (command) {
+			case autosortSubCommand:
+				key = autosortProperty;
+				value = String.valueOf(PlayerDataManager.isAutoSort(p));
+				break;
+			case categoriesSubCommand:
+				key = categoriesProperty;
+				value = PlayerDataManager.getCategoryOrder(p).toString();
+				break;
+			case patternSubCommand:
+				key = patternProperty;
+				value = PlayerDataManager.getSortingPattern(p).name();
+				break;
+		}
+		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, p, key, value);
+	}
 
-	private final String setDefaultPatternSubCommand = "setDefaultPattern";
-	private final String setDefaultEvaluatorSubCommand = "setDefaultEvaluator";
-	private final String setDefaultAutoSortSubCommand = "setDefaultAutosort";
+	private boolean getCategoryList(CommandSender sender, String pageString) {
+		List<String> names = CategorizerManager.getAllNames();
+		return MessageSystem.sendListPageToCS(names, sender, pageString, MAX_LINES_PER_PAGE);
+	}
 
-	/* Syntax Error */
+	private boolean setPattern(Player player, String patternName) {
+		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
+			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_PATTERN);
+		}
 
-	private final String syntax = "/sortingconfig <pattern/evaluator/setautosort/adminconfig>";
-	private final String adminConfigSyntax = "/sortingconfig adminconfig <setdefaultpattern/setdefaultevaluator/setdefaultautosort>";
-	private final String setAutoSortSyntax = "/sortingconfig setautosort <true/false>";
-	private final String adminConfigSetDefaultSortSyntax = "/sortingconfig adminconfig setdefaultautosort <true/false>";
+		SortingPattern pattern = SortingPattern.getSortingPatternByName(patternName);
+		if (pattern != null) {
+			PlayerDataManager.setSortingPattern(player, pattern);
+			return MessageSystem.sendChangedValue(player, patternProperty, pattern.name());
+		}
+		return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PATTERN_ID, player);
+	}
 
+	private boolean setAutoSort(Player player, String bool) {
+		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
+			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT);
+		} else if (!StringUtils.isStringTrueOrFalse(bool)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
+		}
+
+		boolean b = Boolean.parseBoolean(bool);
+		PlayerDataManager.setAutoSort(player, b);
+		return MessageSystem.sendChangedValue(player, autosortProperty, String.valueOf(b));
+	}
+
+	private boolean setCategories(Player player, String commaSeperatedCategories) {
+		List<String> categories = Arrays.asList(commaSeperatedCategories.split(","));
+
+		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
+			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES);
+		} else if (!CategorizerManager.validateExists(categories)) {
+			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, player);
+		}
+		PlayerDataManager.setCategoryOrder(player, categories);
+		return MessageSystem.sendChangedValue(player, categoriesProperty, categories.toString());
+	}
 }
