@@ -23,6 +23,9 @@ public class InventorySorter {
 
 	/**
 	 * Returns {@code list} sorted in full stacked items.
+	 * The amount of the ItemStack is increased beyond MaxStackSize, but only one ItemStack exists for each Material.
+	 * Items on the stacking blacklist dont get their ammount increased. They are simply added to the list.
+	 * So there may be multiple ItemStacks for materials on the stacking blacklist.
 	 * 
 	 * @param items an ArrayList of ItemStacks you want to sort
 	 * @return full stacked {@code list};
@@ -49,6 +52,11 @@ public class InventorySorter {
 		return newList;
 	}
 
+	/**
+	 * Returns {@code list} sorted in maxStackSize ItemStacks.
+	 * If the amount is larger than maxStackSize, it will create a new ItemStack for that material.
+	 * Items on the stacking blacklist are simply added to the list.
+	 */
 	private static List<ItemStack> expandStacks(List<ItemStack> items) {
 		ArrayList<ItemStack> newList = new ArrayList<>();
 

@@ -26,7 +26,7 @@ commands:
   sortingadmin:
     description: Configuration for admins
     usage: /<command> <autosort/categories/cooldown/pattern> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern>]
-    aliases: [aconfig, ac]
+    aliases: [sadmin, sa]
     permission: chestcleaner.cmd.admin.config
 
 permissions:

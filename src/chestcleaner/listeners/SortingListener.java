@@ -35,12 +35,10 @@ public class SortingListener implements org.bukkit.event.Listener {
 		Player player = e.getPlayer();
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
-
-			if (PluginConfigManager.isCleaningItemActive()
-					&& isPlayerHoldingACleaningItem(player)
-					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)) {
-
-				if (isPlayerAllowedToCleanOwnInv(player) && InventorySorter.sortPlayerInventory(player)) {
+			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
+				if (isPlayerAllowedToCleanOwnInv(player)
+						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+						&& InventorySorter.sortPlayerInventory(player)) {
 					damageItem(player);
 					InventorySorter.playSortingSound(player);
 
@@ -48,6 +46,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 					e.setCancelled(true);
 
 				} else if (!PluginConfigManager.isOpenEvent()
+						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
 						&& player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
 
 					Block b = BlockDetector.getTargetBlock(player);
