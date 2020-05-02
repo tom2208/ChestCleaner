@@ -51,8 +51,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	private final String durabilityProperty = command.concat(" ").concat(durabilityLossSubCommand);
 	private final String openEventProperty = openEventSubCommand;
 
-	private final String[] strCommandList = {getSubCommand, setSubCommand, giveSubCommand, nameSubCommand,
-			loreSubCommand, activeSubCommand, durabilityLossSubCommand, openEventSubCommand};
+	private final String[] strCommandList = { getSubCommand, setSubCommand, giveSubCommand, nameSubCommand,
+			loreSubCommand, activeSubCommand, durabilityLossSubCommand, openEventSubCommand };
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -64,220 +64,243 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 		if (args.length == 1) {
 			if (nameSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, nameSubCommand);
+				getConfig(sender, nameSubCommand);
+				return true;
 			} else if (loreSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, loreSubCommand);
+				getConfig(sender, loreSubCommand);
+				return true;
 			} else if (activeSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, activeSubCommand);
+				getConfig(sender, activeSubCommand);
+				return true;
 			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, durabilityLossSubCommand);
+				getConfig(sender, durabilityLossSubCommand);
+				return true;
 			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
-				return getConfig(sender, openEventSubCommand);
+				getConfig(sender, openEventSubCommand);
+				return true;
 
 			} else if (player == null) {
-				return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
+				return true;
 
 			} else if (setSubCommand.equalsIgnoreCase(args[0])) {
-				return setCleaningItem(player);
+				setCleaningItem(player);
+				return true;
 			} else if (getSubCommand.equalsIgnoreCase(args[0])) {
-				return getCleaningItem(player);
+				getCleaningItem(player);
+				return true;
 			}
 
 		}
 		if (args.length >= 2) {
 			if (nameSubCommand.equalsIgnoreCase(args[0])) {
-				return setItemName(sender, args, player);
+				setItemName(sender, args, player);
+				return true;
 			} else if (loreSubCommand.equalsIgnoreCase(args[0])) {
-				return setItemLore(sender, args);
+				setItemLore(sender, args);
+				return true;
 			}
 		}
 		if (args.length == 2) {
 			if (activeSubCommand.equalsIgnoreCase(args[0])) {
-				return setCleaningItemActive(sender, args[1]);
+				setCleaningItemActive(sender, args[1]);
+				return true;
 			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
-				return setDurabilityLoss(sender, args[1]);
+				setDurabilityLoss(sender, args[1]);
+				return true;
 			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
-				return setOpenEventMode(sender, args[1]);
+				setOpenEventMode(sender, args[1]);
+				return true;
 			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-				return giveCleaningItem(sender, args[1]);
+				giveCleaningItem(sender, args[1]);
+				return true;
 			}
 		}
 		return false;
 	}
 
-	private boolean getConfig(CommandSender sender, String command) {
+	private void getConfig(CommandSender sender, String command) {
 		String key = "";
 		String value = "";
 		switch (command) {
-			case nameSubCommand:
-				key = nameProperty;
-				value = PluginConfigManager.getCleaningItem().getItemMeta().hasDisplayName()
-						? PluginConfigManager.getCleaningItem().getItemMeta().getDisplayName()
-                        : "<null>";
-				break;
-			case loreSubCommand:
-				key = loreProperty;
-				value = PluginConfigManager.getCleaningItem().getItemMeta().hasLore()
-						? PluginConfigManager.getCleaningItem().getItemMeta().getLore().toString()
-						: "<null>";
-				break;
-			case activeSubCommand:
-				key = activeProperty;
-				value = String.valueOf(PluginConfigManager.isCleaningItemActive());
-				break;
-			case durabilityLossSubCommand:
-				key = durabilityProperty;
-				value = String.valueOf(PluginConfigManager.isDurabilityLossActive());
-				break;
-			case openEventSubCommand:
-				key = openEventProperty;
-				value = String.valueOf(PluginConfigManager.isOpenEvent());
-				break;
+		case nameSubCommand:
+			key = nameProperty;
+			value = PluginConfigManager.getCleaningItem().getItemMeta().hasDisplayName()
+					? PluginConfigManager.getCleaningItem().getItemMeta().getDisplayName()
+					: "<null>";
+			break;
+		case loreSubCommand:
+			key = loreProperty;
+			value = PluginConfigManager.getCleaningItem().getItemMeta().hasLore()
+					? PluginConfigManager.getCleaningItem().getItemMeta().getLore().toString()
+					: "<null>";
+			break;
+		case activeSubCommand:
+			key = activeProperty;
+			value = String.valueOf(PluginConfigManager.isCleaningItemActive());
+			break;
+		case durabilityLossSubCommand:
+			key = durabilityProperty;
+			value = String.valueOf(PluginConfigManager.isDurabilityLossActive());
+			break;
+		case openEventSubCommand:
+			key = openEventProperty;
+			value = String.valueOf(PluginConfigManager.isOpenEvent());
+			break;
 		}
-		return MessageSystem.sendMessageToCSWithReplacement(
-				MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key, value);
+		MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key,
+				value);
 	}
 
-	private boolean getCleaningItem(Player player) {
+	private void getCleaningItem(Player player) {
 		if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
-			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
-		}
+			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
+		} else {
 
-		player.getInventory().addItem(PluginConfigManager.getCleaningItem());
-		return MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
+			player.getInventory().addItem(PluginConfigManager.getCleaningItem());
+			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
+		}
 	}
 
-	private boolean setCleaningItem(Player player) {
+	private void setCleaningItem(Player player) {
 
 		if (!player.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET.getString())) {
-			return MessageSystem.sendPermissionError(player, PluginPermissions.CMD_ADMIN_ITEM_SET);
+			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_ADMIN_ITEM_SET);
+		} else {
+
+			ItemStack item = player.getInventory().getItemInMainHand().clone();
+
+			if (item.getType() == Material.AIR) {
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_HOLD_ITEM, player);
+			} else {
+
+				ItemMeta itemMeta = item.getItemMeta();
+				Damageable damageable = ((Damageable) itemMeta);
+				damageable.setDamage(0);
+				item.setItemMeta(itemMeta);
+				item.setAmount(1);
+
+				PluginConfigManager.setCleaningItem(item);
+				MessageSystem.sendChangedValue(player, command, item.toString());
+			}
 		}
-
-		ItemStack item = player.getInventory().getItemInMainHand().clone();
-
-		if (item.getType() == Material.AIR) {
-			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_HOLD_ITEM, player);
-		}
-
-		ItemMeta itemMeta = item.getItemMeta();
-		Damageable damageable = ((Damageable) itemMeta);
-		damageable.setDamage(0);
-		item.setItemMeta(itemMeta);
-		item.setAmount(1);
-
-		PluginConfigManager.setCleaningItem(item);
-		return MessageSystem.sendChangedValue(player, command, item.toString());
 	}
 
-	private boolean giveCleaningItem(CommandSender sender, String playerName) {
+	private void giveCleaningItem(CommandSender sender, String playerName) {
 		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
-		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_GIVE);
-		}
-
-		Player player2 = Bukkit.getPlayer(playerName);
-
-		if (player2 != null) {
-			player2.getInventory().addItem(PluginConfigManager.getCleaningItem());
-			return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-					MessageID.INFO_CLEANITEM_PLAYER_GET, sender, player2.getName());
-
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_GIVE);
 		} else {
-			if (playerName.equalsIgnoreCase("@a")) {
-				Object[] players = Bukkit.getOnlinePlayers().toArray();
-				for (Object p : players) {
-					Player pl = (Player) p;
-					pl.getInventory().addItem(PluginConfigManager.getCleaningItem());
-					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-							MessageID.INFO_CLEANITEM_PLAYER_GET, sender, pl.getName());
+
+			Player player2 = Bukkit.getPlayer(playerName);
+
+			if (player2 != null) {
+				player2.getInventory().addItem(PluginConfigManager.getCleaningItem());
+				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_PLAYER_GET,
+						sender, player2.getName());
+
+			} else {
+				if (playerName.equalsIgnoreCase("@a")) {
+					Object[] players = Bukkit.getOnlinePlayers().toArray();
+					for (Object p : players) {
+						Player pl = (Player) p;
+						pl.getInventory().addItem(PluginConfigManager.getCleaningItem());
+						MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+								MessageID.INFO_CLEANITEM_PLAYER_GET, sender, pl.getName());
+					}
+				} else {
+
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE,
+							sender, playerName);
 				}
-				return true;
+			}
+		}
+	}
+
+	private void setCleaningItemActive(CommandSender sender, String value) {
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
+
+		} else if (!StringUtils.isStringTrueOrFalse(value)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
+		} else {
+			boolean b = Boolean.parseBoolean(value);
+			PluginConfigManager.setCleaningItemActive(b);
+			MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(b));
+		}
+	}
+
+	private void setDurabilityLoss(CommandSender sender, String value) {
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
+		} else if (!StringUtils.isStringTrueOrFalse(value)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
+		} else {
+
+			boolean b = Boolean.parseBoolean(value);
+			PluginConfigManager.setDurabilityLossActive(b);
+			MessageSystem.sendChangedValue(sender, durabilityProperty, String.valueOf(b));
+		}
+	}
+
+	private void setOpenEventMode(CommandSender sender, String value) {
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
+		} else {
+			boolean b = Boolean.parseBoolean(value);
+			PluginConfigManager.setOpenEvent(b);
+			MessageSystem.sendChangedValue(sender, openEventProperty, String.valueOf(b));
+		}
+	}
+
+	private void setItemLore(CommandSender sender, String[] args) {
+		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
+		} else {
+
+			String lore = args[1];
+			for (int i = 2; i < args.length; i++) {
+				lore = lore.concat(" ").concat(args[i]);
 			}
 
-			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE,
-					sender, playerName);
+			String[] lorearray = lore.split("/n");
+
+			ArrayList<String> lorelist = new ArrayList<>();
+
+			for (String obj : lorearray) {
+				obj = obj.replace("&", "\u00A7");
+				lorelist.add(obj);
+			}
+
+			ItemStack is = PluginConfigManager.getCleaningItem();
+			ItemMeta im = is.getItemMeta();
+			im.setLore(lorelist);
+			is.setItemMeta(im);
+			PluginConfigManager.setCleaningItem(is);
+
+			MessageSystem.sendChangedValue(sender, loreProperty, lorelist.toString());
 		}
 	}
 
-	private boolean setCleaningItemActive(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
-
-		} else if (!StringUtils.isStringTrueOrFalse(value)) {
-			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-		}
-		boolean b = Boolean.parseBoolean(value);
-		PluginConfigManager.setCleaningItemActive(b);
-		return MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(b));
-	}
-
-	private boolean setDurabilityLoss(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
-		} else if (!StringUtils.isStringTrueOrFalse(value)) {
-			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-		}
-
-		boolean b = Boolean.parseBoolean(value);
-		PluginConfigManager.setDurabilityLossActive(b);
-		return MessageSystem.sendChangedValue(sender, durabilityProperty, String.valueOf(b));
-	}
-
-	private boolean setOpenEventMode(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
-			return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
-		}
-		boolean b = Boolean.parseBoolean(value);
-		PluginConfigManager.setOpenEvent(b);
-		return MessageSystem.sendChangedValue(sender, openEventProperty, String.valueOf(b));
-	}
-
-	private boolean setItemLore(CommandSender sender, String[] args) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
-		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
-		}
-
-		String lore = args[1];
-		for (int i = 2; i < args.length; i++) {
-			lore = lore.concat(" ").concat(args[i]);
-		}
-
-		String[] lorearray = lore.split("/n");
-
-		ArrayList<String> lorelist = new ArrayList<>();
-
-		for (String obj : lorearray) {
-			obj = obj.replace("&", "\u00A7");
-			lorelist.add(obj);
-		}
-
-		ItemStack is = PluginConfigManager.getCleaningItem();
-		ItemMeta im = is.getItemMeta();
-		im.setLore(lorelist);
-		is.setItemMeta(im);
-		PluginConfigManager.setCleaningItem(is);
-
-		return MessageSystem.sendChangedValue(sender, loreProperty, lorelist.toString());
-	}
-
-	private boolean setItemName(CommandSender sender, String[] args, Player player) {
+	private void setItemName(CommandSender sender, String[] args, Player player) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_RENAME.getString())) {
-		    return MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
+			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
+		} else {
+
+			String newname = args[1];
+			for (int i = 2; i < args.length; i++) {
+				newname = newname.concat(" ").concat(args[i]);
+			}
+
+			newname = newname.replace("&", "\u00A7");
+
+			ItemStack is = PluginConfigManager.getCleaningItem();
+			ItemMeta im = is.getItemMeta();
+			im.setDisplayName(newname);
+			is.setItemMeta(im);
+			PluginConfigManager.setCleaningItem(is);
+
+			MessageSystem.sendChangedValue(sender, nameProperty, newname);
 		}
-
-		String newname = args[1];
-		for (int i = 2; i < args.length; i++) {
-			newname = newname.concat(" ").concat(args[i]);
-		}
-
-		newname = newname.replace("&", "\u00A7");
-
-		ItemStack is = PluginConfigManager.getCleaningItem();
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(newname);
-		is.setItemMeta(im);
-		PluginConfigManager.setCleaningItem(is);
-
-		return MessageSystem.sendChangedValue(sender, nameProperty, newname);
 	}
 
 	@Override
@@ -296,9 +319,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-				StringUtil.copyPartialMatches(
-						args[1], ChestCleaner.main.getServer().getOnlinePlayers()
-								.stream().map(Player::getName).collect(Collectors.toList()), completions);
+				StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
+						.map(Player::getName).collect(Collectors.toList()), completions);
 			}
 		}
 

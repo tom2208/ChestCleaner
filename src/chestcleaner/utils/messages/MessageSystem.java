@@ -12,21 +12,20 @@ import java.util.List;
 
 public class MessageSystem {
 
-	public static boolean sendMessageToCS(MessageType type, String arg, CommandSender cs) {
+	public static void sendMessageToCS(MessageType type, String arg, CommandSender cs) {
 		if (cs != null) {
 			cs.sendMessage(getMessageString(type, arg));
 		} else {
 			ChestCleaner.main.getServer().getConsoleSender().sendMessage(getMessageString(type, arg));
 		}
-		return true;
 	}
 
-	public static boolean sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
-		return sendMessageToCS(type, ChestCleaner.main.getRB().getString(messageID.getID()), cs);
+	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {
+		sendMessageToCS(type, ChestCleaner.main.getRB().getString(messageID.getID()), cs);
 	}
 
-	public static boolean sendConsoleMessage(MessageType type, MessageID messageID) {
-		return sendMessageToCS(type, messageID, null);
+	public static void sendConsoleMessage(MessageType type, MessageID messageID) {
+		sendMessageToCS(type, messageID, null);
 	}
 
 	/**
@@ -40,18 +39,18 @@ public class MessageSystem {
 	 * @param cs      the player who should receive the message.
 	 * @param replacement the replacement variables
 	 */
-	public static boolean sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
+	public static void sendMessageToCSWithReplacement(MessageType type, MessageID messageID, CommandSender cs,
 			Object... replacement) {
 		String message = ChestCleaner.main.getRB().getString(messageID.getID());
-		return sendMessageToCS(type, String.format(message, replacement), cs);
+		sendMessageToCS(type, String.format(message, replacement), cs);
 	}
 
-	public static boolean sendPermissionError(CommandSender sender, PluginPermissions permission) {
-		return MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION, permission.getString(), sender);
+	public static void sendPermissionError(CommandSender sender, PluginPermissions permission) {
+		MessageSystem.sendMessageToCS(MessageType.MISSING_PERMISSION, permission.getString(), sender);
 	}
 
-	public static boolean sendChangedValue(CommandSender sender, String key, String value) {
-		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_VALUE_CHANGED,
+	public static void sendChangedValue(CommandSender sender, String key, String value) {
+		MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_VALUE_CHANGED,
 				sender,key, value);
 	}
 
@@ -59,16 +58,16 @@ public class MessageSystem {
 									  int maxPageLines) {
 
 		int pages = (int) Math.ceil(list.size() / (double) maxPageLines);
-		int page;
+		int page = -1;
 
 		try {
 			page = Integer.parseInt(pageNrAsString);
 		} catch (NumberFormatException ex) {
-			return sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_VALIDATION_INTEGER, sender, pageNrAsString);
+			sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_VALIDATION_INTEGER, sender, pageNrAsString);
 		}
 
 		if (page < 0 || page > pages) {
-			return sendMessageToCSWithReplacement(MessageType.ERROR,
+			sendMessageToCSWithReplacement(MessageType.ERROR,
 					MessageID.ERROR_PAGE_NUMBER, sender, "1 - " + pages);
 		}
 

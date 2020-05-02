@@ -37,10 +37,12 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	private final String stackingSubCommand = "stacking";
 	private final String inventorySubCommand = "inventory";
 
-	private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand };
-	private final String[] strList = {stackingSubCommand, inventorySubCommand};
+	private final String[] subCommandList = { addSubCommand, removeSubCommand, listSubCommand, clearSubCommand };
+	private final String[] strList = { stackingSubCommand, inventorySubCommand };
 
-	private enum BlacklistType {STACKING, INVENTORY}
+	private enum BlacklistType {
+		STACKING, INVENTORY
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
@@ -68,26 +70,33 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		// subCommands
 		if (args.length == 2) {
 			if (listSubCommand.equalsIgnoreCase(args[1])) {
-				return printBlacklist(sender, "1", list);
+				printBlacklist(sender, "1", list);
+				return true;
 			} else if (clearSubCommand.equalsIgnoreCase(args[1])) {
-				return clearBlacklist(sender, listType, list);
+				clearBlacklist(sender, listType, list);
+				return true;
 			}
 			if (player == null) {
 				return false;
 
 			} else if (addSubCommand.equalsIgnoreCase(args[1])) {
-				return addMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+				addMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+				return true;
 			} else if (removeSubCommand.equalsIgnoreCase(args[1])) {
-				return removeMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+				removeMaterial(sender, listType, list, getMaterialFromPlayerHand(player));
+				return true;
 			}
 		}
 		if (args.length == 3) {
 			if (listSubCommand.equalsIgnoreCase(args[1])) {
-				return printBlacklist(sender, args[2], list);
+				printBlacklist(sender, args[2], list);
+				return true;
 			} else if (addSubCommand.equalsIgnoreCase(args[1])) {
-				return addMaterialName(sender, listType, list, args[2]);
+				addMaterialName(sender, listType, list, args[2]);
+				return true;
 			} else if (removeSubCommand.equalsIgnoreCase(args[1])) {
-				return removeMaterialName(sender, listType, list, args[2]);
+				removeMaterialName(sender, listType, list, args[2]);
+				return true;
 			}
 		}
 		return false;
@@ -106,40 +115,38 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			StringUtil.copyPartialMatches(args[1], commandList, completions);
 		} else if (args.length == 3) {
 			if (addSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
-				StringUtil.copyPartialMatches(
-						args[2],
-						Arrays.stream(Material.values())
-								.map(material -> material.name().toLowerCase())
-								.collect(Collectors.toList()),
-						completions);
+				StringUtil.copyPartialMatches(args[2], Arrays.stream(Material.values())
+						.map(material -> material.name().toLowerCase()).collect(Collectors.toList()), completions);
 		}
 
 		return completions;
 	}
 
-	private boolean addMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
+	private void addMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
 		Material material = Material.getMaterial(name.toUpperCase());
 		if (material == null) {
-			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.ERROR_MATERIAL_NAME, sender, name);
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_MATERIAL_NAME, sender,
+					name);
+		} else {
+			addMaterial(sender, type, list, material);
 		}
-		return addMaterial(sender, type, list, material);
 	}
 
-	private boolean addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
+	private void addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (list.contains(material)) {
-			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.ERROR_BLACKLIST_EXISTS, sender, material.name().toLowerCase());
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EXISTS, sender,
+					material.name().toLowerCase());
+		} else {
+
+			list.add(material);
+			saveList(type, list);
+
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_ADD, sender,
+					material.name().toLowerCase());
 		}
-
-		list.add(material);
-		saveList(type, list);
-
-		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-				MessageID.INFO_BLACKLIST_ADD, sender, material.name().toLowerCase());
 	}
 
-	private boolean removeMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
+	private void removeMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
 		Material material = Material.getMaterial(name.toUpperCase());
 
 		if (material == null) {
@@ -149,44 +156,48 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				if (index > 0 && index <= list.size()) {
 					material = list.get(index - 1);
 				} else {
-					return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
 							MessageID.ERROR_VALIDATION_INDEX_BOUNDS, sender, String.valueOf(index));
+					return;
 				}
 			} catch (NumberFormatException ex) {
-				return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-						MessageID.ERROR_MATERIAL_NAME, sender, name);
+				MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_MATERIAL_NAME, sender,
+						name);
+				return;
 			}
 
 		}
-		return removeMaterial(sender, type, list, material);
+		removeMaterial(sender, type, list, material);
 	}
 
-	private boolean removeMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
+	private void removeMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (!list.contains(material)) {
-			return MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
-					MessageID.ERROR_BLACKLIST_NOT_EXISTS, sender, material.name().toLowerCase());
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLACKLIST_NOT_EXISTS,
+					sender, material.name().toLowerCase());
+		} else {
+
+			list.remove(material);
+			saveList(type, list);
+
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_DEL, sender,
+					material.name().toLowerCase());
 		}
-
-		list.remove(material);
-		saveList(type, list);
-
-		return MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-				MessageID.INFO_BLACKLIST_DEL, sender, material.name().toLowerCase());
 	}
 
-	private boolean printBlacklist(CommandSender sender, String pageString, List<Material> list) {
+	private void printBlacklist(CommandSender sender, String pageString, List<Material> list) {
 		if (list.size() == 0) {
-			return MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender);
-		}
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender);
+		} else {
 
-		List<String> names  = list.stream().map(item -> item.name().toLowerCase()).collect(Collectors.toList());
-		return MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
+			List<String> names = list.stream().map(item -> item.name().toLowerCase()).collect(Collectors.toList());
+			MessageSystem.sendListPageToCS(names, sender, pageString, LIST_PAGE_LENGTH);
+		}
 	}
 
-	private boolean clearBlacklist(CommandSender sender, BlacklistType type, List<Material> list) {
+	private void clearBlacklist(CommandSender sender, BlacklistType type, List<Material> list) {
 		list.clear();
 		saveList(type, list);
-		return MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_CLEARED, sender);
+		MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_CLEARED, sender);
 	}
 
 	/**
