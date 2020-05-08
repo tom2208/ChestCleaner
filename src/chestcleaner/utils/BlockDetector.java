@@ -10,7 +10,7 @@ import org.bukkit.util.BlockIterator;
 public class BlockDetector implements Listener {
 
 	private static final int RANGE = 12;
-	private static final Material[] passableBlocks = { Material.AIR, Material.ITEM_FRAME, Material.GRASS,
+	private static final Material[] passableBlocks = { Material.AIR, Material.CAVE_AIR, Material.ITEM_FRAME, Material.GRASS,
 			Material.TORCH };
 
 	/**

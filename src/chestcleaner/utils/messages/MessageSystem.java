@@ -31,7 +31,7 @@ public class MessageSystem {
 	/**
 	 * Sends a message with the MessageID {@code messageID} and the MessageType
 	 * {@code messageType} to the CommandSender {@code cs} (player or console)
-	 * replacing placeholders using java's String.format(str, args)
+	 * replacing placeholder using java's String.format(str, args)
 	 * see https://docs.oracle.com/javase/8/docs/api/java/util/Formatter.html#syntax for details
 	 *
 	 * @param type        the MessageType of the message.

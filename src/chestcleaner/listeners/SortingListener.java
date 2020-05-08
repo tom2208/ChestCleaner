@@ -34,7 +34,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		Player player = e.getPlayer();
 
-		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
+		if (e.getAction() == Action.RIGHT_CLICK_AIR|| e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
 				if (isPlayerAllowedToCleanOwnInv(player)
 						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
@@ -44,7 +44,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
 					e.setCancelled(true);
-
+					
 				} else if (!PluginConfigManager.isOpenEvent()
 						&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
 						&& player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())) {
