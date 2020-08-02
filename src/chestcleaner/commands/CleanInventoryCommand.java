@@ -90,7 +90,7 @@ public class CleanInventoryCommand implements CommandExecutor {
         }else if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
             // isPlayerOnCooldown sends error message
         }else if (InventorySorter.sortPlayerBlock(block, p)) {
-             MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, sender);
+            MessageSystem.sendSortedMessage(sender);
         } else {
         	MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
                 MessageID.ERROR_BLOCK_NO_INVENTORY, sender, "(" + block.getX() + " / "

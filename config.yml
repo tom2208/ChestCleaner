@@ -8,6 +8,9 @@ default:
   categories:
     - AlphaBackAsc
     - IsBlock
+  sorting:
+    notification: true
+    sound: true
 cleaningItem:
   active: true
   durability: true

@@ -153,7 +153,9 @@ public class InventorySorter {
 	}
 
 	public static void playSortingSound(Player p) {
-		p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
+		if(PluginConfigManager.getSortingSoundBoolean()) {
+			p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
+		}
 	}
 
 }

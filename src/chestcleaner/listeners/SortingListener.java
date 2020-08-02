@@ -21,8 +21,6 @@ import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
-import chestcleaner.utils.messages.enums.MessageType;
 
 /**
  * @author Tom2208
@@ -42,7 +40,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 					damageItem(player);
 					InventorySorter.playSortingSound(player);
 
-					MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+					MessageSystem.sendSortedMessage(player);
 					e.setCancelled(true);
 					
 				} else if (!PluginConfigManager.isOpenEvent()
@@ -57,7 +55,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					if (InventorySorter.sortPlayerBlock(b, player)) {
 						damageItem(player);
-						MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+						MessageSystem.sendSortedMessage(player);
 						e.setCancelled(true);
 					}
 				}
@@ -148,7 +146,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 				damageItem(player);
 				InventorySorter.playSortingSound(player);
-				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, player);
+				MessageSystem.sendSortedMessage(player);
 				e.setCancelled(true);
 			}
 		}
@@ -160,14 +158,14 @@ public class SortingListener implements org.bukkit.event.Listener {
 		if (e.getInventory().getType().equals(InventoryType.ENDER_CHEST)
 				|| e.getInventory().getType().equals(InventoryType.CHEST)) {
 
-			Player p = (Player) e.getPlayer();
+			Player player = (Player) e.getPlayer();
 
-			if (PlayerDataManager.isAutoSort(p)
-					&& !CooldownManager.getInstance().isPlayerOnCooldown(p)
-					&& InventorySorter.sortInventory(e.getInventory(), p)) {
+			if (PlayerDataManager.isAutoSort(player)
+					&& !CooldownManager.getInstance().isPlayerOnCooldown(player)
+					&& InventorySorter.sortInventory(e.getInventory(), player)) {
 
-				InventorySorter.playSortingSound(p);
-				MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, p);
+				InventorySorter.playSortingSound(player);
+				MessageSystem.sendSortedMessage(player);
 			}
 		}
 	}

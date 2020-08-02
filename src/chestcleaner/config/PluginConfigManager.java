@@ -19,7 +19,24 @@ public class PluginConfigManager {
 	private static List<Material> blacklistInventory = null;
 
 	private PluginConfigManager() {}
-
+	
+	
+	public static void setSortingSoundBoolean(boolean bool) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN, bool);
+	}
+	
+	public static boolean getSortingSoundBoolean() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN.getPath());
+	}
+	
+	public static void setChatNotificationBoolean(boolean bool) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN, bool);
+	}
+	
+	public static boolean getChatNotificationBoolean() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN.getPath());
+	}
+	
 	public static boolean isDurabilityLossActive() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CLEANING_ITEM_DURABILITY.getPath());
 	}

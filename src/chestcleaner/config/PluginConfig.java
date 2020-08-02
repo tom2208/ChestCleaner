@@ -131,8 +131,10 @@ public class PluginConfig {
 		UPDATE_CHECKER_ACTIVE("updateMessage"),
 		CATEGORIES_WORDS("categories.words"),
 		CATEGORIES_LISTS("categories.lists"),
-		CATEGORIES_MASTER("categories.master");
-
+		CATEGORIES_MASTER("categories.master"),
+		CHAT_NOTIFICATION_BOOLEAN("default.sorting.notification"),
+		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound");
+		
 		private String path;
 
 		ConfigPath(String path) {
