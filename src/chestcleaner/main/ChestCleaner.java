@@ -5,13 +5,11 @@ import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.CleanInventoryCommand;
 import chestcleaner.commands.CleaningItemCommand;
 import chestcleaner.commands.SortingConfigCommand;
-import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.ListCategory;
 import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
-import chestcleaner.listeners.DataLoadingListener;
 import chestcleaner.listeners.RefillListener;
 import chestcleaner.listeners.SortingListener;
 import org.bukkit.Bukkit;
@@ -38,7 +36,6 @@ public class ChestCleaner extends JavaPlugin {
 		ConfigurationSerialization.registerClass(ListCategory.class);
 		ConfigurationSerialization.registerClass(MasterCategory.class);
 		PluginConfig.getInstance().loadConfig();
-		this.getServer().getOnlinePlayers().forEach(PlayerDataManager::loadPlayerData);
 
 		String version = getDescription().getVersion().replace(".", "-");
 		String bundleName = getName() + "_" + version;
@@ -60,7 +57,6 @@ public class ChestCleaner extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
-		Bukkit.getPluginManager().registerEvents(new DataLoadingListener(), this);
 
 		if (PluginConfigManager.isUpdateCheckerActive()) {
 			new UpdateChecker(this).checkForUpdate();

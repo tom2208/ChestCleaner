@@ -20,20 +20,19 @@ public class PluginConfigManager {
 
 	private PluginConfigManager() {}
 	
-	
-	public static void setSortingSoundBoolean(boolean bool) {
+	public static void setDefaultSortingSoundBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN, bool);
 	}
 	
-	public static boolean getSortingSoundBoolean() {
+	public static boolean getDefaultSortingSoundBoolean() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN.getPath());
 	}
 	
-	public static void setChatNotificationBoolean(boolean bool) {
+	public static void setDefaultChatNotificationBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN, bool);
 	}
 	
-	public static boolean getChatNotificationBoolean() {
+	public static boolean getDefaultChatNotificationBoolean() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.CHAT_NOTIFICATION_BOOLEAN.getPath());
 	}
 	
@@ -190,14 +189,14 @@ public class PluginConfigManager {
 				.getString(PluginConfig.ConfigPath.DEFAULT_PATTERN.getPath()));
 	}
 
-	public static boolean isDefaultAutoSort() {
+	public static boolean getDefaultAutoSortBoolean() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_AUTOSORT.getPath());
 	}
 
 	public static void setDefaultAutoSort(boolean defaultAutoSort) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_AUTOSORT, defaultAutoSort);
 	}
-
+	
 	public static List<Material> getBlacklistInventory() {
 		if (blacklistInventory == null) {
 			blacklistInventory = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_INVENTORY);

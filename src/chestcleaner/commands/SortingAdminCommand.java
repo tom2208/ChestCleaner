@@ -49,11 +49,11 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String cooldownProperty = "cooldown (in ms)";
 	private final String patternProperty = "default sortingpattern";
 	private final String activeProperty = "cooldownActive";
-	private final String chatNotfificationProperty = "chat sorting notification";
+	private final String chatNotificationProperty = "chat sorting notification";
 	private final String soundProperty = "sorting sound";
-	
+
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, cooldownSubCommand,
-			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand};
+			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand };
 	private final String[] categoriesSubCommandList = { setSubCommand, addFromBookSubCommand, getAsBookSubCommand };
 	private final String[] cooldownSubCommandList = { setSubCommand, activeSubCommand };
 
@@ -66,19 +66,8 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		}
 
 		if (args.length == 1) {
-			if (autosortSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, autosortSubCommand);
-				return true;
-			} else if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, categoriesSubCommand);
-				return true;
-			} else if (cooldownSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, cooldownSubCommand);
-				return true;
-			} else if (patternSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, patternSubCommand);
-				return true;
-			}
+			return getConfig(sender, args[0]);
+
 		} else if (args.length == 2) {
 			if (autosortSubCommand.equalsIgnoreCase(args[0])) {
 				setDefaultAutoSort(sender, args[1]);
@@ -96,7 +85,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			} else if (chatNotificationSubCommand.equalsIgnoreCase(args[0])) {
 				setChatNotification(sender, args[1]);
 				return true;
-			}else if(sortingSoundSubCommand.equalsIgnoreCase(args[0])) {
+			} else if (sortingSoundSubCommand.equalsIgnoreCase(args[0])) {
 				setSound(sender, args[1]);
 				return true;
 			}
@@ -132,7 +121,8 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			StringUtil.copyPartialMatches(args[0], commandList, completions);
 		} else if (args.length == 2) {
 
-			if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand) || args[0].equalsIgnoreCase(sortingSoundSubCommand))
+			if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand)
+					|| args[0].equalsIgnoreCase(sortingSoundSubCommand))
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			else if (args[0].equalsIgnoreCase(categoriesSubCommand))
 				StringUtil.copyPartialMatches(args[1], categoriesSubCommands, completions);
@@ -156,35 +146,47 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		return completions;
 	}
 
-	private void getConfig(CommandSender sender, String command) {
+	private boolean getConfig(CommandSender sender, String command) {
 		String key = "";
 		String value = "";
-		switch (command) {
-		case autosortSubCommand:
+
+		if (command.equalsIgnoreCase(autosortSubCommand)) {
 			key = autosortProperty;
-			value = String.valueOf(PluginConfigManager.isDefaultAutoSort());
-			break;
-		case categoriesSubCommand:
+			value = String.valueOf(PluginConfigManager.getDefaultAutoSortBoolean());
+
+		} else if (command.equalsIgnoreCase(categoriesSubCommand)) {
 			key = categoriesProperty;
 			value = PluginConfigManager.getCategoryOrder().toString();
-			break;
-		case cooldownSubCommand:
+
+		} else if (command.equalsIgnoreCase(cooldownSubCommand)) {
 			key = cooldownProperty;
 			value = String.valueOf(PluginConfigManager.getCooldown());
-			break;
-		case activeSubCommand:
+
+		} else if (command.equalsIgnoreCase(activeSubCommand)) {
 			key = activeProperty;
 			value = String.valueOf(PluginConfigManager.isCooldownActive());
-			break;
-		case patternSubCommand:
+
+		} else if (command.equalsIgnoreCase(patternSubCommand)) {
 			key = patternProperty;
 			value = PluginConfigManager.getDefaultPattern().name();
-			break;
+
+		} else if (command.equalsIgnoreCase(chatNotificationSubCommand)) {
+			key = chatNotificationProperty;
+			value = String.valueOf(PluginConfigManager.getDefaultChatNotificationBoolean());
+			
+		} else if (command.equalsIgnoreCase(sortingSoundSubCommand)) {
+			key = sortingSoundSubCommand;
+			value = String.valueOf(PluginConfigManager.getDefaultSortingSoundBoolean());
+
 		}
-		MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key,
-				value);
+
+		if(key != "" && value != "") {
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key, value);
+			return true;
+		}
+		return false;
 	}
-	
+
 	private boolean isStringBoolean(CommandSender sender, String bool) {
 		if (!StringUtils.isStringTrueOrFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
@@ -192,23 +194,23 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		}
 		return true;
 	}
-	
+
 	private void setChatNotification(CommandSender sender, String bool) {
-		if(isStringBoolean(sender, bool)) {
+		if (isStringBoolean(sender, bool)) {
 			boolean b = Boolean.parseBoolean(bool);
-			PluginConfigManager.setChatNotificationBoolean(b);
-			MessageSystem.sendChangedValue(sender, chatNotfificationProperty, String.valueOf(b));
+			PluginConfigManager.setDefaultChatNotificationBoolean(b);
+			MessageSystem.sendChangedValue(sender, chatNotificationProperty, String.valueOf(b));
 		}
 	}
-	
+
 	private void setSound(CommandSender sender, String bool) {
-		if(isStringBoolean(sender, bool)) {
+		if (isStringBoolean(sender, bool)) {
 			boolean b = Boolean.parseBoolean(bool);
-			PluginConfigManager.setSortingSoundBoolean(b);
+			PluginConfigManager.setDefaultSortingSoundBoolean(b);
 			MessageSystem.sendChangedValue(sender, soundProperty, String.valueOf(b));
 		}
 	}
-	
+
 	private void setDefaultAutoSort(CommandSender sender, String bool) {
 		if (!StringUtils.isStringTrueOrFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);

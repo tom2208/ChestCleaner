@@ -12,6 +12,8 @@ public enum PluginPermissions {
     CMD_SORTING_CONFIG_CATEGORIES("chestcleaner.cmd.sortingconfig.categories"),
     CMD_SORTING_CONFIG_PATTERN("chestcleaner.cmd.sortingconfig.pattern"),
     CMD_SORTING_CONFIG_SET_AUTOSORT("chestcleaner.cmd.sortingconfig.setautosort"),
+    CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL("chestcleaner.cmd.sortingconfig.setchatnotification"),
+    CMD_SORTING_CONFIG_SET_SOUND_BOOL("chestcleaner.cmd.sortingconfig.setsortingsound"),
     CMD_CLEANING_ITEM_GET("chestcleaner.cmd.cleaningitem.get"),
     CMD_CLEANING_ITEM_GIVE("chestcleaner.cmd.cleaningitem.give"),
     CMD_INV_CLEAN("chestcleaner.cmd.cleaninventory"),
@@ -25,8 +27,7 @@ public enum PluginPermissions {
     CMD_ADMIN_ITEM_SET_LORE("chestcleaner.cmd.admin.cleaningitem.setlore"),
     CMD_ADMIN_ITEM_SET_ACTIVE("chestcleaner.cmd.admin.cleaningitem.setactive"),
     CMD_ADMIN_ITEM_SET_DURABILITYLOSS("chestcleaner.cmd.admin.cleaningitem.setdurabilityloss"),
-    CMD_ADMIN_ITEM_SET_EVENT_MODE("chestcleaner.cmd.admin.cleaningitem.setopenevent"),
-    ;
+    CMD_ADMIN_ITEM_SET_EVENT_MODE("chestcleaner.cmd.admin.cleaningitem.setopenevent");
 
     private String permission;
 

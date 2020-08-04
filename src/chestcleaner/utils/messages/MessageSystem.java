@@ -3,7 +3,9 @@ package chestcleaner.utils.messages;
 import chestcleaner.utils.PluginPermissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.messages.enums.MessageID;
@@ -22,9 +24,19 @@ public class MessageSystem {
 	}
 	
 	public static void sendSortedMessage(CommandSender sender) {
-		if(PluginConfigManager.getChatNotificationBoolean()) {
+		
+		boolean flag = false;
+		
+		if(sender instanceof Player && PlayerDataManager.containsNotification((Player) sender)) {
+			flag = PlayerDataManager.isNotification((Player) sender);
+		}else {
+			flag = PluginConfigManager.getDefaultChatNotificationBoolean();
+		}
+		
+		if(flag) {
 			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, sender);
 		}
+		
 	}
 	
 	public static void sendMessageToCS(MessageType type, MessageID messageID, CommandSender cs) {

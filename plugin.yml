@@ -25,7 +25,7 @@ commands:
     aliases: [sconfig, sc]
   sortingadmin:
     description: Configuration for admins
-    usage: /<command> <autosort/categories/cooldown/pattern> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern>]
+    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false>]
     aliases: [sadmin, sa]
     permission: chestcleaner.cmd.admin.config
 
@@ -58,13 +58,19 @@ permissions:
       chestcleaner.cmd.sortingconfig.categories: true
       chestcleaner.cmd.sortingconfig.pattern: true
       chestcleaner.cmd.sortingconfig.setautosort: true
+      chestcleaner.cmd.sortingconfig.setchatnotification: true
+      chestcleaner.cmd.sortingconfig.setsortingsound: true
   chestcleaner.cmd.sortingconfig.categories:
     description: allow player to override the category order for themself using the /sortingconfig categories command
   chestcleaner.cmd.sortingconfig.pattern:
     description: allow player to override the sorting pattern for themself using the /sortingconfig pattern command
   chestcleaner.cmd.sortingconfig.setautosort:
     description: allow player to override the autosort toggle for themself using the /sortingconfig autosort command
-
+  chestcleaner.cmd.sortingconfig.setchatnotification:
+    description: allow player to toggle the chat sorting notification.
+  chestcleaner.cmd.sortingconfig.setsortingsound:
+    description: allow player to toggle the sorting sound.
+  
   chestcleaner.cmd.cleaningitem.get:
     description: allow player to get a cleaningitem using the /cleaningitem get command
   chestcleaner.cmd.cleaningitem.give:

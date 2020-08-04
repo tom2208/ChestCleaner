@@ -150,7 +150,9 @@ public class PluginConfig {
 
 		AUTOSORT("autosort"),
 		PATTERN("sortingpattern"),
-		CATEGORIES_ORDER("categories.order");
+		CATEGORIES_ORDER("categories.order"),
+		NOTIFICATION("notification"),
+		SOUND("sound");
 
 		private String path;
 
