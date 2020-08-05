@@ -1,7 +1,6 @@
 package chestcleaner.commands;
 
 import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.CategorizerManager;
 import chestcleaner.utils.PluginPermissions;
@@ -34,6 +33,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	private final String patternSubCommand = "pattern";
 	private final String chatNotificationSubCommand = "chatNotification";
 	private final String sortingSoundSubCommand = "sortingSound";
+	private final String resetSubCommand = "reset";
 
 	private final String autosortProperty = "default autosort";
 	private final String categoriesProperty = "default categoryOrder";
@@ -45,7 +45,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	private final String setSubCommand = "set";
 
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, patternSubCommand,
-			chatNotificationSubCommand, sortingSoundSubCommand };
+			chatNotificationSubCommand, sortingSoundSubCommand, resetSubCommand};
 	private final String[] categoriesSubCommandList = { listSubCommand, setSubCommand };
 
 	@Override
@@ -68,6 +68,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		}
 
 		if (args.length == 1) {
+			if(resetSubCommand.equalsIgnoreCase(args[0])) {
+				resetConfiguration(player);
+				return true;
+			}
 			return getConfig(player, args[0]);
 		}
 
@@ -150,6 +154,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			value = String.valueOf(PlayerDataManager.isSortingSound(p));
 
 		}
+		
 		if(key != "" && value != "") {
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, p, key, value);
 			return true;
@@ -157,6 +162,15 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
+	private void resetConfiguration(Player player) {
+		if(!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_RESET.getString())) {
+			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_RESET);
+		}else {
+			PlayerDataManager.reset(player);
+			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_RESET_CONFIG, player);
+		}
+	}
+	
 	private void setChatNotificationBool(Player player, String bool) {
 		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL.getString())) {
 			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL);
@@ -176,7 +190,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
 		} else {
 			boolean b = Boolean.parseBoolean(bool);
-			PlayerDataManager.setNotification(player, b);
+			PlayerDataManager.setSortingSound(player, b);
 			MessageSystem.sendChangedValue(player, sortingSoundProperty, String.valueOf(b));
 		}
 	}

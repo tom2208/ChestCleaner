@@ -44,7 +44,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	private final String activeSubCommand = "active";
 	private final String durabilityLossSubCommand = "durabilityLoss";
 	private final String openEventSubCommand = "openEvent";
-
+	
 	private final String nameProperty = command.concat(" ").concat(nameSubCommand);
 	private final String loreProperty = command.concat(" ").concat(loreSubCommand);
 	private final String activeProperty = command.concat(" ").concat(activeSubCommand);

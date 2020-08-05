@@ -15,6 +15,11 @@ public class PlayerDataManager {
 
 	private PlayerDataManager() {}
 	
+	public static void reset(Player player) {
+		PluginConfig.getPlayerData().set(player.getUniqueId().toString(), null);
+		PluginConfig.savePlayerData();
+	}
+	
 	public static void setSortingPattern(Player p, SortingPattern pattern) {
 		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.PATTERN, pattern.name());
 	}
@@ -27,7 +32,7 @@ public class PlayerDataManager {
 	}
 
 	public static boolean containsNotification(Player p) {
-		return PluginConfig.getPlayerData().contains(p.getUniqueId() + "." + PluginConfig.PlayerDataPath.NOTIFICATION);
+		return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.NOTIFICATION.getPath(p));
 	}
 	
 	public static void setNotification(Player p, boolean b) {
@@ -43,7 +48,7 @@ public class PlayerDataManager {
 	}
 	
 	public static boolean containsSortingSound(Player p) {
-		return PluginConfig.getPlayerData().contains(p.getUniqueId() + "." + PluginConfig.PlayerDataPath.SOUND);
+		return PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.SOUND.getPath(p));
 	}
 	
 	public static void setSortingSound(Player p, boolean b) {

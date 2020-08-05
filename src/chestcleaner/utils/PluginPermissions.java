@@ -14,6 +14,7 @@ public enum PluginPermissions {
     CMD_SORTING_CONFIG_SET_AUTOSORT("chestcleaner.cmd.sortingconfig.setautosort"),
     CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL("chestcleaner.cmd.sortingconfig.setchatnotification"),
     CMD_SORTING_CONFIG_SET_SOUND_BOOL("chestcleaner.cmd.sortingconfig.setsortingsound"),
+    CMD_SORTING_CONFIG_RESET("chestcleaner.cmd.sortingconfig.reset"),
     CMD_CLEANING_ITEM_GET("chestcleaner.cmd.cleaningitem.get"),
     CMD_CLEANING_ITEM_GIVE("chestcleaner.cmd.cleaningitem.give"),
     CMD_INV_CLEAN("chestcleaner.cmd.cleaninventory"),

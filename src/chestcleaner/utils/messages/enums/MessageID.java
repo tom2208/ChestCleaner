@@ -37,7 +37,8 @@ public enum MessageID {
 	INFO_CURRENT_VALUE("info.value.current"),
 	INFO_INVENTORY_SORTED("info.inventory.sorted"),
 	INFO_UPDATE_AVAILABLE("info.update.available"),
-	INFO_VALUE_CHANGED("info.value.changed");
+	INFO_VALUE_CHANGED("info.value.changed"),
+	INFO_RESET_CONFIG("info.config.reset");
 
 	String id;
 
