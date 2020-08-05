@@ -60,6 +60,7 @@ permissions:
       chestcleaner.cmd.sortingconfig.setautosort: true
       chestcleaner.cmd.sortingconfig.setchatnotification: true
       chestcleaner.cmd.sortingconfig.setsortingsound: true
+      chestcleaner.cmd.sortingconfig.reset: true
   chestcleaner.cmd.sortingconfig.categories:
     description: allow player to override the category order for themself using the /sortingconfig categories command
   chestcleaner.cmd.sortingconfig.pattern:
@@ -70,6 +71,8 @@ permissions:
     description: allow player to toggle the chat sorting notification.
   chestcleaner.cmd.sortingconfig.setsortingsound:
     description: allow player to toggle the sorting sound.
+  chestcleaner.cmd.sortingconfig.reset:
+    description: resets the configuration of the player who is executing the command.
   
   chestcleaner.cmd.cleaningitem.get:
     description: allow player to get a cleaningitem using the /cleaningitem get command
