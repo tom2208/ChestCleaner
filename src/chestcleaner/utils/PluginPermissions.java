@@ -4,6 +4,7 @@ public enum PluginPermissions {
 
     AUTOFILL_CONSUMABLES("chestcleaner.autorefill.consumables"),
     AUTOFILL_BLOCKS("chestcleaner.autorefill.blocks"),
+    AUTOFILL_BROKEN_ITEMS("chestcleaner.autorefill.brokenitems"),
     CLEANING_ITEM_USE("chestcleaner.cleaningitem.use"),
     CLEANING_ITEM_USE_OWN_INV("chestcleaner.cleaningitem.use.owninventory"),
     COOLDOWN_IMMUNE("chestcleaner.cooldown.immune"),

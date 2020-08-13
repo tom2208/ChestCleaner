@@ -20,6 +20,14 @@ public class PluginConfigManager {
 
 	private PluginConfigManager() {}
 	
+	public static boolean isBreakableRefillActive() {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL.getPath());
+	}
+
+	public static void setBreakableRefillActive(boolean breakableRefill) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL, breakableRefill);
+	}
+	
 	public static void setDefaultSortingSoundBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN, bool);
 	}

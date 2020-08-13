@@ -133,7 +133,8 @@ public class PluginConfig {
 		CATEGORIES_LISTS("categories.lists"),
 		CATEGORIES_MASTER("categories.master"),
 		CHAT_NOTIFICATION_BOOLEAN("default.sorting.notification"),
-		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound");
+		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound"),
+		DEFAULT_BREAKABLE_ITEMS_REFILL("default.autorefill.breakables");
 		
 		private String path;
 

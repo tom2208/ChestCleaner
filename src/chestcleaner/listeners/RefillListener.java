@@ -1,9 +1,11 @@
 package chestcleaner.listeners;
 
 import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -89,6 +91,73 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 	}
 
+	@EventHandler
+	private void onPlayerItemBreaks(PlayerItemBreakEvent e) {
+		if (PluginConfigManager.isBreakableRefillActive()) {
+			Player player = e.getPlayer();
+
+			if (isPlayerAllowedToRefillBrokenItems(player)) {
+				ItemStack item = e.getBrokenItem();
+				int refillSlot = getRefillStack(item.getType(), player);
+
+				if (refillSlot > 8) {
+					if (player.getInventory().getItemInMainHand().equals(item)) {
+
+						ItemStack refillItem = player.getInventory().getItem(refillSlot);
+						player.getInventory().setItem(player.getInventory().getHeldItemSlot(), refillItem);
+						player.getInventory().setItem(refillSlot, null);
+
+					} else {
+
+						ItemStack refillItem = player.getInventory().getItem(refillSlot);
+						player.getInventory().setItem(40, refillItem);
+						player.getInventory().setItem(refillSlot, null);
+
+					}
+				}
+
+			}
+		}
+	}
+
+	/**
+	 * Returns the index of a refill stack if it gets found, if not it returns -1.
+	 * 
+	 * @param material the material of the stack you want to find.
+	 * @param p        the owner of the inventory.
+	 * @return the index of the item in the inventory if it got found otherwise -1.
+	 */
+	private int getRefillStack(Material material, Player player) {
+
+		ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
+		for (int i = 9; i < 36; i++) {
+
+			if (items[i] != null) {
+
+				if (items[i].getType().equals(material)) {
+					return i;
+				}
+
+			}
+
+		}
+		return -1;
+
+	}
+
+	/**
+	 * If the player is in survival mode and has the permission
+	 * PluginPermissions.AUTOFILL_BROKEN_ITEMS it returns true otherwise false.
+	 * 
+	 * @param player the player you want to check.
+	 * @return true if the player is allowed to auto refill broken items otherwise
+	 *         false.
+	 */
+	private boolean isPlayerAllowedToRefillBrokenItems(Player player) {
+		return player.getGameMode().equals(GameMode.SURVIVAL)
+				&& player.hasPermission(PluginPermissions.AUTOFILL_BROKEN_ITEMS.getString());
+	}
+
 	/**
 	 * If the player is in survival mode and has the permission
 	 * PluginPermissions.AUTOFILL_CONSUMABLES it returns true otherwise false.
@@ -160,8 +229,8 @@ public class RefillListener implements org.bukkit.event.Listener {
 	/**
 	 * Searches through the main inventory (slots 9 - 35) taking the first ItemStack
 	 * with the same type, an amount bigger than 1 (bigger than 0 would work but
-	 * causes a rendering-bug in the client, so the golden apple is invisible) and
-	 * puts it into the slot (+ one amount) while consuming.
+	 * causes a rendering-bug in the client, so the item is invisible) and puts it
+	 * into the slot (+ one amount) while consuming.
 	 * 
 	 * @param inMainHand true if the refill slot is the main hand otherwise false.
 	 * @param e          the consuming event the refill should happen.
