@@ -4,6 +4,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -17,78 +18,64 @@ import chestcleaner.utils.PluginPermissions;
 
 public class RefillListener implements org.bukkit.event.Listener {
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlacingBlock(BlockPlaceEvent e) {
+		Player player = e.getPlayer();
 
-		if (!e.isCancelled()) {
+		if (isPlayerAllowedToRefillBlocks(player)) {
+			boolean config = PluginConfigManager.isDefaultBlockRefill();
 
-			Player player = e.getPlayer();
+			if (PlayerDataManager.containsRefillBlocks(player)) {
+				config = PlayerDataManager.isRefillBlocks(player);
+			}
 
-			if (isPlayerAllowedToRefillBlocks(player)) {
-				boolean config = PluginConfigManager.isDefaultBlockRefill();
+			if (config) {
 
-				if (PlayerDataManager.containsRefillBlocks(player)) {
-					config = PlayerDataManager.isRefillBlocks(player);
-				}
+				ItemStack item = e.getItemInHand();
 
-				if (config) {
+				if (item.getAmount() == 1) {
 
-					ItemStack item = e.getItemInHand();
-
-					if (item.getAmount() == 1) {
-
-						/*
-						 * stripping a log counts as placing a block, at least some times (cause the axe
-						 * to get replaced)
-						 */
-						if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
-							if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
-									|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
-								return;
-							}
+					/*
+					 * stripping a log counts as placing a block, at least some times (cause the axe
+					 * to get replaced)
+					 */
+					if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
+						if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
+								|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
+							return;
 						}
-
-						refillBlockInSlot(e);
-
 					}
+
+					refillBlockInSlot(e);
+
 				}
 			}
 		}
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onConsuming(PlayerItemConsumeEvent e) {
 
-		if (!e.isCancelled()) {
+		Player player = e.getPlayer();
 
-			Player player = e.getPlayer();
+		if (isPlayerAllowedToRefillConsumables(player)) {
 
-			if (isPlayerAllowedToRefillConsumables(player)) {
+			boolean config = PluginConfigManager.isDefaultConsumablesRefill();
 
-				boolean config = PluginConfigManager.isDefaultConsumablesRefill();
+			if (PlayerDataManager.containsRefillConumables(player)) {
+				config = PlayerDataManager.isRefillConumables(player);
+			}
 
-				if (PlayerDataManager.containsRefillConumables(player)) {
-					config = PlayerDataManager.isRefillConumables(player);
-				}
+			if (config) {
+				ItemStack item = e.getItem();
+				if (item.getAmount() == 1) {
 
-				if (config) {
-					ItemStack item = e.getItem();
-					if (item.getAmount() == 1) {
+					if (item.getMaxStackSize() > 1) {
 
-						if (item.getMaxStackSize() > 1) {
+						if (isPlayerHoldingAItemInMainHand(player)) {
 
-							if (isPlayerHoldingAItemInMainHand(player)) {
-
-								if (playerMainHandHeldItemMaterialEquals(item, player)) {
-									refillConsumableInSlot(true, e);
-
-								} else if (isPlayerHoldingAItemInOffHand(player)) {
-
-									if (playerOffHandHeldItemMaterialEquals(item, player)) {
-										refillConsumableInSlot(false, e);
-									}
-
-								}
+							if (playerMainHandHeldItemMaterialEquals(item, player)) {
+								refillConsumableInSlot(true, e);
 
 							} else if (isPlayerHoldingAItemInOffHand(player)) {
 
@@ -98,17 +85,23 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 							}
 
+						} else if (isPlayerHoldingAItemInOffHand(player)) {
+
+							if (playerOffHandHeldItemMaterialEquals(item, player)) {
+								refillConsumableInSlot(false, e);
+							}
+
 						}
 
 					}
+
 				}
 			}
-
 		}
 
 	}
 
-	@EventHandler
+	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlayerItemBreaks(PlayerItemBreakEvent e) {
 
 		Player player = e.getPlayer();
@@ -120,7 +113,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 			if (PlayerDataManager.containsRefillBreakables(player)) {
 				config = PlayerDataManager.isRefillBreakables(player);
 			}
-			
+
 			if (config) {
 				ItemStack item = e.getBrokenItem();
 				int refillSlot = getRefillStack(item.getType(), player);
