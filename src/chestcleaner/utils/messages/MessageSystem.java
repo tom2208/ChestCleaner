@@ -35,7 +35,7 @@ public class MessageSystem {
 		
 		if(flag) {
 			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_INVENTORY_SORTED, sender);
-		}
+		} 
 		
 	}
 	
@@ -124,7 +124,7 @@ public class MessageSystem {
 			break;
 		case MISSING_PERMISSION:
 			out += ChatColor.RED + ChestCleaner.main.getRB().getString(MessageID.ERROR_PERMISSION.getID())
-					+ " ( " + arg + " )";
+					+ " (" + arg + ")";
 			break;
 		case UNHEADED_INFORMATION:
 			out = ChatColor.GRAY + arg;

@@ -89,7 +89,7 @@ public class InventorySorter {
 	 * 
 	 * @param inv the inventory you want to sort.
 	 */
-	private static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
+	public static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
 		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
 		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 

@@ -22,8 +22,10 @@ public enum PluginPermissions {
     CMD_SORTING_CONFIG_REFILL_GENERIC("chestcleaner.cmd.sortingconfig.refill.*"),
     CMD_CLEANING_ITEM_GET("chestcleaner.cmd.cleaningitem.get"),
     CMD_CLEANING_ITEM_GIVE("chestcleaner.cmd.cleaningitem.give"),
-    CMD_INV_CLEAN("chestcleaner.cmd.cleaninventory"),
-
+    CMD_INV_CLEAN("chestcleaner.cmd.cleaninventory.sort"),
+    CMD_INV_CLEAN_OWN("chestcleaner.cmd.cleaninventory.own"),
+    CMD_INV_CLEAN_OTHERS("chestcleaner.cmd.cleaninventory.others"),
+    
     CMD_ADMIN_CONFIG("chestcleaner.cmd.admin.config"),
     CMD_ADMIN_COOLDOWN("chestcleaner.cmd.admin.cooldown"),
     CMD_ADMIN_BLACKLIST("chestcleaner.cmd.admin.blacklist"),

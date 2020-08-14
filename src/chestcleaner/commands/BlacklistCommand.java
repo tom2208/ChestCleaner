@@ -106,13 +106,11 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
-		final List<String> commandList = Arrays.asList(subCommandList);
-		final List<String> lists = Arrays.asList(strList);
 
 		if (args.length <= 1) {
-			StringUtil.copyPartialMatches(args[0], lists, completions);
+			StringUtil.copyPartialMatches(args[0], Arrays.asList(strList), completions);
 		} else if (args.length == 2) {
-			StringUtil.copyPartialMatches(args[1], commandList, completions);
+			StringUtil.copyPartialMatches(args[1], Arrays.asList(subCommandList), completions);
 		} else if (args.length == 3) {
 			if (addSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
 				StringUtil.copyPartialMatches(args[2], Arrays.stream(Material.values())

@@ -8,7 +8,7 @@ main: chestcleaner.main.ChestCleaner
 commands:
   cleaninventory:
     description: Cleans an inventory of a block.
-    usage: /<command> <x> <y> <z> <world>
+    usage: /<command> <<playername> / own / <x> <y> <z>> [<world>]
     aliases: [cleaninv, cinv]
   cleaningitem:
     description: Configuration of the cleaningitem.
@@ -78,9 +78,20 @@ permissions:
     description: allow player to get a cleaningitem using the /cleaningitem get command
   chestcleaner.cmd.cleaningitem.give:
     description: allow player to give a player/all players a cleaningitem using the /cleaningitem give command
-  chestcleaner.cmd.cleaninventory:
+  chestcleaner.cmd.cleaninventory.sort:
     description: allow player to use the /cleaninventory command
+  chestcleaner.cmd.cleaninventory.own:
+    description: allow player to use the /cleaninventory own command
+  chestcleaner.cmd.cleaninventory.others:
+    description: allow player to use the /cleaninventory <player> command
 
+  chestcleaner.cmd.cleaningitem.*:
+    description: allow all (subcommands) uses of the /cleaninventory command
+    children:
+      chestcleaner.cmd.cleaninventory.sort: true
+      chestcleaner.cmd.cleaninventory.own: true
+      chestcleaner.cmd.cleaninventory.others: true
+      
   chestcleaner.cmd.admin.*:
     description: allow all changes to the defaults
     children:
