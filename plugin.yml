@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: "2.1"
+version: "2.1.0"
 author: Tom2208, leanNiki
 api-version: "1.13" # we need this otherwise new blocks e.g. mossy cobble slabs get deleted
 
@@ -21,7 +21,7 @@ commands:
     permission: chestcleaner.cmd.admin.blacklist
   sortingconfig:
     description: Configuration of the sorting algorithm for players.
-    usage: /<command> <autosort/categories/pattern> [<true/false> | list | set <category,category,..> | <pattern>]
+    usage: /<command> <autosort/categories/chatNotification/pattern/refill/reset/sortingSound> [<true/false> | list | <true/false> | set <category,category,..> | <pattern> | <true/false/blocks/consumables/breakables> | | <true/false>]
     aliases: [sconfig, sc]
   sortingadmin:
     description: Configuration for admins

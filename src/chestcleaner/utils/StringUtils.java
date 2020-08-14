@@ -2,8 +2,13 @@ package chestcleaner.utils;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BookMeta;
+
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +61,14 @@ public class StringUtils {
         }
     }
 
+	public static boolean isStringBoolean(CommandSender sender, String bool) {
+		if (!StringUtils.isStringTrueOrFalse(bool)) {
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
+			return false;
+		}
+		return true;
+	}
+    
     public static boolean isStringTrueOrFalse(String str) {
         return Boolean.parseBoolean(str) || str.equalsIgnoreCase(Boolean.FALSE.toString());
     }

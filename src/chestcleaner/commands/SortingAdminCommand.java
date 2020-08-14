@@ -217,7 +217,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	 * @return True if the command can get parsed, otherwise false.
 	 */
 	private boolean setRefill(CommandSender sender, String arg, String bool){
-		if(isStringBoolean(sender, bool)) {
+		if(StringUtils.isStringBoolean(sender, bool)) {
 			
 			boolean b = Boolean.parseBoolean(bool);
 			String property = new String();
@@ -243,7 +243,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	}
 	
 	private void setAllRefills(CommandSender sender, String bool) {
-		if(isStringBoolean(sender, bool)) {
+		if(StringUtils.isStringBoolean(sender, bool)) {
 			boolean b = Boolean.parseBoolean(bool);
 			PluginConfigManager.setDefaultBlockRefill(b);
 			PluginConfigManager.setDefaultConsumablesRefill(b);
@@ -251,17 +251,9 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			MessageSystem.sendChangedValue(sender, allRefillsProperty, String.valueOf(b));
 		}
 	}
-	
-	private boolean isStringBoolean(CommandSender sender, String bool) {
-		if (!StringUtils.isStringTrueOrFalse(bool)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-			return false;
-		}
-		return true;
-	}
 
 	private void setChatNotification(CommandSender sender, String bool) {
-		if (isStringBoolean(sender, bool)) {
+		if (StringUtils.isStringBoolean(sender, bool)) {
 			boolean b = Boolean.parseBoolean(bool);
 			PluginConfigManager.setDefaultChatNotificationBoolean(b);
 			MessageSystem.sendChangedValue(sender, chatNotificationProperty, String.valueOf(b));
@@ -269,7 +261,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void setSound(CommandSender sender, String bool) {
-		if (isStringBoolean(sender, bool)) {
+		if (StringUtils.isStringBoolean(sender, bool)) {
 			boolean b = Boolean.parseBoolean(bool);
 			PluginConfigManager.setDefaultSortingSoundBoolean(b);
 			MessageSystem.sendChangedValue(sender, soundProperty, String.valueOf(b));
