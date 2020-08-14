@@ -13,6 +13,10 @@ default:
   sorting:
     notification: true
     sound: true
+  refill:
+    blocks: true
+    consumables: true
+    breakables: true
 cleaningItem:
   active: true
   durability: true
@@ -21,9 +25,6 @@ cleaningItem:
     ==: org.bukkit.inventory.ItemStack
     v: 2230
     type: IRON_HOE
-refill:
-  blocks: true
-  consumables: true
 cooldown:
   active: true
   time: 5000

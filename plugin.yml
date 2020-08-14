@@ -25,7 +25,7 @@ commands:
     aliases: [sconfig, sc]
   sortingadmin:
     description: Configuration for admins
-    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound/relfill> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false> | <true/false/blocks/consumables/breakables>]
+    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound/refill> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false> | <true/false/blocks/consumables/breakables>]
     aliases: [sadmin, sa]
     permission: chestcleaner.cmd.admin.config
 
@@ -35,14 +35,18 @@ permissions:
     children:
       chestcleaner.autorefill.blocks: true
       chestcleaner.autorefill.consumables: true
+      chestcleaner.autorefill.brokenitems: true
   chestcleaner.autorefill.blocks:
     description: allows the player to automatically get blocks refilled in the hotbar
     default: true
   chestcleaner.autorefill.consumables:
-    description: allows the player to automatically get blocks refilled in the hotbar
+    description: allows the player to automatically get consumables refilled in the hotbar
     default: true
   chestcleaner.cleaningitem.use:
     description: allows the player to sort inventories of blocks
+    default: true
+  chestcleaner.autorefill.brokenitems:
+    description: allows the player to automatically get breakables refilled in the hotbar
     default: true
   chestcleaner.cleaningitem.use.owninventory:
     description: allows the player to sort their own inventory
@@ -51,7 +55,6 @@ permissions:
     description: whether the player is unaffected by the cooldown
   chestcleaner.update:
     description: whether the player gets a notification when a ChestCleaner update is available
-
   chestcleaner.cmd.sortingconfig.*:
     description: parent permission for sortingconfig
     children:
@@ -61,19 +64,31 @@ permissions:
       chestcleaner.cmd.sortingconfig.setchatnotification: true
       chestcleaner.cmd.sortingconfig.setsortingsound: true
       chestcleaner.cmd.sortingconfig.reset: true
+      chestcleaner.cmd.sortingconfig.refill.*: true
   chestcleaner.cmd.sortingconfig.categories:
-    description: allow player to override the category order for themself using the /sortingconfig categories command
+    description: allow a player to override the category order for themself using the /sortingconfig categories command
   chestcleaner.cmd.sortingconfig.pattern:
-    description: allow player to override the sorting pattern for themself using the /sortingconfig pattern command
+    description: allow a player to override the sorting pattern for themself using the /sortingconfig pattern command
   chestcleaner.cmd.sortingconfig.setautosort:
-    description: allow player to override the autosort toggle for themself using the /sortingconfig autosort command
+    description: allow a player to override the autosort toggle for themself using the /sortingconfig autosort command
   chestcleaner.cmd.sortingconfig.setchatnotification:
-    description: allow player to toggle the chat sorting notification.
+    description: allow a player to toggle the chat sorting notification.
   chestcleaner.cmd.sortingconfig.setsortingsound:
-    description: allow player to toggle the sorting sound.
+    description: allow a player to toggle the sorting sound.
   chestcleaner.cmd.sortingconfig.reset:
-    description: resets the configuration of the player who is executing the command.
-  
+    description: allow a  player to reset her/his configuration.
+  chestcleaner.cmd.sortingconfig.refill.blocks:
+    description: allow a player to configure the autorefill of blocks.
+  chestcleaner.cmd.sortingconfig.refill.breakables:
+    description: allow a player to configure the autorefill of breakbales.
+  chestcleaner.cmd.sortingconfig.refill.consumables:
+    description: allow a player to configure the autorefill of consumables.
+  chestcleaner.cmd.sortingconfig.refill.*:
+    description: allow a player to configure all autorefills.
+    children:
+      chestcleaner.cmd.sortingconfig.refill.consumables: true
+      chestcleaner.cmd.sortingconfig.refill.breakables: true
+      chestcleaner.cmd.sortingconfig.refill.blocks: true
   chestcleaner.cmd.cleaningitem.get:
     description: allow player to get a cleaningitem using the /cleaningitem get command
   chestcleaner.cmd.cleaningitem.give:
@@ -84,14 +99,12 @@ permissions:
     description: allow player to use the /cleaninventory own command
   chestcleaner.cmd.cleaninventory.others:
     description: allow player to use the /cleaninventory <player> command
-
   chestcleaner.cmd.cleaningitem.*:
     description: allow all (subcommands) uses of the /cleaninventory command
     children:
       chestcleaner.cmd.cleaninventory.sort: true
       chestcleaner.cmd.cleaninventory.own: true
-      chestcleaner.cmd.cleaninventory.others: true
-      
+      chestcleaner.cmd.cleaninventory.others: true  
   chestcleaner.cmd.admin.*:
     description: allow all changes to the defaults
     children:

@@ -1,7 +1,6 @@
 package chestcleaner.commands;
 
 import chestcleaner.config.PlayerDataManager;
-import chestcleaner.config.PluginConfigManager;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.CategorizerManager;
 import chestcleaner.utils.PluginPermissions;

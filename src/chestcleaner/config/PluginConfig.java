@@ -122,8 +122,8 @@ public class PluginConfig {
 		CLEANING_ITEM_ACTIVE("cleaningItem.active"),
 		CLEANING_ITEM_DURABILITY("cleaningItem.durability"),
 		CLEANING_ITEM_OPEN_EVENT("cleaningItem.openEvent"),
-		REFILL_CONSUMABLES("refill.consumables"),
-		REFILL_BLOCKS("refill.blocks"),
+		REFILL_CONSUMABLES("default.refill.consumables"),
+		REFILL_BLOCKS("default.refill.blocks"),
 		BLACKLIST_STACKING("blacklist.stacking"),
 		BLACKLIST_INVENTORY("blacklist.inventory"),
 		COOLDOWN_TIME("cooldown.time"),
@@ -134,7 +134,7 @@ public class PluginConfig {
 		CATEGORIES_MASTER("categories.master"),
 		CHAT_NOTIFICATION_BOOLEAN("default.sorting.notification"),
 		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound"),
-		DEFAULT_BREAKABLE_ITEMS_REFILL("default.autorefill.breakables");
+		DEFAULT_BREAKABLE_ITEMS_REFILL("default.refill.breakables");
 		
 		private String path;
 
