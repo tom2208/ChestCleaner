@@ -25,7 +25,7 @@ commands:
     aliases: [sconfig, sc]
   sortingadmin:
     description: Configuration for admins
-    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false>]
+    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound/relfill> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false> | <true/false/blocks/consumables/breakables>]
     aliases: [sadmin, sa]
     permission: chestcleaner.cmd.admin.config
 

@@ -153,7 +153,10 @@ public class PluginConfig {
 		PATTERN("sortingpattern"),
 		CATEGORIES_ORDER("categories.order"),
 		NOTIFICATION("notification"),
-		SOUND("sound");
+		SOUND("sound"),
+		REFILL_CONSUMABLES("refill.consumables"),
+		REFILL_BLOCKS("refill.blocks"),
+		REFILL_BREAKABLE_ITEMS("refill.breakableitems");
 
 		private String path;
 

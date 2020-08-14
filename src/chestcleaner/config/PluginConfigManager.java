@@ -20,11 +20,11 @@ public class PluginConfigManager {
 
 	private PluginConfigManager() {}
 	
-	public static boolean isBreakableRefillActive() {
+	public static boolean isDefaultBreakableRefill() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL.getPath());
 	}
 
-	public static void setBreakableRefillActive(boolean breakableRefill) {
+	public static void setDefaultBreakableRefill(boolean breakableRefill) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL, breakableRefill);
 	}
 	
@@ -76,19 +76,19 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CLEANING_ITEM_OPEN_EVENT, openEvent);
 	}
 
-	public static boolean isBlockRefillActive() {
+	public static boolean isDefaultBlockRefill() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_BLOCKS.getPath());
 	}
 
-	public static void setBlockRefillActive(boolean blockRefillActive) {
+	public static void setDefaultBlockRefill(boolean blockRefillActive) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_BLOCKS, blockRefillActive);
 	}
 
-	public static boolean isConsumablesRefillActive() {
+	public static boolean isDefaultConsumablesRefill() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.REFILL_CONSUMABLES.getPath());
 	}
 
-	public static void setConsumablesRefillActive(boolean consumablesRefillActive) {
+	public static void setDefaultConsumablesRefill(boolean consumablesRefillActive) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.REFILL_CONSUMABLES, consumablesRefillActive);
 	}
 

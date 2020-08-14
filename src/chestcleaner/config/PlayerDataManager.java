@@ -20,6 +20,30 @@ public class PlayerDataManager {
 		PluginConfig.savePlayerData();
 	}
 	
+	public static void setRefillConumables(Player p, boolean b) {
+		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.REFILL_CONSUMABLES, b);
+	}
+	
+	public static boolean isRefillConumables(Player p) {
+		return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_CONSUMABLES.getPath(p));
+	}
+	
+	public static void setRefillBlocks(Player p, boolean b) {
+		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.REFILL_BLOCKS, b);
+	}
+	
+	public static boolean isRefillBlocks(Player p) {
+		return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_BLOCKS.getPath(p));
+	}
+	
+	public static void setRefillBreakables(Player p, boolean b) {
+		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.REFILL_BREAKABLE_ITEMS, b);
+	}
+	
+	public static boolean isRefillBreakables(Player p) {
+		return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.REFILL_BREAKABLE_ITEMS.getPath(p));
+	}
+	
 	public static void setSortingPattern(Player p, SortingPattern pattern) {
 		PluginConfig.setIntoPlayerData(p, PluginConfig.PlayerDataPath.PATTERN, pattern.name());
 	}

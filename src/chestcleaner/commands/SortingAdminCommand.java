@@ -38,12 +38,17 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String patternSubCommand = "pattern";
 	private final String chatNotificationSubCommand = "chatNotification";
 	private final String sortingSoundSubCommand = "sortingSound";
-
+	private final String refillSubCommand = "refill";
+	
 	private final String setSubCommand = "set";
 	private final String activeSubCommand = "active";
 	private final String addFromBookSubCommand = "addFromBook";
 	private final String getAsBookSubCommand = "getAsBook";
-
+	
+	private final String blocksSubCommand = "blocks";
+	private final String consumablesSubCommand = "consumables";
+	private final String breakablesSubCommand = "breakables";
+	
 	private final String autosortProperty = "default autosort";
 	private final String categoriesProperty = "default categoryOrder";
 	private final String cooldownProperty = "cooldown (in ms)";
@@ -51,11 +56,13 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String activeProperty = "cooldownActive";
 	private final String chatNotificationProperty = "chat sorting notification";
 	private final String soundProperty = "sorting sound";
-
+	private final String allRefillsProperty = "all refills";
+	
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, cooldownSubCommand,
-			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand };
+			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand, refillSubCommand};
 	private final String[] categoriesSubCommandList = { setSubCommand, addFromBookSubCommand, getAsBookSubCommand };
 	private final String[] cooldownSubCommandList = { setSubCommand, activeSubCommand };
+	private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand, "true", "false"};
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -88,22 +95,31 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			} else if (sortingSoundSubCommand.equalsIgnoreCase(args[0])) {
 				setSound(sender, args[1]);
 				return true;
+			} else if(refillSubCommand.equalsIgnoreCase(args[0])) {
+				setAllRefills(sender, args[1]);
+				return true;
 			}
 
 		} else if (args.length == 3) {
 			if (categoriesSubCommand.equalsIgnoreCase(args[0]) && setSubCommand.equalsIgnoreCase(args[1])) {
 				setDefaultCategories(sender, args[2]);
 				return true;
+				
 			} else if (categoriesSubCommand.equalsIgnoreCase(args[0])
 					&& getAsBookSubCommand.equalsIgnoreCase(args[1])) {
 				getBook(sender, player, args[2]);
 				return true;
-			} else if (cooldownSubCommand.equalsIgnoreCase(args[0]) && activeSubCommand.equalsIgnoreCase(args[1])) {
-				setCooldownActive(sender, args[2]);
+				
+			} else if (cooldownSubCommand.equalsIgnoreCase(args[0])) {
+				if(activeSubCommand.equalsIgnoreCase(args[1])) {
+					setCooldownActive(sender, args[2]);
+				}else if(setSubCommand.equalsIgnoreCase(args[1])) {
+					setCooldownTime(sender, args[2]);
+				}
 				return true;
-			} else if (cooldownSubCommand.equalsIgnoreCase(args[0]) && setSubCommand.equalsIgnoreCase(args[1])) {
-				setCooldownTime(sender, args[2]);
-				return true;
+				
+			} else if (refillSubCommand.equalsIgnoreCase(args[0])) {
+				return setRefill(sender, args[1], args[2]);
 			}
 		}
 		return false;
@@ -113,34 +129,40 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
 
 		final List<String> completions = new ArrayList<>();
-		final List<String> commandList = Arrays.asList(strCommandList);
-		final List<String> categoriesSubCommands = Arrays.asList(categoriesSubCommandList);
-		final List<String> cooldownSubCommands = Arrays.asList(cooldownSubCommandList);
-
+		
 		if (args.length <= 1) {
-			StringUtil.copyPartialMatches(args[0], commandList, completions);
+			StringUtil.copyPartialMatches(args[0], Arrays.asList(strCommandList), completions);
 		} else if (args.length == 2) {
 
 			if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand)
 					|| args[0].equalsIgnoreCase(sortingSoundSubCommand))
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			else if (args[0].equalsIgnoreCase(categoriesSubCommand))
-				StringUtil.copyPartialMatches(args[1], categoriesSubCommands, completions);
+				StringUtil.copyPartialMatches(args[1], Arrays.asList(categoriesSubCommandList), completions);
 			else if (args[0].equalsIgnoreCase(cooldownSubCommand))
-				StringUtil.copyPartialMatches(args[1], cooldownSubCommands, completions);
+				StringUtil.copyPartialMatches(args[1], Arrays.asList(cooldownSubCommandList), completions);
 			else if (args[0].equalsIgnoreCase(patternSubCommand))
 				StringUtil.copyPartialMatches(args[1], SortingPattern.getIDList(), completions);
-
+			else if (args[0].equalsIgnoreCase(refillSubCommand))
+				StringUtil.copyPartialMatches(args[1], Arrays.asList(refillSubCommandList), completions);
+			
 		} else if (args.length == 3) {
 			if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
 				if (setSubCommand.equalsIgnoreCase(args[1]))
 					StringUtils.copyPartialMatchesCommasNoDuplicates(args[2], CategorizerManager.getAllNames(),
 							completions);
+				
 				if (getAsBookSubCommand.equalsIgnoreCase(args[1]))
 					StringUtil.copyPartialMatches(args[2], PluginConfigManager.getAllCategories().stream()
 							.map(Category::getName).collect(Collectors.toList()), completions); //
+				
 			} else if (cooldownSubCommand.equalsIgnoreCase(args[0]) && activeSubCommand.equalsIgnoreCase(args[1])) {
 				StringUtil.copyPartialMatches(args[2], StringUtils.getBooleanValueStringList(), completions);
+				
+			} else if(refillSubCommand.equalsIgnoreCase(args[0])) {
+				if(args[1].equalsIgnoreCase(blocksSubCommand) || args[1].equalsIgnoreCase(consumablesSubCommand) || args[1].equalsIgnoreCase(breakablesSubCommand)) {
+					StringUtil.copyPartialMatches(args[2], StringUtils.getBooleanValueStringList(), completions);
+				}
 			}
 		}
 		return completions;
@@ -186,7 +208,50 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		}
 		return false;
 	}
-
+	
+	/**
+	 * Sets the configuration for a refill option.
+	 * @param sender the sender who enters the command.
+	 * @param arg the subcommand string.
+	 * @param bool true: sets active, false: sets inactive
+	 * @return True if the command can get parsed, otherwise false.
+	 */
+	private boolean setRefill(CommandSender sender, String arg, String bool){
+		if(isStringBoolean(sender, bool)) {
+			
+			boolean b = Boolean.parseBoolean(bool);
+			String property = new String();
+			
+			if(arg.equalsIgnoreCase(blocksSubCommand)) {
+				PluginConfigManager.setDefaultBlockRefill(b);
+				property = blocksSubCommand;
+			}else if(arg.equalsIgnoreCase(consumablesSubCommand)) {
+				PluginConfigManager.setDefaultConsumablesRefill(b);
+				property = consumablesSubCommand;
+			}else if(arg.equalsIgnoreCase(breakablesSubCommand)) {
+				PluginConfigManager.setDefaultBreakableRefill(b);
+				property = breakablesSubCommand;
+			}else {
+				return false;
+			}
+			
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, property, b);
+			
+		}
+		
+		return true;
+	}
+	
+	private void setAllRefills(CommandSender sender, String bool) {
+		if(isStringBoolean(sender, bool)) {
+			boolean b = Boolean.parseBoolean(bool);
+			PluginConfigManager.setDefaultBlockRefill(b);
+			PluginConfigManager.setDefaultConsumablesRefill(b);
+			PluginConfigManager.setDefaultBreakableRefill(b);
+			MessageSystem.sendChangedValue(sender, allRefillsProperty, String.valueOf(b));
+		}
+	}
+	
 	private boolean isStringBoolean(CommandSender sender, String bool) {
 		if (!StringUtils.isStringTrueOrFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
