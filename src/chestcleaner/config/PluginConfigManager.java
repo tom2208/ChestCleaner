@@ -5,6 +5,12 @@ import chestcleaner.config.serializable.ListCategory;
 import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
 import chestcleaner.sorting.SortingPattern;
+import chestcleaner.sorting.categorizer.Categorizer;
+import chestcleaner.sorting.categorizer.ComparatorCategorizer;
+import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
+import chestcleaner.sorting.categorizer.MasterCategorizer;
+import chestcleaner.sorting.categorizer.PredicateCategorizer;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -176,6 +182,32 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.CATEGORIES_MASTER, categories);
 	}
 
+	public static boolean removeCategory(Categorizer categorizer) {
+		
+		String path = PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath();
+		String categoryName = categorizer.getName();
+		if(categorizer instanceof PredicateCategorizer){	
+			path = PluginConfig.ConfigPath.CATEGORIES_WORDS.getPath();	
+		}else if(categorizer instanceof ListCategoryCategorizer) {
+			path = PluginConfig.ConfigPath.CATEGORIES_LISTS.getPath();
+		}else if(categorizer instanceof MasterCategorizer) {
+			path = PluginConfig.ConfigPath.CATEGORIES_MASTER.getPath();
+		}
+		
+		boolean removed = false;
+		List<Category<?>> list = (List<Category<?>>) PluginConfig.getConfig().getList(path);
+		for(Category cat : list) {
+			if(cat.getName().equalsIgnoreCase(categoryName)) {
+				list.remove(cat);
+				removed = true;
+				break;
+			}
+		}
+		
+		PluginConfig.setIntoConfig(path, list);
+		return removed;
+	}
+	
 	private static <T extends Category> List<T> addOrUpdateCategory(T category, List<T> categories) {
 		T existingCategory = categories.stream()
 				.filter(cat -> cat.getName().equalsIgnoreCase(category.getName()))

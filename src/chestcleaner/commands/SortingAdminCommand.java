@@ -44,6 +44,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String activeSubCommand = "active";
 	private final String addFromBookSubCommand = "addFromBook";
 	private final String getAsBookSubCommand = "getAsBook";
+	private final String removeSubCommand = "remove";
 	
 	private final String blocksSubCommand = "blocks";
 	private final String consumablesSubCommand = "consumables";
@@ -60,7 +61,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, cooldownSubCommand,
 			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand, refillSubCommand};
-	private final String[] categoriesSubCommandList = { setSubCommand, addFromBookSubCommand, getAsBookSubCommand };
+	private final String[] categoriesSubCommandList = { setSubCommand, addFromBookSubCommand, getAsBookSubCommand, removeSubCommand};
 	private final String[] cooldownSubCommandList = { setSubCommand, activeSubCommand };
 	private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand, "true", "false"};
 
@@ -101,16 +102,22 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			}
 
 		} else if (args.length == 3) {
-			if (categoriesSubCommand.equalsIgnoreCase(args[0]) && setSubCommand.equalsIgnoreCase(args[1])) {
-				setDefaultCategories(sender, args[2]);
-				return true;
+			
+			if(categoriesSubCommand.equalsIgnoreCase(args[0])) {
+				if (setSubCommand.equalsIgnoreCase(args[1])) {
+					setDefaultCategories(sender, args[2]);
+					return true;
+					
+				} else if (getAsBookSubCommand.equalsIgnoreCase(args[1])) {
+					getBook(sender, player, args[2]);
+					return true;
+					
+				} else if (removeSubCommand.equalsIgnoreCase(args[1])) {
+					removeCategory(sender, args[2]);
+					return true;
+				}
 				
-			} else if (categoriesSubCommand.equalsIgnoreCase(args[0])
-					&& getAsBookSubCommand.equalsIgnoreCase(args[1])) {
-				getBook(sender, player, args[2]);
-				return true;
-				
-			} else if (cooldownSubCommand.equalsIgnoreCase(args[0])) {
+			}else if (cooldownSubCommand.equalsIgnoreCase(args[0])) {
 				if(activeSubCommand.equalsIgnoreCase(args[1])) {
 					setCooldownActive(sender, args[2]);
 				}else if(setSubCommand.equalsIgnoreCase(args[1])) {
@@ -148,7 +155,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			
 		} else if (args.length == 3) {
 			if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
-				if (setSubCommand.equalsIgnoreCase(args[1]))
+				if (setSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
 					StringUtils.copyPartialMatchesCommasNoDuplicates(args[2], CategorizerManager.getAllNames(),
 							completions);
 				
@@ -300,7 +307,13 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			MessageSystem.sendChangedValue(sender, categoriesProperty, categories.toString());
 		}
 	}
-
+	
+	private void removeCategory(CommandSender sender, String category) {
+		
+		CategorizerManager.removeCategoryAndSave(category, sender);
+		
+	}
+	
 	private void addFromBook(CommandSender sender, Player player) {
 		if (player == null) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);

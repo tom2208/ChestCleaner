@@ -21,11 +21,11 @@ commands:
     permission: chestcleaner.cmd.admin.blacklist
   sortingconfig:
     description: Configuration of the sorting algorithm for players.
-    usage: /<command> <autosort/categories/chatNotification/pattern/refill/reset/sortingSound> [<true/false> | list | <true/false> | set <category,category,..> | <pattern> | <true/false/blocks/consumables/breakables> | | <true/false>]
+    usage: /<command> <autosort/categories/chatNotification/pattern/refill/reset/sortingSound> [<true/false> | list | <true/false> | set <category,category,..> | <pattern> | <true/false/blocks/consumables/breakables>]
     aliases: [sconfig, sc]
   sortingadmin:
     description: Configuration for admins
-    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound/refill> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <true/false> | <true/false> | <true/false/blocks/consumables/breakables>]
+    usage: /<command> <autosort/categories/cooldown/pattern/chatNotification/sortingSound/refill> [<true/false> | addFromBook | getAsBook <category> | set <category,category,..> | active <true/false> | set <number> | <pattern> | <blocks/consumables/breakables> | remove]
     aliases: [sadmin, sa]
     permission: chestcleaner.cmd.admin.config
 

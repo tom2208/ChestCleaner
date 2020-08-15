@@ -54,7 +54,7 @@ public class PluginConfig {
 
 		ChestCleaner.main.saveConfig();
 	}
-
+	
 	public static FileConfiguration getConfig() {
 		return ChestCleaner.main.getConfig();
 	}
@@ -63,7 +63,16 @@ public class PluginConfig {
 		ChestCleaner.main.getConfig().set(path.getPath(), obj);
 		ChestCleaner.main.saveConfig();
 	}
-
+	
+	public static void setIntoConfig(String path, Object obj) {
+		ChestCleaner.main.getConfig().set(path, obj);
+		ChestCleaner.main.saveConfig();
+	}
+	
+	public static void removeFormConfig() {
+		
+	}
+	
 	public static FileConfiguration getPlayerData() {
 		return getInstance().playerDataConfig;
 	}
