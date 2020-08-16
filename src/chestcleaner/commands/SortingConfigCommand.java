@@ -40,9 +40,9 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	private final String consumablesSubCommand = "consumables";
 	private final String breakablesSubCommand = "breakables";
 
-	private final String autosortProperty = "default autosort";
-	private final String categoriesProperty = "default categoryOrder";
-	private final String patternProperty = "default sortingpattern";
+	private final String autosortProperty = "autosort";
+	private final String categoriesProperty = "categoryOrder";
+	private final String patternProperty = "sortingpattern";
 	private final String chatNotificationProperty = "chat sorting notification";
 	private final String sortingSoundProperty = "sorting sound";
 

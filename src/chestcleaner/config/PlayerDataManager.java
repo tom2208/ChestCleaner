@@ -112,7 +112,7 @@ public class PlayerDataManager {
 	}
 
 	public static List<String> getCategoryOrder(Player p) {
-		List<String> list = PluginConfig.getPlayerData().getStringList(PluginConfig.ConfigPath.DEFAULT_CATEGORIES.getPath());
+		List<String> list = PluginConfig.getPlayerData().getStringList(PluginConfig.PlayerDataPath.CATEGORIES_ORDER.getPath(p));
 		return !list.isEmpty() ? list : PluginConfigManager.getCategoryOrder();
 	}
 
