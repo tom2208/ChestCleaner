@@ -77,9 +77,10 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 				MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
 				return true;
 			}
-			InventorySorter.sortPlayerInventory(player);
-			MessageSystem.sendSortedMessage(player);
-			InventorySorter.playSortingSound(player);
+			if (InventorySorter.sortPlayerInventory(player)) {
+				MessageSystem.sendSortedMessage(player);
+				InventorySorter.playSortingSound(player);
+			}
 		} else {
 
 			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OTHERS.getString())) {
@@ -92,12 +93,13 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 			if (player2 == null) {
 				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player);
 			} else {
-				InventorySorter.sortInventory(player2.getInventory(), player,
-						InventoryDetector.getPlayerInventoryList(player2));
-				MessageSystem.sendSortedMessage(player);
-				MessageSystem.sendSortedMessage(player2);
-				InventorySorter.playSortingSound(player);
-				InventorySorter.playSortingSound(player2);
+				if (InventorySorter.sortInventory(player2.getInventory(), player,
+						InventoryDetector.getPlayerInventoryList(player2))) {
+					MessageSystem.sendSortedMessage(player);
+					MessageSystem.sendSortedMessage(player2);
+					InventorySorter.playSortingSound(player);
+					InventorySorter.playSortingSound(player2);
+				}
 			}
 
 		}

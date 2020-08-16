@@ -16,6 +16,7 @@ public enum MessageID {
 	ERROR_CATEGORY_BOOK("error.category.book"),
 	ERROR_CATEGORY_NAME("error.category.name"),
 	ERROR_CATEGORY_NOTINCONFIG("error.category.notinconfig"),
+	ERROR_CATEGORY_INVALID("error.category.invalid"),
 	ERROR_MATERIAL_NAME("error.material.name"),
 	ERROR_PAGE_NUMBER("error.page.number"),
 	ERROR_PATTERN_ID("error.pattern.id"),

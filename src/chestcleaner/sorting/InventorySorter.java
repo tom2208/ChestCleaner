@@ -107,7 +107,7 @@ public class InventorySorter {
 		}
 
 		if (!CategorizerManager.validateExists(categoryNames)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, p);
+			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_INVALID, p);
 			return false;
 		}
 
