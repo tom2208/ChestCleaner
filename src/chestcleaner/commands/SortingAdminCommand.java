@@ -39,6 +39,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String chatNotificationSubCommand = "chatNotification";
 	private final String sortingSoundSubCommand = "sortingSound";
 	private final String refillSubCommand = "refill";
+	private final String clickSortSubCommand = "clickSort";
 	
 	private final String setSubCommand = "set";
 	private final String activeSubCommand = "active";
@@ -58,9 +59,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 	private final String chatNotificationProperty = "chat sorting notification";
 	private final String soundProperty = "sorting sound";
 	private final String allRefillsProperty = "all refills";
+	private final String clickSortProperty = "default clicksort";
 	
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, cooldownSubCommand,
-			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand, refillSubCommand};
+			patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand, refillSubCommand, clickSortSubCommand};
 	private final String[] categoriesSubCommandList = { setSubCommand, addFromBookSubCommand, getAsBookSubCommand, removeSubCommand};
 	private final String[] cooldownSubCommandList = { setSubCommand, activeSubCommand };
 	private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand, "true", "false"};
@@ -98,6 +100,9 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 				return true;
 			} else if(refillSubCommand.equalsIgnoreCase(args[0])) {
 				setAllRefills(sender, args[1]);
+				return true;
+			} else if(clickSortSubCommand.equalsIgnoreCase(args[0])) {
+				setClickSort(sender, args[1]);
 				return true;
 			}
 
@@ -142,7 +147,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		} else if (args.length == 2) {
 
 			if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand)
-					|| args[0].equalsIgnoreCase(sortingSoundSubCommand))
+					|| args[0].equalsIgnoreCase(sortingSoundSubCommand) || args[0].equalsIgnoreCase(clickSortSubCommand))
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			else if (args[0].equalsIgnoreCase(categoriesSubCommand))
 				StringUtil.copyPartialMatches(args[1], Arrays.asList(categoriesSubCommandList), completions);
@@ -207,6 +212,9 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			key = sortingSoundSubCommand;
 			value = String.valueOf(PluginConfigManager.getDefaultSortingSoundBoolean());
 
+		} else if (command.equalsIgnoreCase(clickSortSubCommand)) {
+			key = clickSortProperty;
+			value = String.valueOf(PluginConfigManager.isDefaultClickSort());
 		}
 
 		if(key != "" && value != "") {
@@ -214,6 +222,14 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 			return true;
 		}
 		return false;
+	}
+	
+	private void setClickSort(CommandSender sender, String bool) {
+		if(StringUtils.isStringBoolean(sender, bool)) {
+			boolean b = Boolean.parseBoolean(bool);
+			PluginConfigManager.setDefaultClickSort(b);
+			MessageSystem.sendChangedValue(sender, clickSortProperty, String.valueOf(bool));
+		}
 	}
 	
 	/**

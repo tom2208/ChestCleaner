@@ -15,6 +15,23 @@ public class PlayerDataManager {
 
 	private PlayerDataManager() {}
 	
+	public static void setClickSort(Player player, boolean b){
+		PluginConfig.getPlayerData().set(PluginConfig.PlayerDataPath.CLICK_SORT.getPath(player), b);
+	}
+	
+	public static boolean isClickSort(Player player){
+		
+		if(PluginConfig.getPlayerData().contains(PluginConfig.PlayerDataPath.CLICK_SORT.getPath(player))) {
+			return PluginConfig.getPlayerData().getBoolean(PluginConfig.PlayerDataPath.CLICK_SORT.getPath(player));
+		}else {
+			return PluginConfigManager.isDefaultClickSort();
+		}
+	}
+	
+	public static void resetCategories(Player player) {
+		PluginConfig.getPlayerData().set(PluginConfig.PlayerDataPath.CATEGORIES_ORDER.getPath(player), null);
+	}
+	
 	public static void reset(Player player) {
 		PluginConfig.getPlayerData().set(player.getUniqueId().toString(), null);
 		PluginConfig.savePlayerData();

@@ -35,6 +35,7 @@ public enum MessageID {
 	INFO_BLACKLIST_DEL("info.blacklist.del"),
 	INFO_CATEGORY_NEW("info.category.new"),
 	INFO_CATEGORY_REMOVED("info.category.removed"),
+	INFO_CATEGORY_RESETED("info.category.reseted"),
 	INFO_CLEANITEM_PLAYER_GET("info.cleaningitem.player.get"),
 	INFO_CLEANITEM_YOU_GET("info.cleaningitem.you.get"),
 	INFO_CURRENT_VALUE("info.value.current"),

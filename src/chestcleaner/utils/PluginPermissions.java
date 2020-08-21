@@ -9,8 +9,10 @@ public enum PluginPermissions {
     CLEANING_ITEM_USE_OWN_INV("chestcleaner.cleaningitem.use.owninventory"),
     COOLDOWN_IMMUNE("chestcleaner.cooldown.immune"),
     UPDATE_PLUGIN("chestcleaner.update"),
-
+    DOUBLE_CLICK_SORT("chestcleaner.doubleclicksort"),
+    
     CMD_SORTING_CONFIG_CATEGORIES("chestcleaner.cmd.sortingconfig.categories"),
+    CMD_SORTING_CONFIG_CATEGORIES_RESET("chestcleaner.cmd.sortingconfig.categories.reset"),
     CMD_SORTING_CONFIG_PATTERN("chestcleaner.cmd.sortingconfig.pattern"),
     CMD_SORTING_CONFIG_SET_AUTOSORT("chestcleaner.cmd.sortingconfig.setautosort"),
     CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL("chestcleaner.cmd.sortingconfig.setchatnotification"),
@@ -20,6 +22,7 @@ public enum PluginPermissions {
     CMD_SORTING_CONFIG_REFILL_BLOCKS("chestcleaner.cmd.sortingconfig.refill.blocks"),
     CMD_SORTING_CONFIG_REFILL_BREAKABLES("chestcleaner.cmd.sortingconfig.refill.breakables"),
     CMD_SORTING_CONFIG_REFILL_GENERIC("chestcleaner.cmd.sortingconfig.refill.*"),
+    CMD_SORTING_CONFIG_CLICKSORT("chestcleaner.cmd.sortingconfig.clicksort"),
     CMD_CLEANING_ITEM_GET("chestcleaner.cmd.cleaningitem.get"),
     CMD_CLEANING_ITEM_GIVE("chestcleaner.cmd.cleaningitem.give"),
     CMD_INV_CLEAN("chestcleaner.cmd.cleaninventory.sort"),

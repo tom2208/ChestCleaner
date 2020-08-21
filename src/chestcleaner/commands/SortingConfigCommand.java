@@ -35,7 +35,8 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	private final String sortingSoundSubCommand = "sortingSound";
 	private final String resetSubCommand = "reset";
 	private final String refillSubCommand = "refill";
-
+	private final String clickSortSubCommand = "clickSort";
+	
 	private final String blocksSubCommand = "blocks";
 	private final String consumablesSubCommand = "consumables";
 	private final String breakablesSubCommand = "breakables";
@@ -48,10 +49,11 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 	private final String listSubCommand = "list";
 	private final String setSubCommand = "set";
+	private final String resetCategoriesSubCommand = "reset";
 
 	private final String[] strCommandList = { autosortSubCommand, categoriesSubCommand, patternSubCommand,
-			chatNotificationSubCommand, sortingSoundSubCommand, resetSubCommand, refillSubCommand };
-	private final String[] categoriesSubCommandList = { listSubCommand, setSubCommand };
+			chatNotificationSubCommand, sortingSoundSubCommand, resetSubCommand, refillSubCommand, clickSortSubCommand};
+	private final String[] categoriesSubCommandList = { listSubCommand, setSubCommand, resetCategoriesSubCommand };
 	private final String[] refillSubCommandList = { blocksSubCommand, consumablesSubCommand, breakablesSubCommand,
 			"true", "false" };
 
@@ -85,33 +87,35 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		if (args.length == 2) {
 			if (autosortSubCommand.equalsIgnoreCase(args[0])) {
 				setAutoSort(player, args[1]);
-				return true;
-
 			} else if (patternSubCommand.equalsIgnoreCase(args[0])) {
 				setPattern(player, args[1]);
-				return true;
-
 			} else if (chatNotificationSubCommand.equalsIgnoreCase(args[0])) {
 				setChatNotificationBool(player, args[1]);
-				return true;
-
 			} else if (sortingSoundSubCommand.equalsIgnoreCase(args[0])) {
 				setSortingSoundBool(player, args[1]);
-				return true;
 			} else if (refillSubCommand.equalsIgnoreCase(args[0])) {
 				setAllRefills(player, args[1]);
-				return true;
+			} else if (categoriesSubCommand.equalsIgnoreCase(args[0])
+					&& resetCategoriesSubCommand.equalsIgnoreCase(args[1])) {
+				resetCategories(player);
+			}else if(clickSortSubCommand.equalsIgnoreCase(args[0])) {
+				setClickSort(player, args[1]);
 			}
+			return true;
 		}
 
 		if (args.length == 3) {
-			if (categoriesSubCommand.equalsIgnoreCase(args[0]) && setSubCommand.equalsIgnoreCase(args[1])) {
-				setCategories(player, args[2]);
-				return true;
-			}else if(refillSubCommand.equalsIgnoreCase(args[0])){
+			if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
+				if (setSubCommand.equalsIgnoreCase(args[1])) {
+					setCategories(player, args[2]);
+				}
+			} else if (refillSubCommand.equalsIgnoreCase(args[0])) {
 				return setRefill(player, args[1], args[2]);
 			}
+			return true;
+
 		}
+
 		return false;
 	}
 
@@ -125,7 +129,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
 		} else if (args.length == 2) {
 			if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand)
-					|| args[0].equalsIgnoreCase(sortingSoundSubCommand))
+					|| args[0].equalsIgnoreCase(sortingSoundSubCommand) || args[0].equalsIgnoreCase(clickSortSubCommand))
 				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
 			else if (args[0].equalsIgnoreCase(categoriesSubCommand))
 				StringUtil.copyPartialMatches(args[1], Arrays.asList(categoriesSubCommandList), completions);
@@ -172,7 +176,10 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		} else if (command.equalsIgnoreCase(sortingSoundSubCommand)) {
 			key = sortingSoundProperty;
 			value = String.valueOf(PlayerDataManager.isSortingSound(p));
-
+		
+		}else if (command.equalsIgnoreCase(clickSortSubCommand)) {
+			key = clickSortSubCommand;
+			value = String.valueOf(PlayerDataManager.isClickSort(p));
 		}
 
 		if (key != "" && value != "") {
@@ -183,39 +190,63 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 		return false;
 	}
 	
-	/**
-	 * Sets the configuration for a refill option.
-	 * @param player the player who entered the command.
-	 * @param arg the subcommand string.
-	 * @param bool true: sets active, false: sets inactive
-	 * @return True if the command can get parsed, otherwise false.
-	 */
-	private boolean setRefill(Player player, String arg, String bool){
-		if(StringUtils.isStringBoolean(player, bool)) {
-			
-			boolean b = Boolean.parseBoolean(bool);
-			String property = new String();
-			
-			if(arg.equalsIgnoreCase(blocksSubCommand)) {
-				PlayerDataManager.setRefillBlocks(player, b);
-				property = blocksSubCommand;
-			}else if(arg.equalsIgnoreCase(consumablesSubCommand)) {
-				PlayerDataManager.setRefillConumables(player, b);
-				property = consumablesSubCommand;
-			}else if(arg.equalsIgnoreCase(breakablesSubCommand)) {
-				PlayerDataManager.setRefillBreakables(player, b);
-				property = breakablesSubCommand;
-			}else {
-				return false;
-			}
-			
-			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, player, property, b);
-			
+	
+	private void resetCategories(Player player) {
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES_RESET)) {
+			PlayerDataManager.resetCategories(player);
+			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CATEGORY_RESETED, player);
 		}
-		
-		return true;
+	}
+
+	
+	
+	private void setClickSort(Player player, String bool) {
+		if(checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_CLICKSORT)) {
+			if (!StringUtils.isStringTrueOrFalse(bool)) {
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
+			} else {
+				boolean b = Boolean.parseBoolean(bool);
+				PlayerDataManager.setClickSort(player, b);
+				MessageSystem.sendChangedValue(player, clickSortSubCommand, String.valueOf(b));
+			}
+		}
 	}
 	
+	/**
+	 * Sets the configuration for a refill option.
+	 * 
+	 * @param player the player who entered the command.
+	 * @param arg    the subcommand string.
+	 * @param bool   true: sets active, false: sets inactive
+	 * @return True if the command can get parsed, otherwise false.
+	 */
+	private boolean setRefill(Player player, String arg, String bool) {
+		if (StringUtils.isStringBoolean(player, bool)) {
+
+			boolean b = Boolean.parseBoolean(bool);
+			String property = new String();
+
+			if (arg.equalsIgnoreCase(blocksSubCommand)) {
+				PlayerDataManager.setRefillBlocks(player, b);
+				property = blocksSubCommand;
+			} else if (arg.equalsIgnoreCase(consumablesSubCommand)) {
+				PlayerDataManager.setRefillConumables(player, b);
+				property = consumablesSubCommand;
+			} else if (arg.equalsIgnoreCase(breakablesSubCommand)) {
+				PlayerDataManager.setRefillBreakables(player, b);
+				property = breakablesSubCommand;
+			} else {
+				return false;
+			}
+
+			MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, player,
+					property, b);
+
+		}
+
+		return true;
+	}
+
 	private void setAllRefills(Player player, String bool) {
 		if (!StringUtils.isStringTrueOrFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
@@ -247,35 +278,33 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void resetConfiguration(Player player) {
-		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_RESET.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_RESET);
-		} else {
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_RESET)) {
 			PlayerDataManager.reset(player);
 			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_RESET_CONFIG, player);
 		}
 	}
 
 	private void setChatNotificationBool(Player player, String bool) {
-		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL);
-		} else if (!StringUtils.isStringTrueOrFalse(bool)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
-		} else {
-			boolean b = Boolean.parseBoolean(bool);
-			PlayerDataManager.setNotification(player, b);
-			MessageSystem.sendChangedValue(player, chatNotificationProperty, String.valueOf(b));
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL)) {
+			if (!StringUtils.isStringTrueOrFalse(bool)) {
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
+			} else {
+				boolean b = Boolean.parseBoolean(bool);
+				PlayerDataManager.setNotification(player, b);
+				MessageSystem.sendChangedValue(player, chatNotificationProperty, String.valueOf(b));
+			}
 		}
 	}
 
 	private void setSortingSoundBool(Player player, String bool) {
-		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_SOUND_BOOL.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_SET_SOUND_BOOL);
-		} else if (!StringUtils.isStringTrueOrFalse(bool)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
-		} else {
-			boolean b = Boolean.parseBoolean(bool);
-			PlayerDataManager.setSortingSound(player, b);
-			MessageSystem.sendChangedValue(player, sortingSoundProperty, String.valueOf(b));
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_SOUND_BOOL)) {
+			if (!StringUtils.isStringTrueOrFalse(bool)) {
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
+			} else {
+				boolean b = Boolean.parseBoolean(bool);
+				PlayerDataManager.setSortingSound(player, b);
+				MessageSystem.sendChangedValue(player, sortingSoundProperty, String.valueOf(b));
+			}
 		}
 	}
 
@@ -285,9 +314,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void setPattern(Player player, String patternName) {
-		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_PATTERN.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_PATTERN);
-		} else {
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_PATTERN)) {
 
 			SortingPattern pattern = SortingPattern.getSortingPatternByName(patternName);
 			if (pattern != null) {
@@ -300,16 +327,27 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 	}
 
 	private void setAutoSort(Player player, String bool) {
-		if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT);
-		} else if (!StringUtils.isStringTrueOrFalse(bool)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
-		} else {
+		if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT)) {
+			if (!StringUtils.isStringTrueOrFalse(bool)) {
+				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
+			} else {
 
-			boolean b = Boolean.parseBoolean(bool);
-			PlayerDataManager.setAutoSort(player, b);
-			MessageSystem.sendChangedValue(player, autosortProperty, String.valueOf(b));
+				boolean b = Boolean.parseBoolean(bool);
+				PlayerDataManager.setAutoSort(player, b);
+				MessageSystem.sendChangedValue(player, autosortProperty, String.valueOf(b));
+			}
 		}
+	}
+
+	private boolean checkPermission(Player player, PluginPermissions permission) {
+
+		if (!player.hasPermission(permission.getString())) {
+			MessageSystem.sendPermissionError(player, permission);
+			return false;
+		} else {
+			return true;
+		}
+
 	}
 
 	private void setCategories(Player player, String commaSeperatedCategories) {

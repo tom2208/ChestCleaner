@@ -17,6 +17,7 @@ default:
     blocks: true
     consumables: true
     breakables: true
+  clicksort: true
 cleaningItem:
   active: true
   durability: true

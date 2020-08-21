@@ -125,6 +125,7 @@ public class PluginConfig {
 		DEFAULT_AUTOSORT("default.autosort"),
 		DEFAULT_PATTERN("default.pattern"),
 		DEFAULT_CATEGORIES("default.categories"),
+		DEFAULT_CLICKSORT("default.clicksort"),
 		LOCALE_LANGUAGE("locale.lang"),
 		LOCALE_COUNTRY("locale.country"),
 		CLEANING_ITEM("cleaningItem.item"),
@@ -165,7 +166,8 @@ public class PluginConfig {
 		SOUND("sound"),
 		REFILL_CONSUMABLES("refill.consumables"),
 		REFILL_BLOCKS("refill.blocks"),
-		REFILL_BREAKABLE_ITEMS("refill.breakableitems");
+		REFILL_BREAKABLE_ITEMS("refill.breakableitems"),
+		CLICK_SORT("clicksort");
 
 		private String path;
 

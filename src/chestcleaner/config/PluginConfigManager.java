@@ -6,7 +6,6 @@ import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.categorizer.Categorizer;
-import chestcleaner.sorting.categorizer.ComparatorCategorizer;
 import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
 import chestcleaner.sorting.categorizer.MasterCategorizer;
 import chestcleaner.sorting.categorizer.PredicateCategorizer;
@@ -25,6 +24,14 @@ public class PluginConfigManager {
 	private static List<Material> blacklistInventory = null;
 
 	private PluginConfigManager() {}
+	
+	public static boolean isDefaultClickSort(){
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_CLICKSORT.getPath());
+	}
+	
+	public static void setDefaultClickSort(boolean b) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_CLICKSORT, b);
+	}
 	
 	public static boolean isDefaultBreakableRefill() {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL.getPath());
