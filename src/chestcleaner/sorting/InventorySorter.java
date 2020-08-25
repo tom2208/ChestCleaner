@@ -136,15 +136,11 @@ public class InventorySorter {
 		Inventory inv = InventoryDetector.getInventoryFormBlock(b);
 
 		if (inv != null) {
-			if (p != null) {
-				playSortingSound(p);
-			}
 			return sortInventory(inv, p);
 		}
 
 		if (p != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
-				playSortingSound(p);
 				return sortInventory(p.getEnderChest(), p);
 			}
 		}

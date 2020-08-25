@@ -118,7 +118,6 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 		if (world == null) {
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_WORLD_NAME, cs, worldStr);
 		} else {
-
 			sortInvAtLocation(xStr, yStr, zStr, world, player, cs);
 		}
 	}

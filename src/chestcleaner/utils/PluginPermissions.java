@@ -9,7 +9,7 @@ public enum PluginPermissions {
     CLEANING_ITEM_USE_OWN_INV("chestcleaner.cleaningitem.use.owninventory"),
     COOLDOWN_IMMUNE("chestcleaner.cooldown.immune"),
     UPDATE_PLUGIN("chestcleaner.update"),
-    DOUBLE_CLICK_SORT("chestcleaner.doubleclicksort"),
+    CLICK_SORT("chestcleaner.clicksort"),
     
     CMD_SORTING_CONFIG_CATEGORIES("chestcleaner.cmd.sortingconfig.categories"),
     CMD_SORTING_CONFIG_CATEGORIES_RESET("chestcleaner.cmd.sortingconfig.categories.reset"),

@@ -1,7 +1,6 @@
 package chestcleaner.listeners;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -24,12 +23,17 @@ import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
+import chestcleaner.utils.SortingUtils;
 import chestcleaner.utils.messages.MessageSystem;
 
 /**
  * @author Tom2208
  */
 public class SortingListener implements org.bukkit.event.Listener {
+
+	private String[] usableAnimalInventories = { "CraftMule", "CraftLlama" };
+	private InventoryType[] invTypeWhiteList = { InventoryType.CHEST, InventoryType.ENDER_CHEST, InventoryType.BARREL, InventoryType.SHULKER_BOX, InventoryType.PLAYER, InventoryType.CREATIVE,
+			InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.HOPPER };
 
 	@EventHandler
 	private void onRightClick(PlayerInteractEvent e) {
@@ -38,12 +42,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		if (e.getAction() == Action.RIGHT_CLICK_AIR || e.getAction() == Action.RIGHT_CLICK_BLOCK) {
 			if (PluginConfigManager.isCleaningItemActive() && isPlayerHoldingACleaningItem(player)) {
-				if (isPlayerAllowedToCleanOwnInv(player) && !CooldownManager.getInstance().isPlayerOnCooldown(player)
-						&& InventorySorter.sortPlayerInventory(player)) {
+				
+				if (isPlayerAllowedToCleanOwnInv(player) && SortingUtils.sortPlayerInvWithEffects(player)) {
 					damageItem(player);
-					InventorySorter.playSortingSound(player);
-
-					MessageSystem.sendSortedMessage(player);
 					e.setCancelled(true);
 
 				} else if (!PluginConfigManager.isOpenEvent()
@@ -58,6 +59,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 					if (InventorySorter.sortPlayerBlock(b, player)) {
 						damageItem(player);
+					    InventorySorter.playSortingSound(player);
 						MessageSystem.sendSortedMessage(player);
 						e.setCancelled(true);
 					}
@@ -74,12 +76,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 			Player player = (Player) e.getPlayer();
 
 			if (player.hasPermission(PluginPermissions.CLEANING_ITEM_USE.getString())
-					&& isPlayerHoldingACleaningItem(player) && !CooldownManager.getInstance().isPlayerOnCooldown(player)
-					&& InventorySorter.sortInventory(e.getInventory(), player)) {
-
+					&& isPlayerHoldingACleaningItem(player) && SortingUtils.sortInventoryWithEffects(e.getInventory(), player)) {
 				damageItem(player);
-				InventorySorter.playSortingSound(player);
-				MessageSystem.sendSortedMessage(player);
 				e.setCancelled(true);
 			}
 		}
@@ -93,11 +91,8 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 			Player player = (Player) e.getPlayer();
 
-			if (PlayerDataManager.isAutoSort(player) && !CooldownManager.getInstance().isPlayerOnCooldown(player)
-					&& InventorySorter.sortInventory(e.getInventory(), player)) {
-
-				InventorySorter.playSortingSound(player);
-				MessageSystem.sendSortedMessage(player);
+			if (PlayerDataManager.isAutoSort(player)) {
+				SortingUtils.sortInventoryWithEffects(e.getInventory(), player);
 			}
 		}
 	}
@@ -105,11 +100,11 @@ public class SortingListener implements org.bukkit.event.Listener {
 	@EventHandler
 	private void onClick(InventoryClickEvent e) {
 		if (e.getClick().equals(ClickType.MIDDLE)) {
-			if (e.getWhoClicked().hasPermission(PluginPermissions.DOUBLE_CLICK_SORT.getString())) {
+			if (e.getWhoClicked().hasPermission(PluginPermissions.CLICK_SORT.getString())) {
 				if (e.getSlot() == -999) {
 					if (e.getCurrentItem() == null) {
 						Player player = Bukkit.getServer().getPlayer(e.getWhoClicked().getName());
-						if(PlayerDataManager.isClickSort(player)) {
+						if (PlayerDataManager.isClickSort(player)) {
 							sortInventoryOnClick(player, e);
 						}
 						e.setCancelled(true);
@@ -122,21 +117,27 @@ public class SortingListener implements org.bukkit.event.Listener {
 	private void sortInventoryOnClick(Player player, InventoryClickEvent e) {
 
 		boolean flag = false;
-		if (e.getInventory().getType().equals(InventoryType.CRAFTING)) {
-			if (!CooldownManager.getInstance().isPlayerOnCooldown(player)
-					&& InventorySorter.sortPlayerInventory(player)) {
+		for (InventoryType type : invTypeWhiteList) {
+			if (e.getInventory().getType().equals(type)) {
 				flag = true;
-
-			}
-		} else if (true) {
-			if (!CooldownManager.getInstance().isPlayerOnCooldown(player)
-					&& InventorySorter.sortInventory(e.getInventory(), player)) {
-				flag = true;
+				break;
 			}
 		}
-		if (flag) {
-			InventorySorter.playSortingSound(player);
-			MessageSystem.sendSortedMessage(player);
+
+		boolean animalInv = false;
+
+		if (e.getInventory().getType().equals(InventoryType.CHEST)) {
+			for (String holder : usableAnimalInventories) {
+				if (e.getInventory().getHolder().toString().equals(holder)) {
+					animalInv = true;
+					break;
+				}
+			}
+		}
+		if (!flag || animalInv) {
+			SortingUtils.sortPlayerInvWithEffects(player);
+		} else {
+			SortingUtils.sortInventoryWithEffects(e.getInventory(), player);
 		}
 
 	}
