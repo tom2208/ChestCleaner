@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
+import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.InventoryDetector;
 import chestcleaner.utils.PluginPermissions;
 
@@ -72,15 +73,18 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 					if (item.getMaxStackSize() > 1) {
 
+						boolean mainhand = false;
+						boolean offhand = false;
+
 						if (isPlayerHoldingAItemInMainHand(player)) {
 
 							if (playerMainHandHeldItemMaterialEquals(item, player)) {
-								refillConsumableInSlot(true, e);
+								mainhand = true;
 
 							} else if (isPlayerHoldingAItemInOffHand(player)) {
 
 								if (playerOffHandHeldItemMaterialEquals(item, player)) {
-									refillConsumableInSlot(false, e);
+									offhand = true;
 								}
 
 							}
@@ -88,11 +92,16 @@ public class RefillListener implements org.bukkit.event.Listener {
 						} else if (isPlayerHoldingAItemInOffHand(player)) {
 
 							if (playerOffHandHeldItemMaterialEquals(item, player)) {
-								refillConsumableInSlot(false, e);
+								offhand = true;
 							}
 
 						}
-
+						if (mainhand || offhand) {
+							int hand = e.getPlayer().getInventory().getHeldItemSlot();
+							if(!mainhand) hand = -999;
+							refillConsumableInSlot(hand, player, e.getItem());							
+							
+						}
 					}
 
 				}
@@ -122,8 +131,16 @@ public class RefillListener implements org.bukkit.event.Listener {
 					if (player.getInventory().getItemInMainHand().equals(item)) {
 
 						ItemStack refillItem = player.getInventory().getItem(refillSlot);
-						player.getInventory().setItem(player.getInventory().getHeldItemSlot(), refillItem);
-						player.getInventory().setItem(refillSlot, null);
+
+						ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+								new Runnable() {
+									@Override
+									public void run() {
+										player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
+												refillItem);
+										player.getInventory().setItem(refillSlot, null);
+									}
+								}, 1l);
 
 					} else {
 
@@ -253,27 +270,36 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 * @param inMainHand true if the refill slot is the main hand otherwise false.
 	 * @param e          the consuming event the refill should happen.
 	 */
-	private void refillConsumableInSlot(boolean inMainHand, PlayerItemConsumeEvent e) {
-		ItemStack[] items = InventoryDetector.getFullInventory(e.getPlayer().getInventory());
-		for (int i = 9; i < 36; i++) {
-			if (items[i] != null) {
-				if (items[i].getType().equals(e.getItem().getType()) && items[i].getAmount() > 1) {
-					items[i].setAmount(items[i].getAmount() + 1);
-					if (inMainHand) {
-						e.setItem(items[i]);
-						e.getPlayer().getInventory().setItem(i, null);
-						break;
-					} else {
-						e.setItem(items[i]);
-						e.getPlayer().getInventory().setItem(i, null);
-						break;
+	private void refillConsumableInSlot(int hand, Player player, ItemStack conItem) {
+		
+		ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+				new Runnable() {
+					@Override
+					public void run() {
+						
+						ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
+						for (int i = 9; i < 36; i++) {
+							if (items[i] != null) {
+								if (items[i].getType().equals(conItem.getType())) {
+									if (hand > -999) {
+										player.getInventory().setItem(hand, items[i]);
+										player.getInventory().setItem(i, null);
+										break;
+									} else {
+										player.getInventory().setItemInOffHand(items[i]);
+										player.getInventory().setItem(i, null);
+										break;
+									}
+
+								}
+
+							}
+
+						}
+						
 					}
-
-				}
-
-			}
-
-		}
+				}, 1l);
+		
 	}
 
 	/**
