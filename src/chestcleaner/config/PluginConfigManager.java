@@ -22,7 +22,8 @@ public class PluginConfigManager {
 
 	private static List<Material> blacklistStacking = null;
 	private static List<Material> blacklistInventory = null;
-
+	private static List<Material> blacklistAutorefill = null;
+	
 	private PluginConfigManager() {}
 	
 	public static boolean isDefaultClickSort(){
@@ -267,7 +268,19 @@ public class PluginConfigManager {
 	    PluginConfigManager.blacklistStacking = blacklistStacking;
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_STACKING, getStringList(blacklistStacking));
 	}
+	
+	public static List<Material> getBlacklistAutoRefill() {
+	    if (blacklistAutorefill == null) {
+	    	blacklistAutorefill = getMaterialList(PluginConfig.getConfig(), PluginConfig.ConfigPath.BLACKLIST_AUTOREFILL);
+		}
+		return blacklistAutorefill;
+	}
 
+	public static void setBlacklistAutoRefill(List<Material> blacklistAutorefill) {
+	    PluginConfigManager.blacklistAutorefill = blacklistAutorefill;
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.BLACKLIST_AUTOREFILL, getStringList(blacklistAutorefill));
+	}
+	
 	private static ArrayList<Material> getMaterialList(FileConfiguration config, PluginConfig.ConfigPath path) {
 		List<String> list = config.getStringList(path.getPath());
 		ArrayList<Material> materials = new ArrayList<>();

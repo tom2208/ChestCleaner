@@ -136,6 +136,7 @@ public class PluginConfig {
 		REFILL_BLOCKS("default.refill.blocks"),
 		BLACKLIST_STACKING("blacklist.stacking"),
 		BLACKLIST_INVENTORY("blacklist.inventory"),
+		BLACKLIST_AUTOREFILL("blacklist.autorefill"),
 		COOLDOWN_TIME("cooldown.time"),
 		COOLDOWN_ACTIVE("cooldown.active"),
 		UPDATE_CHECKER_ACTIVE("updateMessage"),

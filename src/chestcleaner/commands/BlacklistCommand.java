@@ -36,12 +36,13 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
 	private final String stackingSubCommand = "stacking";
 	private final String inventorySubCommand = "inventory";
+	private final String autorefillSubCommand = "autorefill";
 
 	private final String[] subCommandList = { addSubCommand, removeSubCommand, listSubCommand, clearSubCommand };
-	private final String[] strList = { stackingSubCommand, inventorySubCommand };
+	private final String[] strList = { stackingSubCommand, inventorySubCommand, autorefillSubCommand };
 
 	private enum BlacklistType {
-		STACKING, INVENTORY
+		STACKING, INVENTORY, AUTOREFILL
 	}
 
 	@Override
@@ -62,7 +63,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(inventorySubCommand)) {
 				list = PluginConfigManager.getBlacklistInventory();
 				listType = BlacklistType.INVENTORY;
-			} else {
+			} else if(args[0].equalsIgnoreCase(autorefillSubCommand)){
+				list = PluginConfigManager.getBlacklistAutoRefill();
+				listType = BlacklistType.AUTOREFILL;
+			}else {
 				return false;
 			}
 		}
@@ -218,10 +222,12 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	 * Saves the list in to the config.yml .
 	 */
 	private void saveList(BlacklistType type, List<Material> items) {
-		if (type == BlacklistType.STACKING) {
+		if (type.equals(BlacklistType.STACKING)) {
 			PluginConfigManager.setBlacklistStacking(items);
-		} else if (type == BlacklistType.INVENTORY) {
+		} else if (type.equals(BlacklistType.INVENTORY)) {
 			PluginConfigManager.setBlacklistInventory(items);
+		} else if(type.equals(BlacklistType.AUTOREFILL)) {
+			PluginConfigManager.setBlacklistAutoRefill(items);
 		}
 	}
 }

@@ -36,19 +36,20 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 				if (item.getAmount() == 1) {
 
-					/*
-					 * stripping a log counts as placing a block, at least some times (cause the axe
-					 * to get replaced)
-					 */
-					if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
-						if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
-								|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
-							return;
+					if (!isOnBlackList(item)) {
+						/*
+						 * stripping a log counts as placing a block, at least some times (cause the axe
+						 * to get replaced)
+						 */
+						if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
+							if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
+									|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
+								return;
+							}
 						}
+
+						refillBlockInSlot(e);
 					}
-
-					refillBlockInSlot(e);
-
 				}
 			}
 		}
@@ -71,15 +72,24 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getItem();
 				if (item.getAmount() == 1) {
 
-					if (item.getMaxStackSize() > 1) {
+					if (!isOnBlackList(item)) {
+						if (item.getMaxStackSize() > 1) {
 
-						boolean mainhand = false;
-						boolean offhand = false;
+							boolean mainhand = false;
+							boolean offhand = false;
 
-						if (isPlayerHoldingAItemInMainHand(player)) {
+							if (isPlayerHoldingAItemInMainHand(player)) {
 
-							if (playerMainHandHeldItemMaterialEquals(item, player)) {
-								mainhand = true;
+								if (playerMainHandHeldItemMaterialEquals(item, player)) {
+									mainhand = true;
+
+								} else if (isPlayerHoldingAItemInOffHand(player)) {
+
+									if (playerOffHandHeldItemMaterialEquals(item, player)) {
+										offhand = true;
+									}
+
+								}
 
 							} else if (isPlayerHoldingAItemInOffHand(player)) {
 
@@ -88,22 +98,15 @@ public class RefillListener implements org.bukkit.event.Listener {
 								}
 
 							}
+							if (mainhand || offhand) {
+								int hand = e.getPlayer().getInventory().getHeldItemSlot();
+								if (!mainhand)
+									hand = -999;
+								refillConsumableInSlot(hand, player, e.getItem());
 
-						} else if (isPlayerHoldingAItemInOffHand(player)) {
-
-							if (playerOffHandHeldItemMaterialEquals(item, player)) {
-								offhand = true;
 							}
-
-						}
-						if (mainhand || offhand) {
-							int hand = e.getPlayer().getInventory().getHeldItemSlot();
-							if(!mainhand) hand = -999;
-							refillConsumableInSlot(hand, player, e.getItem());							
-							
 						}
 					}
-
 				}
 			}
 		}
@@ -125,34 +128,40 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 			if (config) {
 				ItemStack item = e.getBrokenItem();
-				int refillSlot = getRefillStack(item.getType(), player);
+				if (!isOnBlackList(item)) {
+					int refillSlot = getRefillStack(item.getType(), player);
 
-				if (refillSlot > 8) {
-					if (player.getInventory().getItemInMainHand().equals(item)) {
+					if (refillSlot > 8) {
+						if (player.getInventory().getItemInMainHand().equals(item)) {
 
-						ItemStack refillItem = player.getInventory().getItem(refillSlot);
+							ItemStack refillItem = player.getInventory().getItem(refillSlot);
 
-						ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
-								new Runnable() {
-									@Override
-									public void run() {
-										player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
-												refillItem);
-										player.getInventory().setItem(refillSlot, null);
-									}
-								}, 1l);
+							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+									new Runnable() {
+										@Override
+										public void run() {
+											player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
+													refillItem);
+											player.getInventory().setItem(refillSlot, null);
+										}
+									}, 1l);
 
-					} else {
+						} else {
 
-						ItemStack refillItem = player.getInventory().getItem(refillSlot);
-						player.getInventory().setItem(40, refillItem);
-						player.getInventory().setItem(refillSlot, null);
+							ItemStack refillItem = player.getInventory().getItem(refillSlot);
+							player.getInventory().setItem(40, refillItem);
+							player.getInventory().setItem(refillSlot, null);
 
+						}
 					}
 				}
 			}
 		}
 
+	}
+
+	private boolean isOnBlackList(ItemStack item) {
+		return PluginConfigManager.getBlacklistAutoRefill().contains(item.getType());
 	}
 
 	/**
@@ -271,35 +280,34 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 * @param e          the consuming event the refill should happen.
 	 */
 	private void refillConsumableInSlot(int hand, Player player, ItemStack conItem) {
-		
-		ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
-				new Runnable() {
-					@Override
-					public void run() {
-						
-						ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
-						for (int i = 9; i < 36; i++) {
-							if (items[i] != null) {
-								if (items[i].getType().equals(conItem.getType())) {
-									if (hand > -999) {
-										player.getInventory().setItem(hand, items[i]);
-										player.getInventory().setItem(i, null);
-										break;
-									} else {
-										player.getInventory().setItemInOffHand(items[i]);
-										player.getInventory().setItem(i, null);
-										break;
-									}
 
-								}
+		ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main, new Runnable() {
+			@Override
+			public void run() {
 
+				ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
+				for (int i = 9; i < 36; i++) {
+					if (items[i] != null) {
+						if (items[i].getType().equals(conItem.getType())) {
+							if (hand > -999) {
+								player.getInventory().setItem(hand, items[i]);
+								player.getInventory().setItem(i, null);
+								break;
+							} else {
+								player.getInventory().setItemInOffHand(items[i]);
+								player.getInventory().setItem(i, null);
+								break;
 							}
 
 						}
-						
+
 					}
-				}, 1l);
-		
+
+				}
+
+			}
+		}, 1l);
+
 	}
 
 	/**

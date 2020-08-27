@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: "2.2.1"
+version: "2.3.0"
 author: Tom2208, leanNiki
 api-version: "1.13" # we need this otherwise new blocks e.g. mossy cobble slabs get deleted
 
@@ -16,7 +16,7 @@ commands:
     aliases: ci
   blacklist:
     description: Avoiding items to get stacked while sorting.
-    usage: /<command> <stacking/inventory> <list/clear/add/remove> [<material>]
+    usage: /<command> <stacking/inventory/autorefill> <list/clear/add/remove> [<material>]
     aliases: bl
     permission: chestcleaner.cmd.admin.blacklist
   sortingconfig:
