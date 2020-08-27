@@ -31,7 +31,7 @@ import chestcleaner.utils.messages.MessageSystem;
  */
 public class SortingListener implements org.bukkit.event.Listener {
 
-	private String[] usableAnimalInventories = { "CraftMule", "CraftLlama" };
+	private String[] usableAnimalInventories = { "CraftMule", "CraftLlama", "CraftHorse"};
 	private InventoryType[] invTypeWhiteList = { InventoryType.CHEST, InventoryType.ENDER_CHEST, InventoryType.BARREL, InventoryType.SHULKER_BOX, InventoryType.PLAYER, InventoryType.CREATIVE,
 			InventoryType.DISPENSER, InventoryType.DROPPER, InventoryType.HOPPER };
 
@@ -128,7 +128,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
 		if (e.getInventory().getType().equals(InventoryType.CHEST)) {
 			for (String holder : usableAnimalInventories) {
-				if (e.getInventory().getHolder().toString().equals(holder)) {
+				if (e.getInventory().getHolder().toString().contains(holder)) {
 					animalInv = true;
 					break;
 				}
