@@ -350,7 +350,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 		if (player == null) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
 		} else {
-			Category category = PluginConfigManager.getCategoryByName(categoryString);
+			Category<?> category = PluginConfigManager.getCategoryByName(categoryString);
 			if (category == null) {
 				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
 			} else {

@@ -137,7 +137,7 @@ public class PluginConfigManager {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_CATEGORIES, categorizationOrder);
 	}
 
-	public static Category getCategoryByName(String name) {
+	public static Category<?> getCategoryByName(String name) {
 		for (WordCategory category : getWordCategories())
 			if (category.getName().equalsIgnoreCase(name))
 				return category;
@@ -150,8 +150,8 @@ public class PluginConfigManager {
 		return null;
 	}
 
-	public static List<Category> getAllCategories() {
-		List<Category> list = new ArrayList<>();
+	public static List<Category<?>> getAllCategories() {
+		List<Category<?>> list = new ArrayList<>();
 		list.addAll(getWordCategories());
 		list.addAll(getListCategories());
 		list.addAll(getMasterCategories());
@@ -203,7 +203,7 @@ public class PluginConfigManager {
 		
 		boolean removed = false;
 		List<Category<?>> list = (List<Category<?>>) PluginConfig.getConfig().getList(path);
-		for(Category cat : list) {
+		for(Category<?> cat : list) {
 			if(cat.getName().equalsIgnoreCase(categoryName)) {
 				list.remove(cat);
 				removed = true;
