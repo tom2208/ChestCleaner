@@ -311,7 +311,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	}
 
 	/**
-	 * Searches through the main inventory (slots 9 - 35) taking the first ItemStack
+	 * Searches through the main inventory (slots 0 - 35) taking the first ItemStack
 	 * with the same type of materials the placed block has and puts it into the
 	 * slot after placing.
 	 * 
@@ -319,13 +319,12 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 */
 	private void refillBlockInSlot(BlockPlaceEvent e) {
 		ItemStack[] items = InventoryDetector.getFullInventory(e.getPlayer().getInventory());
+		int currentItemSlot = e.getPlayer().getInventory().getHeldItemSlot();
 
-		for (int i = 9; i < 36; i++) {
-
+		for (int i = 0; i < 36; i++) {
+			if (i == currentItemSlot) continue;
 			if (items[i] != null) {
-
-				if (items[i].getType().equals(e.getBlockPlaced().getType())) {
-
+				if (items[i].isSimilar(e.getItemInHand())) {
 					if (e.getHand().equals(EquipmentSlot.HAND)) {
 						e.getPlayer().getInventory().setItemInMainHand(items[i]);
 						e.getPlayer().getInventory().setItem(i, null);
