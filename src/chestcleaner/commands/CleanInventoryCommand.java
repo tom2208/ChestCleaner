@@ -70,6 +70,14 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
+	/**
+	 * The player {@code player} sorts the inventory of the player with the name
+	 * {@code playername}. He needs the correct permissions.
+	 * 
+	 * @param player     the player who sorts the inventory.
+	 * @param playername the name of the player whose inventory will get sorted.
+	 * @return <b>true</b> if a inventory got sorted, <b>false</b> if not.
+	 */
 	private boolean sortPlayerInventory(Player player, String playername) {
 
 		if (playername.equalsIgnoreCase(ownSubCommand) || playername.equalsIgnoreCase(player.getDisplayName())) {
@@ -106,11 +114,27 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 		return true;
 	}
 
+	/**
+	 * The player {@code p} sorts a blocks inventory.
+	 * 
+	 * @param p the player who sorts the inventory.
+	 */
 	private void sortInvForPlayer(Player p) {
 		Block block = BlockDetector.getTargetBlock(p);
 		sortBlock(block, p, p);
 	}
 
+	/**
+	 * Sorts an inventory of a block if it has one.
+	 * 
+	 * @param xStr     the x coordinate as a String.
+	 * @param yStr     the y coordinate as a String.
+	 * @param zStr     the z coordinate as a String.
+	 * @param worldStr the name of the world of block whose inventory you want to
+	 *                 sort.
+	 * @param player   the player which executed the inventory (can be null).
+	 * @param cs       the sender which executed the command.
+	 */
 	private void sortInvInWorld(String xStr, String yStr, String zStr, String worldStr, Player player,
 			CommandSender cs) {
 
@@ -122,6 +146,16 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Sorts an inventory of a block if it has one.
+	 * 
+	 * @param xStr   the x coordinate as a String.
+	 * @param yStr   the y coordinate as a String.
+	 * @param zStr   the z coordinate as a String.
+	 * @param world  the world of block whose inventory you want to sort.
+	 * @param player the player which executed the inventory (can be null).
+	 * @param sender the sender which executed the command.
+	 */
 	private void sortInvAtLocation(String xStr, String yStr, String zStr, World world, Player player,
 			CommandSender sender) {
 		int x = (int) Double.parseDouble(xStr);
@@ -131,6 +165,13 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 		sortBlock(block, player, sender);
 	}
 
+	/**
+	 * Sorts the inventory of a block if it has one.
+	 * 
+	 * @param block  the block which may have an inventory.
+	 * @param p      the player who is sorting.
+	 * @param sender the sender which executed the command.
+	 */
 	private void sortBlock(Block block, Player p, CommandSender sender) {
 		if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_INVENTORY, sender);
