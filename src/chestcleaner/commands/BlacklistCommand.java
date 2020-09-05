@@ -63,10 +63,10 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 			} else if (args[0].equalsIgnoreCase(inventorySubCommand)) {
 				list = PluginConfigManager.getBlacklistInventory();
 				listType = BlacklistType.INVENTORY;
-			} else if(args[0].equalsIgnoreCase(autorefillSubCommand)){
+			} else if (args[0].equalsIgnoreCase(autorefillSubCommand)) {
 				list = PluginConfigManager.getBlacklistAutoRefill();
 				listType = BlacklistType.AUTOREFILL;
-			}else {
+			} else {
 				return false;
 			}
 		}
@@ -77,7 +77,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 				printBlacklist(sender, "1", list);
 				return true;
 			} else if (clearSubCommand.equalsIgnoreCase(args[1])) {
-				clearBlacklist(sender, listType, list);
+				clearBlacklist(sender, listType);
 				return true;
 			}
 			if (player == null) {
@@ -134,6 +134,14 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Adds {@code material} to the blacklist.
+	 * 
+	 * @param sender   the sender which executed the command.
+	 * @param type     the list on which the material gets added.
+	 * @param list     a list which gets modified and set to the config.
+	 * @param material the material that gets added to the list.
+	 */
 	private void addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (list.contains(material)) {
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EXISTS, sender,
@@ -148,6 +156,15 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Removes a material with the name {@code name} form a blacklist.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param type   the type of blacklist form which you want to remove the
+	 *               material.
+	 * @param list   the list which gets modified and then set to the config.
+	 * @param name   the name of the material you want to remove.
+	 */
 	private void removeMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {
 		Material material = Material.getMaterial(name.toUpperCase());
 
@@ -172,6 +189,15 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		removeMaterial(sender, type, list, material);
 	}
 
+	/**
+	 * Removes a {@code material} form a blacklist.
+	 * 
+	 * @param sender   the sender which executed the command.
+	 * @param type     the type of blacklist form which you want to remove the
+	 *                 material.
+	 * @param list     the list which gets modified and then set to the config.
+	 * @param material the material you want to remove.
+	 */
 	private void removeMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
 		if (!list.contains(material)) {
 			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLACKLIST_NOT_EXISTS,
@@ -186,6 +212,15 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Sends a page with the page number {@code pageString} of the list to the
+	 * {@code sender}.
+	 * 
+	 * @param sender     the sender which will receive the the list.
+	 * @param pageString the page of the list which gets sent.
+	 * @param list       The list which contains the page/part of the list you want
+	 *                   to send.
+	 */
 	private void printBlacklist(CommandSender sender, String pageString, List<Material> list) {
 		if (list.size() == 0) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_EMPTY, sender);
@@ -196,17 +231,26 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private void clearBlacklist(CommandSender sender, BlacklistType type, List<Material> list) {
-		list.clear();
+	/**
+	 * Clears the specific blacklist in the config.
+	 * 
+	 * @param sender the sender which executed the command. It becomes a success
+	 *               message.
+	 * @param type   the type of the list. It determines the blacklist which gets
+	 *               cleared.
+	 */
+	private void clearBlacklist(CommandSender sender, BlacklistType type) {
+		List<Material> list = new ArrayList<Material>();
 		saveList(type, list);
 		MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_BLACKLIST_CLEARED, sender);
 	}
 
 	/**
-	 * Returns the Material of a hand.
+	 * Returns the Material of the item in a hand (prefers the main hand, if it's
+	 * empty it take the off handF).
 	 * 
-	 * @param p The player of the hand.
-	 * @return It returns the material of you main hand if it is not AIR otherwise
+	 * @param p the player of the hand.
+	 * @return it returns the material of you main hand if it is not AIR otherwise
 	 *         the Material of your off hand.
 	 */
 	private Material getMaterialFromPlayerHand(Player p) {
@@ -219,14 +263,17 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 	}
 
 	/**
-	 * Saves the list in to the config.yml .
+	 * Saves the list in to the config.yml.
+	 * 
+	 * @param type  the type of blacklist you want to save.
+	 * @param items the list which gets set to the config.
 	 */
 	private void saveList(BlacklistType type, List<Material> items) {
 		if (type.equals(BlacklistType.STACKING)) {
 			PluginConfigManager.setBlacklistStacking(items);
 		} else if (type.equals(BlacklistType.INVENTORY)) {
 			PluginConfigManager.setBlacklistInventory(items);
-		} else if(type.equals(BlacklistType.AUTOREFILL)) {
+		} else if (type.equals(BlacklistType.AUTOREFILL)) {
 			PluginConfigManager.setBlacklistAutoRefill(items);
 		}
 	}
