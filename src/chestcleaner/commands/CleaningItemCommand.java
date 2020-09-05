@@ -44,7 +44,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 	private final String activeSubCommand = "active";
 	private final String durabilityLossSubCommand = "durabilityLoss";
 	private final String openEventSubCommand = "openEvent";
-	
+
 	private final String nameProperty = command.concat(" ").concat(nameSubCommand);
 	private final String loreProperty = command.concat(" ").concat(loreSubCommand);
 	private final String activeProperty = command.concat(" ").concat(activeSubCommand);
@@ -94,7 +94,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 		if (args.length >= 2) {
 			if (nameSubCommand.equalsIgnoreCase(args[0])) {
-				setItemName(sender, args, player);
+				setItemName(sender, args);
 				return true;
 			} else if (loreSubCommand.equalsIgnoreCase(args[0])) {
 				setItemLore(sender, args);
@@ -119,6 +119,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		return false;
 	}
 
+	/**
+	 * Sends a value change message of the state of the {@code command} form the
+	 * config to the {@code sender}.
+	 * 
+	 * @param sender  the sender which executed the command.
+	 * @param command the command for which you want to get the config state.
+	 */
 	private void getConfig(CommandSender sender, String command) {
 		String key = "";
 		String value = "";
@@ -152,6 +159,12 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 				value);
 	}
 
+	/**
+	 * Gives the {@code player} the cleaning item if he has the permission for that.
+	 * 
+	 * @param player the player which executed the command and gets the cleaning
+	 *               item with the correct permission.
+	 */
 	private void getCleaningItem(Player player) {
 		if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
 			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
@@ -162,6 +175,12 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Sets the cleaning item to the item the player is holding if the
+	 * {@code player} has the correct permission.
+	 * 
+	 * @param player the player who executed the command.
+	 */
 	private void setCleaningItem(Player player) {
 
 		if (!player.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET.getString())) {
@@ -186,6 +205,12 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Gives the player with the name {@code playerName} a cleaning item.
+	 * 
+	 * @param sender     the player who executed the command.
+	 * @param playerName the name of the player who should get the cleaning item.
+	 */
 	private void giveCleaningItem(CommandSender sender, String playerName) {
 		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_GIVE);
@@ -216,6 +241,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Activates or deactivates the cleaning item depending on the String
+	 * {@code value} if the {@code sender} has the correct permission.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param value  a String which represents a boolean.
+	 */
 	private void setCleaningItemActive(CommandSender sender, String value) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
@@ -229,6 +261,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Activates or deactivates the durability loss for the cleaning item depending
+	 * on the String {@code value} if the {@code sender} has the correct permission.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param value  a String which represents a boolean.
+	 */
 	private void setDurabilityLoss(CommandSender sender, String value) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
@@ -242,6 +281,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Activates or deactivates the open event mode for the cleaning item depending
+	 * on the String {@code value} if the {@code sender} has the correct permission.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param value  a String which represents a boolean.
+	 */
 	private void setOpenEventMode(CommandSender sender, String value) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
@@ -252,6 +298,13 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
+	/**
+	 * Sets the lore for the cleaning item the {@code sender} has the correct
+	 * permission.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param args   the lore.
+	 */
 	private void setItemLore(CommandSender sender, String[] args) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
@@ -281,7 +334,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 		}
 	}
 
-	private void setItemName(CommandSender sender, String[] args, Player player) {
+	/**
+	 * Sets the name of the cleaning item if the {@code sender} has the correct
+	 * permission.
+	 * 
+	 * @param sender the sender which executed the command.
+	 * @param args   the name, a new array entry represents a space.
+	 */
+	private void setItemName(CommandSender sender, String[] args) {
 		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_RENAME.getString())) {
 			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
 		} else {
