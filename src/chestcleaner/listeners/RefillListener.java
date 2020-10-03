@@ -19,6 +19,8 @@ import chestcleaner.utils.PluginPermissions;
 
 public class RefillListener implements org.bukkit.event.Listener {
 
+	private final String[] tools = {"HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS"};
+	
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlacingBlock(BlockPlaceEvent e) {
 		Player player = e.getPlayer();
@@ -31,23 +33,16 @@ public class RefillListener implements org.bukkit.event.Listener {
 			}
 
 			if (config) {
+				
+				if(!e.getPlayer().getInventory().getItem(e.getHand()).getType().equals(e.getBlock().getType())) {
+					return;
+				}
 
 				ItemStack item = e.getItemInHand();
 
 				if (item.getAmount() == 1) {
 
 					if (!isOnBlackList(item)) {
-						/*
-						 * stripping a log counts as placing a block, at least some times (cause the axe
-						 * to get replaced)
-						 */
-						if (e.getBlockPlaced().getType().toString().contains("STRIPPED")) {
-							if (player.getInventory().getItemInMainHand().getType().toString().contains("_AXE")
-									|| player.getInventory().getItemInOffHand().getType().toString().contains("_AXE")) {
-								return;
-							}
-						}
-
 						refillBlockInSlot(e);
 					}
 				}
@@ -117,7 +112,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private void onPlayerItemBreaks(PlayerItemBreakEvent e) {
 
 		Player player = e.getPlayer();
-
+		
 		if (isPlayerAllowedToRefillBrokenItems(player)) {
 
 			boolean config = PluginConfigManager.isDefaultBreakableRefill();
@@ -130,30 +125,29 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getBrokenItem();
 				if (!isOnBlackList(item)) {
 					int refillSlot = getRefillStack(item.getType(), player);
+					
+					ItemStack refillItem = player.getInventory().getItem(refillSlot);
 
-					if (refillSlot > 8) {
-						if (player.getInventory().getItemInMainHand().equals(item)) {
+					if (player.getInventory().getItemInMainHand().equals(item)) {
 
-							ItemStack refillItem = player.getInventory().getItem(refillSlot);
 
-							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
-									new Runnable() {
-										@Override
-										public void run() {
-											player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
-													refillItem);
-											player.getInventory().setItem(refillSlot, null);
-										}
-									}, 1l);
+						ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+								new Runnable() {
+									@Override
+									public void run() {
+										player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
+												refillItem);
+										player.getInventory().setItem(refillSlot, null);
+									}
+								}, 1l);
 
-						} else {
+					} else if(player.getInventory().getItemInOffHand().equals(item)){
 
-							ItemStack refillItem = player.getInventory().getItem(refillSlot);
-							player.getInventory().setItem(40, refillItem);
-							player.getInventory().setItem(refillSlot, null);
+						player.getInventory().setItem(40, refillItem);
+						player.getInventory().setItem(refillSlot, null);
 
-						}
 					}
+
 				}
 			}
 		}
