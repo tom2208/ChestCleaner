@@ -1,5 +1,7 @@
 package chestcleaner.listeners;
 
+import java.util.HashMap;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,12 +21,39 @@ import chestcleaner.utils.PluginPermissions;
 
 public class RefillListener implements org.bukkit.event.Listener {
 
-	private final String[] tools = {"HELMET", "CHESTPLATE", "LEGGINGS", "BOOTS"};
+	private HashMap<Material, Material> specialBlockRefills;
+	
+	public RefillListener() {
+		specialBlockRefills = new HashMap<>();
+		specialBlockRefills.put(Material.WHEAT, Material.WHEAT_SEEDS);
+		specialBlockRefills.put(Material.BEETROOTS, Material.BEETROOT_SEEDS);
+		specialBlockRefills.put(Material.MELON_STEM, Material.MELON_SEEDS);
+		specialBlockRefills.put(Material.PUMPKIN_STEM, Material.PUMPKIN_SEEDS);
+		specialBlockRefills.put(Material.TRIPWIRE, Material.STRING);
+		specialBlockRefills.put(Material.BAMBOO_SAPLING, Material.BAMBOO);
+		specialBlockRefills.put(Material.COCOA, Material.COCOA_BEANS);
+		specialBlockRefills.put(Material.POTATOES, Material.POTATO);
+		specialBlockRefills.put(Material.CARROTS, Material.CARROT);
+		specialBlockRefills.put(Material.SWEET_BERRY_BUSH, Material.SWEET_BERRIES);
+		specialBlockRefills.put(Material.REDSTONE_WIRE, Material.REDSTONE);
+		specialBlockRefills.put(Material.REDSTONE_WALL_TORCH, Material.REDSTONE_TORCH);
+		specialBlockRefills.put(Material.WALL_TORCH, Material.TORCH);
+		specialBlockRefills.put(Material.SOUL_WALL_TORCH, Material.SOUL_TORCH);
+		specialBlockRefills.put(Material.CRIMSON_WALL_SIGN, Material.CRIMSON_SIGN);
+		specialBlockRefills.put(Material.WARPED_WALL_SIGN, Material.WARPED_SIGN);
+		specialBlockRefills.put(Material.OAK_WALL_SIGN, Material.OAK_SIGN);
+		specialBlockRefills.put(Material.SPRUCE_WALL_SIGN, Material.SPRUCE_SIGN);
+		specialBlockRefills.put(Material.BIRCH_WALL_SIGN, Material.BIRCH_SIGN);
+		specialBlockRefills.put(Material.JUNGLE_WALL_SIGN, Material.JUNGLE_SIGN);
+		specialBlockRefills.put(Material.ACACIA_WALL_SIGN, Material.ACACIA_SIGN);
+		specialBlockRefills.put(Material.DARK_OAK_WALL_SIGN, Material.DARK_OAK_SIGN);
+
+	}
 	
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlacingBlock(BlockPlaceEvent e) {
 		Player player = e.getPlayer();
-
+		player.sendMessage(e.getBlockPlaced().getType().toString());
 		if (isPlayerAllowedToRefillBlocks(player)) {
 			boolean config = PluginConfigManager.isDefaultBlockRefill();
 
@@ -33,18 +62,22 @@ public class RefillListener implements org.bukkit.event.Listener {
 			}
 
 			if (config) {
-				
-				if(!e.getPlayer().getInventory().getItem(e.getHand()).getType().equals(e.getBlock().getType())) {
-					return;
-				}
 
 				ItemStack item = e.getItemInHand();
 
+				Material material = e.getBlockPlaced().getType();
+				
+				if(specialBlockRefills.containsKey(material)) {
+					material = specialBlockRefills.get(material);
+				}
+				
 				if (item.getAmount() == 1) {
-
-					if (!isOnBlackList(item)) {
-						refillBlockInSlot(e);
+					if (e.getPlayer().getInventory().getItem(e.getHand()).getType().equals(material)) {
+						if (!isOnBlackList(item)) {
+							refillBlockInSlot(e.getPlayer(), material, e.getHand());
+						}
 					}
+
 				}
 			}
 		}
@@ -112,7 +145,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private void onPlayerItemBreaks(PlayerItemBreakEvent e) {
 
 		Player player = e.getPlayer();
-		
+
 		if (isPlayerAllowedToRefillBrokenItems(player)) {
 
 			boolean config = PluginConfigManager.isDefaultBreakableRefill();
@@ -125,11 +158,10 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getBrokenItem();
 				if (!isOnBlackList(item)) {
 					int refillSlot = getRefillStack(item.getType(), player);
-					
+
 					ItemStack refillItem = player.getInventory().getItem(refillSlot);
 
 					if (player.getInventory().getItemInMainHand().equals(item)) {
-
 
 						ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
 								new Runnable() {
@@ -141,7 +173,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 									}
 								}, 1l);
 
-					} else if(player.getInventory().getItemInOffHand().equals(item)){
+					} else if (player.getInventory().getItemInOffHand().equals(item)) {
 
 						player.getInventory().setItem(40, refillItem);
 						player.getInventory().setItem(refillSlot, null);
@@ -311,22 +343,22 @@ public class RefillListener implements org.bukkit.event.Listener {
 	 * 
 	 * @param e the block placing event the refill should happen.
 	 */
-	private void refillBlockInSlot(BlockPlaceEvent e) {
-		ItemStack[] items = InventoryDetector.getFullInventory(e.getPlayer().getInventory());
+	private void refillBlockInSlot(Player player, Material material, EquipmentSlot hand) {
+		ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
 
 		for (int i = 9; i < 36; i++) {
 
 			if (items[i] != null) {
 
-				if (items[i].getType().equals(e.getBlockPlaced().getType())) {
+				if (items[i].getType().equals(material)) {
 
-					if (e.getHand().equals(EquipmentSlot.HAND)) {
-						e.getPlayer().getInventory().setItemInMainHand(items[i]);
-						e.getPlayer().getInventory().setItem(i, null);
+					if (hand.equals(EquipmentSlot.HAND)) {
+						player.getInventory().setItemInMainHand(items[i]);
+						player.getInventory().setItem(i, null);
 						break;
-					} else if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
-						e.getPlayer().getInventory().setItemInOffHand(items[i]);
-						e.getPlayer().getInventory().setItem(i, null);
+					} else if (hand.equals(EquipmentSlot.OFF_HAND)) {
+						player.getInventory().setItemInOffHand(items[i]);
+						player.getInventory().setItem(i, null);
 						break;
 					}
 
