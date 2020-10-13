@@ -53,7 +53,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlacingBlock(BlockPlaceEvent e) {
 		Player player = e.getPlayer();
-		player.sendMessage(e.getBlockPlaced().getType().toString());
+		
 		if (isPlayerAllowedToRefillBlocks(player)) {
 			boolean config = PluginConfigManager.isDefaultBlockRefill();
 
