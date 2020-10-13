@@ -22,7 +22,7 @@ import chestcleaner.utils.PluginPermissions;
 public class RefillListener implements org.bukkit.event.Listener {
 
 	private HashMap<Material, Material> specialBlockRefills;
-	
+
 	public RefillListener() {
 		specialBlockRefills = new HashMap<>();
 		specialBlockRefills.put(Material.WHEAT, Material.WHEAT_SEEDS);
@@ -49,11 +49,11 @@ public class RefillListener implements org.bukkit.event.Listener {
 		specialBlockRefills.put(Material.DARK_OAK_WALL_SIGN, Material.DARK_OAK_SIGN);
 
 	}
-	
+
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onPlacingBlock(BlockPlaceEvent e) {
 		Player player = e.getPlayer();
-		
+
 		if (isPlayerAllowedToRefillBlocks(player)) {
 			boolean config = PluginConfigManager.isDefaultBlockRefill();
 
@@ -66,11 +66,11 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getItemInHand();
 
 				Material material = e.getBlockPlaced().getType();
-				
-				if(specialBlockRefills.containsKey(material)) {
+
+				if (specialBlockRefills.containsKey(material)) {
 					material = specialBlockRefills.get(material);
 				}
-				
+
 				if (item.getAmount() == 1) {
 					if (e.getPlayer().getInventory().getItem(e.getHand()).getType().equals(material)) {
 						if (!isOnBlackList(item)) {
@@ -158,28 +158,28 @@ public class RefillListener implements org.bukkit.event.Listener {
 				ItemStack item = e.getBrokenItem();
 				if (!isOnBlackList(item)) {
 					int refillSlot = getRefillStack(item.getType(), player);
+					if (refillSlot >= 0) {
+						ItemStack refillItem = player.getInventory().getItem(refillSlot);
 
-					ItemStack refillItem = player.getInventory().getItem(refillSlot);
+						if (player.getInventory().getItemInMainHand().equals(item)) {
 
-					if (player.getInventory().getItemInMainHand().equals(item)) {
+							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+									new Runnable() {
+										@Override
+										public void run() {
+											player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
+													refillItem);
+											player.getInventory().setItem(refillSlot, null);
+										}
+									}, 1l);
 
-						ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
-								new Runnable() {
-									@Override
-									public void run() {
-										player.getInventory().setItem(player.getInventory().getHeldItemSlot(),
-												refillItem);
-										player.getInventory().setItem(refillSlot, null);
-									}
-								}, 1l);
+						} else if (player.getInventory().getItemInOffHand().equals(item)) {
 
-					} else if (player.getInventory().getItemInOffHand().equals(item)) {
+							player.getInventory().setItem(40, refillItem);
+							player.getInventory().setItem(refillSlot, null);
 
-						player.getInventory().setItem(40, refillItem);
-						player.getInventory().setItem(refillSlot, null);
-
+						}
 					}
-
 				}
 			}
 		}
