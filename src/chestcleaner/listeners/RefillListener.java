@@ -200,16 +200,16 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private int getRefillStack(Material material, Player player) {
 
 		ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
-		for (int i = 9; i < 36; i++) {
+		for (int i = 0; i < 36; i++) {
+			if (i != player.getInventory().getHeldItemSlot() && i != 40) {
+				if (items[i] != null) {
 
-			if (items[i] != null) {
+					if (items[i].getType().equals(material)) {
+						return i;
+					}
 
-				if (items[i].getType().equals(material)) {
-					return i;
 				}
-
 			}
-
 		}
 		return -1;
 
@@ -296,6 +296,10 @@ public class RefillListener implements org.bukkit.event.Listener {
 		return player.getInventory().getItemInOffHand().getType().equals(item.getType());
 	}
 
+	private boolean isViableSlot(int i, Player player) {
+		return i != player.getInventory().getHeldItemSlot() && i != 40;
+	}
+
 	/**
 	 * Searches through the main inventory (slots 9 - 35) taking the first ItemStack
 	 * with the same type, an amount bigger than 1 (bigger than 0 would work but
@@ -312,23 +316,24 @@ public class RefillListener implements org.bukkit.event.Listener {
 			public void run() {
 
 				ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
-				for (int i = 9; i < 36; i++) {
+				for (int i = 0; i < 36; i++) {
 					if (items[i] != null) {
-						if (items[i].getType().equals(conItem.getType())) {
-							if (hand > -999) {
-								player.getInventory().setItem(hand, items[i]);
-								player.getInventory().setItem(i, null);
-								break;
-							} else {
-								player.getInventory().setItemInOffHand(items[i]);
-								player.getInventory().setItem(i, null);
-								break;
+						if (isViableSlot(i, player)) {
+							if (items[i].getType().equals(conItem.getType())) {
+								if (hand > -999) {
+									player.getInventory().setItem(hand, items[i]);
+									player.getInventory().setItem(i, null);
+									break;
+								} else {
+									player.getInventory().setItemInOffHand(items[i]);
+									player.getInventory().setItem(i, null);
+									break;
+								}
+
 							}
 
 						}
-
 					}
-
 				}
 
 			}
@@ -346,24 +351,24 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private void refillBlockInSlot(Player player, Material material, EquipmentSlot hand) {
 		ItemStack[] items = InventoryDetector.getFullInventory(player.getInventory());
 
-		for (int i = 9; i < 36; i++) {
+		for (int i = 0; i < 36; i++) {
 
 			if (items[i] != null) {
+				if (isViableSlot(i, player)) {
+					if (items[i].getType().equals(material)) {
 
-				if (items[i].getType().equals(material)) {
+						if (hand.equals(EquipmentSlot.HAND)) {
+							player.getInventory().setItemInMainHand(items[i]);
+							player.getInventory().setItem(i, null);
+							break;
+						} else if (hand.equals(EquipmentSlot.OFF_HAND)) {
+							player.getInventory().setItemInOffHand(items[i]);
+							player.getInventory().setItem(i, null);
+							break;
+						}
 
-					if (hand.equals(EquipmentSlot.HAND)) {
-						player.getInventory().setItemInMainHand(items[i]);
-						player.getInventory().setItem(i, null);
-						break;
-					} else if (hand.equals(EquipmentSlot.OFF_HAND)) {
-						player.getInventory().setItemInOffHand(items[i]);
-						player.getInventory().setItem(i, null);
-						break;
 					}
-
 				}
-
 			}
 
 		}
