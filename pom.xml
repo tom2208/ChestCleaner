@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.tom2208</groupId>
 	<artifactId>ChestCleaner</artifactId>
-	<version>2.3.2</version>
+	<version>2-3-2</version>
 
 	<packaging>jar</packaging>
 
@@ -56,8 +56,8 @@
 				<directory>./</directory>
 				<includes>
 					<include>plugin.yml</include>
-					<include>ChestCleaner_${version.properties}_de_DE.properties</include>
-					<include>ChestCleaner_${version.properties}_en_GB.properties</include>
+					<include>ChestCleaner_${version}_de_DE.properties</include>
+					<include>ChestCleaner_${version}_en_GB.properties</include>
 					<include>config.yml</include>
 				</includes>
 			</resource>

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import chestcleaner.cooldown.CMRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -16,7 +17,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.sorting.CooldownManager;
 import chestcleaner.sorting.InventorySorter;
 import chestcleaner.utils.BlockDetector;
 import chestcleaner.utils.InventoryDetector;
@@ -26,7 +26,7 @@ import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
 /**
- * A command class representing the cleaninventory command. CleanInventory
+ * A command class representing the CleanInventory command. CleanInventory
  * Command explained:
  * https://github.com/tom2208/ChestCleaner/wiki/Command--cleaninventory
  *
@@ -72,15 +72,15 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 
 	/**
 	 * The player {@code player} sorts the inventory of the player with the name
-	 * {@code playername}. He needs the correct permissions.
+	 * {@code playerName}. He needs the correct permissions.
 	 * 
 	 * @param player     the player who sorts the inventory.
-	 * @param playername the name of the player whose inventory will get sorted.
+	 * @param playerName the name of the player whose inventory will get sorted.
 	 * @return <b>true</b> if a inventory got sorted, <b>false</b> if not.
 	 */
-	private boolean sortPlayerInventory(Player player, String playername) {
+	private boolean sortPlayerInventory(Player player, String playerName) {
 
-		if (playername.equalsIgnoreCase(ownSubCommand) || playername.equalsIgnoreCase(player.getDisplayName())) {
+		if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getDisplayName())) {
 			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.getString())) {
 				MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
 				return true;
@@ -96,7 +96,7 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 				return true;
 			}
 
-			Player player2 = Bukkit.getPlayer(playername);
+			Player player2 = Bukkit.getPlayer(playerName);
 
 			if (player2 == null) {
 				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player);
@@ -175,7 +175,7 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 	private void sortBlock(Block block, Player p, CommandSender sender) {
 		if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_INVENTORY, sender);
-		} else if (CooldownManager.getInstance().isPlayerOnCooldown(p)) {
+		} else if (CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
 			// isPlayerOnCooldown sends error message
 		} else if (InventorySorter.sortPlayerBlock(block, p)) {
 			MessageSystem.sendSortedMessage(sender);
