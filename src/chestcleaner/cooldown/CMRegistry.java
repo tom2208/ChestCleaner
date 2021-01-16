@@ -1,5 +1,7 @@
 package chestcleaner.cooldown;
 
+import chestcleaner.utils.messages.enums.MessageID;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +15,7 @@ public class CMRegistry {
 
     protected CMRegistry() {
         cmMap = new HashMap<>();
-        register(CMIdentifier.SORTING, new PlayerInvSortCM());
+        register(CMIdentifier.SORTING, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_SORTING));
     }
 
     /**

@@ -26,7 +26,7 @@ public enum MessageID {
 	ERROR_VALIDATION_INDEX_BOUNDS("error.validation.index.bounds"),
 	ERROR_VALIDATION_INTEGER("error.validation.integer"),
 	ERROR_WORLD_NAME("error.world.name"),
-	ERROR_YOU_COOLDOWN("error.you.cooldown"),
+	ERROR_YOU_COOLDOWN_SORTING("error.you.cooldown.sorting"),
 	ERROR_YOU_HOLD_ITEM("error.you.hold.item"),
 	ERROR_YOU_NOT_PLAYER("error.you.not.player"),
 

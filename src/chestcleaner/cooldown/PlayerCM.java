@@ -8,17 +8,18 @@ import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
-public class PlayerInvSortCM implements CooldownManager{
+public class PlayerCM implements CooldownManager {
 
-    private static CooldownManager instance = null;
+    private MessageID msgId;
+    private Map<UUID, Long> map;
+    private final long immuneTime = 100;
 
-    private HashMap<UUID, Long> times;
-    private final long  immuneTime = 100;
-
-    public PlayerInvSortCM() {
-        times = new HashMap<>();
+    public PlayerCM(MessageID msgId) {
+        this.msgId = msgId;
+        map = new HashMap<>();
     }
 
     @Override
@@ -26,7 +27,7 @@ public class PlayerInvSortCM implements CooldownManager{
 
         if (obj == null) {
             return false;
-        }else if(!(obj instanceof Player)){
+        } else if (!(obj instanceof Player)) {
             return false;
         }
 
@@ -38,33 +39,32 @@ public class PlayerInvSortCM implements CooldownManager{
             immune = true;
         }
 
-        if (times.containsKey(player.getUniqueId())) {
-            long difference = System.currentTimeMillis() - times.get(player.getUniqueId());
+        if (map.containsKey(player.getUniqueId())) {
+            long difference = System.currentTimeMillis() - map.get(player.getUniqueId());
             int cooldown = PluginConfigManager.getCooldown();
 
-            if(immune) {
-                if(difference >= immuneTime) {
-                    times.put(player.getUniqueId(), System.currentTimeMillis());
+            if (immune) {
+                if (difference >= immuneTime) {
+                    map.put(player.getUniqueId(), System.currentTimeMillis());
                     return false;
-                }else {
+                } else {
                     return true;
                 }
             }
 
             if (difference >= cooldown) {
-                times.put(player.getUniqueId(), System.currentTimeMillis());
+                map.put(player.getUniqueId(), System.currentTimeMillis());
                 return false;
             }
 
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_YOU_COOLDOWN, player,
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, msgId, player,
                     String.valueOf((cooldown - difference) / 1000 + 1));
             return true;
 
         } else {
-            times.put(player.getUniqueId(), System.currentTimeMillis());
+            map.put(player.getUniqueId(), System.currentTimeMillis());
             return false;
         }
 
     }
-
 }
