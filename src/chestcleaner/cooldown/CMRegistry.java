@@ -13,7 +13,7 @@ public class CMRegistry {
 
     protected CMRegistry() {
         cmMap = new HashMap<>();
-        register(CMIdentifier.SORTING, new PlayerCM());
+        register(CMIdentifier.SORTING, new PlayerInvSortCM());
     }
 
     /**
