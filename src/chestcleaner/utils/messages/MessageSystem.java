@@ -25,7 +25,7 @@ public class MessageSystem {
 	
 	public static void sendSortedMessage(CommandSender sender) {
 		
-		boolean flag = false;
+		boolean flag;
 		
 		if(sender instanceof Player && PlayerDataManager.containsNotification((Player) sender)) {
 			flag = PlayerDataManager.isNotification((Player) sender);
@@ -73,21 +73,23 @@ public class MessageSystem {
 				sender,key, value);
 	}
 
-	public static boolean sendListPageToCS(List<String> list, CommandSender sender, String pageNrAsString,
+	public static void sendListPageToCS(List<String> list, CommandSender sender, String pageNrAsString,
 									  int maxPageLines) {
 
 		int pages = (int) Math.ceil(list.size() / (double) maxPageLines);
-		int page = -1;
+		int page;
 
 		try {
 			page = Integer.parseInt(pageNrAsString);
 		} catch (NumberFormatException ex) {
 			sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_VALIDATION_INTEGER, sender, pageNrAsString);
+			return;
 		}
 
 		if (page < 0 || page > pages) {
 			sendMessageToCSWithReplacement(MessageType.ERROR,
 					MessageID.ERROR_PAGE_NUMBER, sender, "1 - " + pages);
+			return;
 		}
 
 		sendMessageToCSWithReplacement(MessageType.SUCCESS,
@@ -105,7 +107,6 @@ public class MessageSystem {
 			sendMessageToCSWithReplacement(MessageType.SUCCESS,
 					MessageID.COMMON_PAGE_NEXT, sender, String.valueOf(page + 1));
 		}
-		return true;
 	}
 
 	private static String getMessageString(MessageType type, String arg) {
