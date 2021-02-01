@@ -12,6 +12,7 @@ public enum MessageID {
 	ERROR_BLACKLIST_EXISTS("error.blacklist.exists"),
 	ERROR_BLACKLIST_INVENTORY("error.blacklist.inventory"),
 	ERROR_BLACKLIST_NOT_EXISTS("error.blacklist.not.exists"),
+	ERROR_BLACKLIST_LIST_NOT_EXISTS("error.blacklist.list.not.exists"),
 	ERROR_BLOCK_NO_INVENTORY("error.block.no.inventory"),
 	ERROR_CATEGORY_BOOK("error.category.book"),
 	ERROR_CATEGORY_NAME("error.category.name"),
