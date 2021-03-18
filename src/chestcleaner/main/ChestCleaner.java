@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ChestCleaner extends JavaPlugin {
@@ -49,11 +50,11 @@ public class ChestCleaner extends JavaPlugin {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		getCommand("cleaninventory").setExecutor(new CleanInventoryCommand());
-		getCommand("cleaningitem").setExecutor(new CleaningItemCommand());
-		getCommand("blacklist").setExecutor(new BlacklistCommand());
-		getCommand("sortingconfig").setExecutor(new SortingConfigCommand());
-		getCommand("sortingadmin").setExecutor(new SortingAdminCommand());
+		Objects.requireNonNull(getCommand("cleaninventory")).setExecutor(new CleanInventoryCommand());
+		Objects.requireNonNull(getCommand("cleaningitem")).setExecutor(new CleaningItemCommand());
+		Objects.requireNonNull(getCommand(BlacklistCommand.COMMAND_ALIAS)).setExecutor(new BlacklistCommand());
+		Objects.requireNonNull(getCommand("sortingconfig")).setExecutor(new SortingConfigCommand());
+		Objects.requireNonNull(getCommand("sortingadmin")).setExecutor(new SortingAdminCommand());
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);

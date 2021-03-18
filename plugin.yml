@@ -16,7 +16,7 @@ commands:
     aliases: ci
   blacklist:
     description: Avoiding items to get stacked while sorting.
-    usage: /<command> <stacking/inventory/autorefill> <list/clear/add/remove> [<material>]
+    usage: /<command> <list> [list|clear|add|remove]
     aliases: bl
     permission: chestcleaner.cmd.admin.blacklist
   sortingconfig:

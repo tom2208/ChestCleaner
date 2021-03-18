@@ -3,6 +3,7 @@ package chestcleaner.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -28,10 +29,12 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
-    private CommandTree cmdTree;
+    private final CommandTree cmdTree;
 
     // The lineNumbers of a page when the list gets displayed in the in game chat.
     private final int LIST_PAGE_LENGTH = 8;
+
+    public static final String COMMAND_ALIAS = "blacklist";
 
     /* sub-commands */
     private final String addSubCommand = "add";
@@ -48,33 +51,27 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand};
     private final String[] strList = {stackingSubCommand, inventorySubCommand, autoRefillSubCommand};
 
-    private enum BlacklistType {
-        STACKING, INVENTORY, AUTOREFILL
-    }
-
     public BlacklistCommand() {
-        cmdTree = new CommandTree();
-
-        cmdTree.addPlaceHolderNode(null, listTypePlaceHolder);
-
+        cmdTree = new CommandTree(COMMAND_ALIAS);
         /* subcommands */
+        cmdTree.addPath("/blacklist blacklist", null, BlacklistType.class);
         // ADD
         Consumer<CommandTree.CommandTuple> addConsumer = this::addSubCommand;
-        cmdTree.addChildToNode(listTypePlaceHolder, addSubCommand, addConsumer);
+        cmdTree.addPath("/blacklist blacklist add", addConsumer, null);
+        cmdTree.addPath("/blacklist blacklist add materialId", addConsumer, Material.class);
         //REMOVE
         Consumer<CommandTree.CommandTuple> removeConsumer = this::removeSubCommand;
-        cmdTree.addChildToNode(listTypePlaceHolder, removeSubCommand, removeConsumer);
+        cmdTree.addPath("/blacklist blacklist remove", removeConsumer, null);
+        cmdTree.addPath("/blacklist blacklist remove materialId", removeConsumer, Material.class);
         //LIST
-        Consumer<CommandTree.CommandTuple> listConsumer = this::listSubCommand;
-        cmdTree.addChildToNode(listTypePlaceHolder, listSubCommand, listConsumer);
+        cmdTree.addPath("/blacklist blacklist list", this::listSubCommand, null);
         //CLEAR
-        Consumer<CommandTree.CommandTuple> clearConsumer = this::clearSubCommand;
-        cmdTree.addChildToNode(listTypePlaceHolder, clearSubCommand, clearConsumer);
+        cmdTree.addPath("/blacklist blacklist clear", this::clearSubCommand, null);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
-        cmdTree.executeSubCommand(args[1], new CommandTree.CommandTuple(sender, command, alias, args));
+        cmdTree.execute(sender, command, alias, args);
         return true;
     }
 
@@ -136,7 +133,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         Player player = checkForPlayer(tuple.sender);
         if (player != null && tuple.args.length == 2) {
             removeMaterial(tuple.sender, getListType(tuple.args),
-                    getList(tuple.args), getMaterialFromPlayerHand(player));
+                    Objects.requireNonNull(getList(tuple.args)), getMaterialFromPlayerHand(player));
         } else if (tuple.args.length == 3) {
             removeMaterialName(tuple.sender, getListType(tuple.args), getList(tuple.args), tuple.args[2]);
         }
@@ -150,9 +147,9 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      */
     public void listSubCommand(CommandTree.CommandTuple tuple) {
         if (tuple.args.length == 2) {
-            printBlacklist(tuple.sender, "1", getList(tuple.args));
+            printBlacklist(tuple.sender, "1", Objects.requireNonNull(getList(tuple.args)));
         } else if (tuple.args.length == 3) {
-            printBlacklist(tuple.sender, tuple.args[2], getList(tuple.args));
+            printBlacklist(tuple.sender, tuple.args[2], Objects.requireNonNull(getList(tuple.args)));
         }
     }
 
@@ -203,7 +200,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      * @param material the material that gets added to the list.
      */
     private void addMaterial(CommandSender sender, BlacklistType type, List<Material> list, Material material) {
-        if(list == null){
+        if (list == null) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_LIST_NOT_EXIST, sender);
             return;
         }
@@ -342,4 +339,18 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
             PluginConfigManager.setBlacklistAutoRefill(items);
         }
     }
+
+
+    public enum BlacklistType {
+        STACKING, INVENTORY, AUTOREFILL;
+
+        public static BlacklistType getBlackListTypeByString(String str) {
+            for (BlacklistType type : values()) {
+                if (str.equalsIgnoreCase(type.toString())) return type;
+            }
+            return null;
+        }
+
+    }
+
 }

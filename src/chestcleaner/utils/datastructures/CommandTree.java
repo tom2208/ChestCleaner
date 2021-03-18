@@ -1,92 +1,196 @@
 package chestcleaner.utils.datastructures;
 
+import chestcleaner.commands.BlacklistCommand;
+import chestcleaner.utils.messages.MessageSystem;
+import chestcleaner.utils.messages.enums.MessageID;
+import chestcleaner.utils.messages.enums.MessageType;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
- * A tree structure representing a command. A node holds an alias and a lambda Consumer.
+ * A acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
  */
-public class CommandTree {
+public class CommandTree extends Tree<CommandTree.Triple> {
 
-    private TreeNode<Tuple<String, Consumer<CommandTuple>>> root;
-    private final String placeholderPreamble = "placeholder:";
-
-    /**
-     * Generates an empty tree. The root is clearly determined by its Tuple entries which are null.
-     * Clearly, because every search algorithm in this class starts at the root.
-     */
-    public CommandTree() {
-        root = new TreeNode<>();
+    public CommandTree(String commandAlias) {
+        super(new Triple(commandAlias, null, null));
     }
 
-    /**
-     * Adds a new node into the CommandTree. Make sure there exists a node
-     * that can be found under the String {@code node} (which represents the subcommand name).
-     * The algorithm first searches for a normal node after that for a placeholder node.
-     * <p>
-     * You can refer to the root by setting {@code node} to null.
-     *
-     * @param node            the alias of a subcommand or {@code null}
-     *                        if you want the to be the first argument of your command.
-     * @param subCommandLabel the alias of the sub-subcommand
-     *                        (the subcommand of the subcommand with the alias {@code node}).
-     * @param consumer        the Consumer of the sub-subcommand.
-     */
-    public void addChildToNode(String node, String subCommandLabel, Consumer<CommandTuple> consumer) {
-        TreeNode<Tuple<String, Consumer<CommandTuple>>> newnode;
-        Tuple<String, Consumer<CommandTuple>> t = new Tuple<>(subCommandLabel, consumer);
-        newnode = new TreeNode<>(t);
 
-        if (node == null) {
-            root.addChild(newnode);
-        } else {
-            TreeNode<Tuple<String, Consumer<CommandTuple>>> n = getNamednode(node);
-            if (n == null) n = getNamednode(placeholderPreamble + node);
-            if (n == null) {
-                throw new NullPointerException("There is no node with its first element String being: "
-                        + node + ", the node could be added.");
+    public void execute(CommandSender sender, Command command, String alias, String[] args) {
+
+        GraphNode<Triple> node = getRoot();
+
+        for (int i = 0; i < args.length; i++) {
+            boolean isLast = i == args.length - 1;
+            GraphNode<Triple> nextNode = getChildNodeByStr(node, args[i]);
+            if (nextNode == null) {
+                for (GraphNode<Triple> child : node.getChildren()) {
+                    if (isTypeNode(child) && getInterpretedObjByNodeType(args[i], child) != null) {
+                        node = child;
+                        break;
+                    }
+                }
+            } else {
+                node = nextNode;
             }
-            n.addChild(newnode);
+            if (isLast) {
+                executeNode(node, sender, command, alias, args);
+                return;
+            }
         }
+        MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, buildSyntax(node), sender);
     }
 
-    /**
-     * Adds a placeholder node into the CommandTree. A placeholder tree is a note with its Consumer being null.
-     * A placeholder will not be executed by running the command.
-     *
-     * @param node  the parent of the placeholder node (use {@code null} for the root).
-     * @param label the alias of the placeholder node.
-     */
-    public void addPlaceHolderNode(String node, String label) {
-        TreeNode<Tuple<String, Consumer<CommandTuple>>> newNode;
-        Tuple<String, Consumer<CommandTuple>> t = new Tuple<>("placeholder:" + label, null);
-        newNode = new TreeNode<>(t);
-        if (node == null) {
-            root.addChild(newNode);
+    private void executeNode(GraphNode<Triple> node, CommandSender sender, Command command, String alias, String[] args) {
+        if (node.getValue().consumer != null) {
+            CommandTuple tuple = new CommandTuple(sender, command, alias, args);
+            node.getValue().consumer.accept(tuple);
         } else {
-            getNamednode(node).addChild(newNode);
+            MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, buildSyntax(node), sender);
         }
+    }
+
+    private Object getInterpretedObjByNodeType(String str, GraphNode<Triple> node) {
+
+        //String
+        if (node.getValue().type.equals(String.class)) {
+            return str;
+        }
+
+        // Material
+        Material material = Material.getMaterial(str.toUpperCase());
+        if (node.getValue().type.equals(Material.class)) {
+            return material;
+        }
+
+        //Blacklist
+        BlacklistCommand.BlacklistType blacklistType = BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
+        if (blacklistType != null && node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
+            return blacklistType;
+        }
+
+        //Integer
+        try {
+            return Integer.parseInt(str);
+        } catch (NumberFormatException ignored) {
+        }
+
+        return null;
+    }
+
+    private boolean isTypeNode(GraphNode<Triple> node) {
+        return node != null && node.getValue().type != null;
+    }
+
+
+    /**
+     * Adds a node into the command tree.
+     *
+     * @param path     like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer the consumer which gets get executed if this command gets executed.
+     *                 Use {@code null} if you dont want this to be an executable path.
+     * @param c        This is null if the path directs to a node which is not an argument
+     *                 otherwise it determines the type of the argument.
+     */
+    public void addPath(String path, Consumer<CommandTree.CommandTuple> consumer, Class<?> c) {
+        String[] args = path.split(" ");
+        GraphNode<Triple> node = getRoot();
+
+        for (int i = 1; i < args.length; i++) {
+            final int finalI = i;
+            GraphNode<Triple> tempNode
+                    = getNodeFormChildren(node, t -> t.label.equalsIgnoreCase(args[finalI]));
+
+            boolean isLastElement = !(i + 1 < args.length);
+
+            if (tempNode == null) {
+                Triple tuple = new Triple(args[i], null, null);
+                tempNode = new GraphNode<>(tuple);
+                node.addChild(tempNode);
+            }
+
+            if (isLastElement) {
+                tempNode.getValue().consumer = consumer;
+                tempNode.getValue().type = c;
+            }
+            node = tempNode;
+
+        }
+
     }
 
     /**
-     * Executes the command with the alias {@code node}
-     * or more detailed said: lets the consumer associated with the alias {@code node} accept the CommandTuple {@code ct}.
+     * Generates a Syntax message for the subcommand with the node {@code node}.
      *
-     * @param node the alias of the subcommand you want to execute.
-     * @param ct   all parameters of the onCommand method of the implemented CommandExecutor interface.
+     * @param node the node which determines the subcommand and thus its syntax.
+     * @return the syntax string.
      */
-    public void executeSubCommand(String node, CommandTuple ct) {
-        if (!node.startsWith(placeholderPreamble)) {
-            TreeNode<Tuple<String, Consumer<CommandTuple>>> n = getNamednode(node);
-            n.getValue().e2.accept(ct);
+    public String buildSyntax(GraphNode<Triple> node) {
+        StringBuilder syntax = new StringBuilder();
+        if (node.hasChild()) {
+            syntax = new StringBuilder("<");
+            for (GraphNode<Triple> child : node.getChildren()) {
+                syntax.append(child.getValue().label).append(", ");
+            }
+            syntax = new StringBuilder(syntax.substring(0, syntax.length() - 2).concat(">"));
         }
+
+        GraphNode<Triple> nextNode = node;
+
+        do {
+            if (nextNode.getValue().type == null) {
+                syntax.insert(0, nextNode.getValue().label + " ");
+            } else {
+                syntax.insert(0, "<" + nextNode.getValue().label + "> ");
+            }
+            if (nextNode.hasParent()) nextNode = nextNode.getParents().get(0);
+            else nextNode = null;
+        } while (nextNode != null);
+        System.out.println(1);
+
+        return "/" + syntax;
     }
 
-    private TreeNode<Tuple<String, Consumer<CommandTuple>>> getNamednode(String name) {
-        return root.getNode(tuple -> tuple.e1 != null && tuple.e1.equalsIgnoreCase(name));
+    private boolean hasArgumentAValidTypeOtherwiseSendMsg(String arg, GraphNode<Triple> node, CommandSender cs) {
+        if (node.getValue().type == null) {
+            return true;
+
+        } else if (node.getValue().type.toString().equals(BlacklistCommand.BlacklistType.class.toString())) {
+            for (BlacklistCommand.BlacklistType type : BlacklistCommand.BlacklistType.values()) {
+                if (type.toString().equalsIgnoreCase(arg)) {
+                    return true;
+                } else {
+                    MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_NOT_EXISTS, cs);
+                    return false;
+                }
+            }
+
+        } else if (node.getValue().type.toString().equals(Material.class.toString())) {
+            for (Material material : Material.values()) {
+                if (material.toString().equalsIgnoreCase(arg)) {
+                    return true;
+                }
+            }
+        }
+        return true;
+    }
+
+    private GraphNode<Triple> getChildNodeByStr(GraphNode<Triple> node, String string) {
+
+        for (GraphNode<Triple> n : node.getChildren()) {
+
+            if (n.getValue().label.equals(string) && n.getValue().type == null) {
+                return n;
+            }
+
+        }
+        return null;
     }
 
     public static class CommandTuple {
@@ -105,14 +209,33 @@ public class CommandTree {
 
     }
 
-    private class Tuple<T1, T2> {
+    static class Triple {
 
-        T1 e1;
-        T2 e2;
+        String label;
+        Consumer<CommandTuple> consumer;
+        Class<?> type;
 
-        public Tuple(T1 e1, T2 e2) {
-            this.e1 = e1;
-            this.e2 = e2;
+        public Triple(String label, Consumer<CommandTuple> consumer, Class<?> type) {
+            this.label = label;
+            this.consumer = consumer;
+            this.type = type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Triple triple = (Triple) o;
+            return Objects.equals(label, triple.label) && Objects.equals(consumer, triple.consumer) && Objects.equals(type, triple.type);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(label, consumer, type);
+        }
+
+        public String toString() {
+            return "(" + label + "," + consumer + "," + type + ")";
         }
 
     }
