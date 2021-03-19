@@ -4,6 +4,7 @@ import chestcleaner.config.PluginConfigManager;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.StringUtils;
+import chestcleaner.commands.datastructures.CommandTree;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
@@ -19,372 +20,380 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * A command class representing the CleaningItem command. CleaningItem Command
  * explained: https://github.com/tom2208/ChestCleaner/wiki/Command-cleaningitem
- * 
- * @author Tom2208
  *
+ * @author Tom2208
  */
 public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
-	private final String command = "cleaningitem";
-	/* sub-commands */
-	private final String getSubCommand = "get";
-	private final String setSubCommand = "set";
-	private final String giveSubCommand = "give";
-	private final String nameSubCommand = "name";
-	private final String loreSubCommand = "lore";
-	private final String activeSubCommand = "active";
-	private final String durabilityLossSubCommand = "durabilityLoss";
-	private final String openEventSubCommand = "openEvent";
+    public static final String COMMAND_ALIAS = "cleaningitem";
+    private final CommandTree cmdTree;
+    private final String command = "cleaningitem";
+    /* sub-commands */
+    private final String getSubCommand = "get";
+    private final String setSubCommand = "set";
+    private final String giveSubCommand = "give";
+    private final String nameSubCommand = "name";
+    private final String loreSubCommand = "lore";
+    private final String activeSubCommand = "active";
+    private final String durabilityLossSubCommand = "durabilityLoss";
+    private final String openEventSubCommand = "openEvent";
 
-	private final String nameProperty = command.concat(" ").concat(nameSubCommand);
-	private final String loreProperty = command.concat(" ").concat(loreSubCommand);
-	private final String activeProperty = command.concat(" ").concat(activeSubCommand);
-	private final String durabilityProperty = command.concat(" ").concat(durabilityLossSubCommand);
-	private final String openEventProperty = openEventSubCommand;
+    private final String nameProperty = command.concat(" ").concat(nameSubCommand);
+    private final String loreProperty = command.concat(" ").concat(loreSubCommand);
+    private final String activeProperty = command.concat(" ").concat(activeSubCommand);
+    private final String durabilityProperty = command.concat(" ").concat(durabilityLossSubCommand);
+    private final String openEventProperty = openEventSubCommand;
 
-	private final String[] strCommandList = { getSubCommand, setSubCommand, giveSubCommand, nameSubCommand,
-			loreSubCommand, activeSubCommand, durabilityLossSubCommand, openEventSubCommand };
+    private final String[] strCommandList = {getSubCommand, setSubCommand, giveSubCommand, nameSubCommand,
+            loreSubCommand, activeSubCommand, durabilityLossSubCommand, openEventSubCommand};
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
+    public CleaningItemCommand() {
+        cmdTree = new CommandTree(COMMAND_ALIAS);
 
-		Player player = null;
-		if (sender instanceof Player) {
-			player = (Player) sender;
-		}
+        Consumer<CommandTree.CommandTuple> getConsumer = this::getCleaningItem;
+        cmdTree.addPath("/cleaningitem get", getConsumer, null, false);
 
-		if (args.length == 1) {
-			if (nameSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, nameSubCommand);
-				return true;
-			} else if (loreSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, loreSubCommand);
-				return true;
-			} else if (activeSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, activeSubCommand);
-				return true;
-			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, durabilityLossSubCommand);
-				return true;
-			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
-				getConfig(sender, openEventSubCommand);
-				return true;
+        Consumer<CommandTree.CommandTuple> giveConsumer = this::giveCleaningItem;
+        cmdTree.addPath("/cleaningitem give @a", giveConsumer, null, false);
+        cmdTree.addPath("/cleaningitem give player", giveConsumer, String.class, false);
 
-			} else if (player == null) {
-				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
-				return true;
+        Consumer<CommandTree.CommandTuple> setConsumer = this::setCleaningItem;
+        cmdTree.addPath("/cleaningitem set", setConsumer, null, false);
 
-			} else if (setSubCommand.equalsIgnoreCase(args[0])) {
-				setCleaningItem(player);
-				return true;
-			} else if (getSubCommand.equalsIgnoreCase(args[0])) {
-				getCleaningItem(player);
-				return true;
-			}
+        Consumer<CommandTree.CommandTuple> configConsumer = this::getConfig;
+        cmdTree.addPath("/cleaningitem name", configConsumer, null, false);
+        cmdTree.addPath("/cleaningitem lore", configConsumer, null, false);
+        cmdTree.addPath("/cleaningitem active", configConsumer, null, false);
+        cmdTree.addPath("/cleaningitem durabilityLoss", configConsumer, null, false);
+        cmdTree.addPath("/cleaningitem openEvent", configConsumer, null, false);
 
-		}
-		if (args.length >= 2) {
-			if (nameSubCommand.equalsIgnoreCase(args[0])) {
-				setItemName(sender, args);
-				return true;
-			} else if (loreSubCommand.equalsIgnoreCase(args[0])) {
-				setItemLore(sender, args);
-				return true;
-			}
-		}
-		if (args.length == 2) {
-			if (activeSubCommand.equalsIgnoreCase(args[0])) {
-				setCleaningItemActive(sender, args[1]);
-				return true;
-			} else if (durabilityLossSubCommand.equalsIgnoreCase(args[0])) {
-				setDurabilityLoss(sender, args[1]);
-				return true;
-			} else if (openEventSubCommand.equalsIgnoreCase(args[0])) {
-				setOpenEventMode(sender, args[1]);
-				return true;
-			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-				giveCleaningItem(sender, args[1]);
-				return true;
-			}
-		}
-		return false;
-	}
+        Consumer<CommandTree.CommandTuple> nameConsumer = this::setItemName;
+        cmdTree.addPath("/cleaningitem name name", nameConsumer, String.class, true);
 
-	/**
-	 * Sends a value change message of the state of the {@code command} form the
-	 * config to the {@code sender}.
-	 * 
-	 * @param sender  the sender which executed the command.
-	 * @param command the command for which you want to get the config state.
-	 */
-	private void getConfig(CommandSender sender, String command) {
-		String key = "";
-		String value = "";
-		switch (command) {
-		case nameSubCommand:
-			key = nameProperty;
-			value = PluginConfigManager.getCleaningItem().getItemMeta().hasDisplayName()
-					? PluginConfigManager.getCleaningItem().getItemMeta().getDisplayName()
-					: "<null>";
-			break;
-		case loreSubCommand:
-			key = loreProperty;
-			value = PluginConfigManager.getCleaningItem().getItemMeta().hasLore()
-					? PluginConfigManager.getCleaningItem().getItemMeta().getLore().toString()
-					: "<null>";
-			break;
-		case activeSubCommand:
-			key = activeProperty;
-			value = String.valueOf(PluginConfigManager.isCleaningItemActive());
-			break;
-		case durabilityLossSubCommand:
-			key = durabilityProperty;
-			value = String.valueOf(PluginConfigManager.isDurabilityLossActive());
-			break;
-		case openEventSubCommand:
-			key = openEventProperty;
-			value = String.valueOf(PluginConfigManager.isOpenEvent());
-			break;
-		}
-		MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key,
-				value);
-	}
+        Consumer<CommandTree.CommandTuple> loreConsumer = this::setItemLore;
+        cmdTree.addPath("/cleaningitem lore lore", loreConsumer, String.class, true);
 
-	/**
-	 * Gives the {@code player} the cleaning item if he has the permission for that.
-	 * 
-	 * @param player the player which executed the command and gets the cleaning
-	 *               item with the correct permission.
-	 */
-	private void getCleaningItem(Player player) {
-		if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
-		} else {
+        Consumer<CommandTree.CommandTuple> activeConsumer = this::setCleaningItemActive;
+        cmdTree.addPath("/cleaningitem active true/false", loreConsumer, Boolean.class, false);
 
-			player.getInventory().addItem(PluginConfigManager.getCleaningItem());
-			MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
-		}
-	}
+        Consumer<CommandTree.CommandTuple> durabilityLossConsumer = this::setDurabilityLoss;
+        cmdTree.addPath("/cleaningitem durabilityLoss true/false", durabilityLossConsumer, Boolean.class, false);
 
-	/**
-	 * Sets the cleaning item to the item the player is holding if the
-	 * {@code player} has the correct permission.
-	 * 
-	 * @param player the player who executed the command.
-	 */
-	private void setCleaningItem(Player player) {
+        Consumer<CommandTree.CommandTuple> openEventConsumer = this::setOpenEventMode;
+        cmdTree.addPath("/cleaningitem openEvent true/false", openEventConsumer, Boolean.class, false);
+    }
 
-		if (!player.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET.getString())) {
-			MessageSystem.sendPermissionError(player, PluginPermissions.CMD_ADMIN_ITEM_SET);
-		} else {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
+        cmdTree.execute(sender, command, alias, args);
+        return true;
+    }
 
-			ItemStack item = player.getInventory().getItemInMainHand().clone();
+    /**
+     * Sends a value change message of the state of the {@code command} form the
+     * config to the {@code sender}.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void getConfig(CommandTree.CommandTuple tuple) {
+        String command = tuple.args[0];
 
-			if (item.getType() == Material.AIR) {
-				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_HOLD_ITEM, player);
-			} else {
+        String key = "";
+        String value = "";
 
-				ItemMeta itemMeta = item.getItemMeta();
-				Damageable damageable = ((Damageable) itemMeta);
-				damageable.setDamage(0);
-				item.setItemMeta(itemMeta);
-				item.setAmount(1);
+        if (nameSubCommand.equalsIgnoreCase(command)) {
+            key = nameProperty;
+            value = Objects.requireNonNull(PluginConfigManager.getCleaningItem().getItemMeta()).hasDisplayName()
+                    ? PluginConfigManager.getCleaningItem().getItemMeta().getDisplayName()
+                    : "<null>";
+        } else if (loreSubCommand.equalsIgnoreCase(command)) {
+            key = loreProperty;
+            value = Objects.requireNonNull(PluginConfigManager.getCleaningItem().getItemMeta()).hasLore()
+                    ? Objects.requireNonNull(PluginConfigManager.getCleaningItem().getItemMeta().getLore()).toString()
+                    : "<null>";
+        } else if (activeSubCommand.equalsIgnoreCase(command)) {
+            key = activeProperty;
+            value = String.valueOf(PluginConfigManager.isCleaningItemActive());
+        } else if (durabilityLossSubCommand.equalsIgnoreCase(command)) {
+            key = durabilityProperty;
+            value = String.valueOf(PluginConfigManager.isDurabilityLossActive());
+        } else if (openEventSubCommand.equalsIgnoreCase(command)) {
+            key = openEventProperty;
+            value = String.valueOf(PluginConfigManager.isOpenEvent());
+        }
 
-				PluginConfigManager.setCleaningItem(item);
-				MessageSystem.sendChangedValue(player, command, item.toString());
-			}
-		}
-	}
+        MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, tuple.sender, key,
+                value);
+    }
 
-	/**
-	 * Gives the player with the name {@code playerName} a cleaning item.
-	 * 
-	 * @param sender     the player who executed the command.
-	 * @param playerName the name of the player who should get the cleaning item.
-	 */
-	private void giveCleaningItem(CommandSender sender, String playerName) {
-		if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_GIVE);
-		} else {
+    private boolean checkPlayer(CommandSender sender) {
+        if (sender instanceof Player) {
+            return true;
+        } else {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
+            return false;
+        }
+    }
 
-			Player player2 = Bukkit.getPlayer(playerName);
+    /**
+     * Gives the {@code player} the cleaning item if he has the permission for that.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void getCleaningItem(CommandTree.CommandTuple tuple) {
+        if (checkPlayer(tuple.sender)) {
+            Player player = (Player) tuple.sender;
+            if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
+            } else {
 
-			if (player2 != null) {
-				player2.getInventory().addItem(PluginConfigManager.getCleaningItem());
-				MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_PLAYER_GET,
-						sender, player2.getName());
+                player.getInventory().addItem(PluginConfigManager.getCleaningItem());
+                MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
+            }
+        }
+    }
 
-			} else {
-				if (playerName.equalsIgnoreCase("@a")) {
-					Object[] players = Bukkit.getOnlinePlayers().toArray();
-					for (Object p : players) {
-						Player pl = (Player) p;
-						pl.getInventory().addItem(PluginConfigManager.getCleaningItem());
-						MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-								MessageID.INFO_CLEANITEM_PLAYER_GET, sender, pl.getName());
-					}
-				} else {
+    /**
+     * Sets the cleaning item to the item the player is holding if the
+     * {@code player} has the correct permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setCleaningItem(CommandTree.CommandTuple tuple) {
 
-					MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE,
-							sender, playerName);
-				}
-			}
-		}
-	}
+        if (checkPlayer(tuple.sender)) {
 
-	/**
-	 * Activates or deactivates the cleaning item depending on the String
-	 * {@code value} if the {@code sender} has the correct permission.
-	 * 
-	 * @param sender the sender which executed the command.
-	 * @param value  a String which represents a boolean.
-	 */
-	private void setCleaningItemActive(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
+            Player player = (Player) tuple.sender;
 
-		} else if (!StringUtils.isStringTrueOrFalse(value)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-		} else {
-			boolean b = Boolean.parseBoolean(value);
-			PluginConfigManager.setCleaningItemActive(b);
-			MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(b));
-		}
-	}
+            if (!player.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET.getString())) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_ADMIN_ITEM_SET);
+            } else {
 
-	/**
-	 * Activates or deactivates the durability loss for the cleaning item depending
-	 * on the String {@code value} if the {@code sender} has the correct permission.
-	 * 
-	 * @param sender the sender which executed the command.
-	 * @param value  a String which represents a boolean.
-	 */
-	private void setDurabilityLoss(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
-		} else if (!StringUtils.isStringTrueOrFalse(value)) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-		} else {
+                ItemStack item = player.getInventory().getItemInMainHand().clone();
 
-			boolean b = Boolean.parseBoolean(value);
-			PluginConfigManager.setDurabilityLossActive(b);
-			MessageSystem.sendChangedValue(sender, durabilityProperty, String.valueOf(b));
-		}
-	}
+                if (item.getType() == Material.AIR) {
+                    MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_HOLD_ITEM, player);
+                } else {
 
-	/**
-	 * Activates or deactivates the open event mode for the cleaning item depending
-	 * on the String {@code value} if the {@code sender} has the correct permission.
-	 * 
-	 * @param sender the sender which executed the command.
-	 * @param value  a String which represents a boolean.
-	 */
-	private void setOpenEventMode(CommandSender sender, String value) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
-		} else {
-			boolean b = Boolean.parseBoolean(value);
-			PluginConfigManager.setOpenEvent(b);
-			MessageSystem.sendChangedValue(sender, openEventProperty, String.valueOf(b));
-		}
-	}
+                    ItemMeta itemMeta = item.getItemMeta();
+                    Damageable damageable = ((Damageable) itemMeta);
+                    assert damageable != null;
+                    damageable.setDamage(0);
+                    item.setItemMeta(itemMeta);
+                    item.setAmount(1);
 
-	/**
-	 * Sets the lore for the cleaning item the {@code sender} has the correct
-	 * permission.
-	 * 
-	 * @param sender the sender which executed the command.
-	 * @param args   the lore.
-	 */
-	private void setItemLore(CommandSender sender, String[] args) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
-		} else {
+                    PluginConfigManager.setCleaningItem(item);
+                    MessageSystem.sendChangedValue(player, command, item.toString());
+                }
+            }
+        }
+    }
 
-			String lore = args[1];
-			for (int i = 2; i < args.length; i++) {
-				lore = lore.concat(" ").concat(args[i]);
-			}
+    /**
+     * Gives the player with the name {@code playerName} a cleaning item.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void giveCleaningItem(CommandTree.CommandTuple tuple) {
+        CommandSender sender = tuple.sender;
+        String playerName = tuple.args[1];
+        if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_CLEANING_ITEM_GIVE);
+        } else {
 
-			String[] lorearray = lore.split("/n");
+            Player player2 = Bukkit.getPlayer(playerName);
 
-			ArrayList<String> lorelist = new ArrayList<>();
+            if (player2 != null) {
+                player2.getInventory().addItem(PluginConfigManager.getCleaningItem());
+                MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_PLAYER_GET,
+                        sender, player2.getName());
 
-			for (String obj : lorearray) {
-				obj = obj.replace("&", "\u00A7");
-				lorelist.add(obj);
-			}
+            } else {
+                if (playerName.equalsIgnoreCase("@a")) {
+                    Object[] players = Bukkit.getOnlinePlayers().toArray();
+                    for (Object p : players) {
+                        Player pl = (Player) p;
+                        pl.getInventory().addItem(PluginConfigManager.getCleaningItem());
+                        MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+                                MessageID.INFO_CLEANITEM_PLAYER_GET, sender, pl.getName());
+                    }
+                } else {
 
-			ItemStack is = PluginConfigManager.getCleaningItem();
-			ItemMeta im = is.getItemMeta();
-			im.setLore(lorelist);
-			is.setItemMeta(im);
-			PluginConfigManager.setCleaningItem(is);
+                    MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE,
+                            sender, playerName);
+                }
+            }
+        }
+    }
 
-			MessageSystem.sendChangedValue(sender, loreProperty, lorelist.toString());
-		}
-	}
+    /**
+     * Activates or deactivates the cleaning item depending on the String
+     * {@code value} if the {@code sender} has the correct permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setCleaningItemActive(CommandTree.CommandTuple tuple) {
 
-	/**
-	 * Sets the name of the cleaning item if the {@code sender} has the correct
-	 * permission.
-	 * 
-	 * @param sender the sender which executed the command.
-	 * @param args   the name, a new array entry represents a space.
-	 */
-	private void setItemName(CommandSender sender, String[] args) {
-		if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_RENAME.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
-		} else {
+        CommandSender sender = tuple.sender;
+        String value = tuple.args[1];
 
-			String newname = args[1];
-			for (int i = 2; i < args.length; i++) {
-				newname = newname.concat(" ").concat(args[i]);
-			}
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
 
-			newname = newname.replace("&", "\u00A7");
+        } else if (!StringUtils.isStringTrueOrFalse(value)) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
+        } else {
+            boolean b = Boolean.parseBoolean(value);
+            PluginConfigManager.setCleaningItemActive(b);
+            MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(b));
+        }
+    }
 
-			ItemStack is = PluginConfigManager.getCleaningItem();
-			ItemMeta im = is.getItemMeta();
-			im.setDisplayName(newname);
-			is.setItemMeta(im);
-			PluginConfigManager.setCleaningItem(is);
+    /**
+     * Activates or deactivates the durability loss for the cleaning item depending
+     * on the String {@code value} if the {@code sender} has the correct permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setDurabilityLoss(CommandTree.CommandTuple tuple) {
 
-			MessageSystem.sendChangedValue(sender, nameProperty, newname);
-		}
-	}
+        CommandSender sender = tuple.sender;
+        String value = tuple.args[1];
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
+        } else if (!StringUtils.isStringTrueOrFalse(value)) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
+        } else {
 
-		final List<String> completions = new ArrayList<>();
-		final List<String> cleaningItemCommands = Arrays.asList(strCommandList);
+            boolean b = Boolean.parseBoolean(value);
+            PluginConfigManager.setDurabilityLossActive(b);
+            MessageSystem.sendChangedValue(sender, durabilityProperty, String.valueOf(b));
+        }
+    }
 
-		switch (args.length) {
-		case 1:
-			StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
-			break;
-		case 2:
-			if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
-					|| args[0].equalsIgnoreCase(openEventSubCommand)) {
+    /**
+     * Activates or deactivates the open event mode for the cleaning item depending
+     * on the String {@code value} if the {@code sender} has the correct permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setOpenEventMode(CommandTree.CommandTuple tuple) {
 
-				StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
-			} else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-				StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
-						.map(Player::getName).collect(Collectors.toList()), completions);
-			}
-		}
+        CommandSender sender = tuple.sender;
+        String value = tuple.args[1];
 
-		Collections.sort(completions);
-		return completions;
-	}
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_EVENT_MODE);
+        } else {
+            boolean b = Boolean.parseBoolean(value);
+            PluginConfigManager.setOpenEvent(b);
+            MessageSystem.sendChangedValue(sender, openEventProperty, String.valueOf(b));
+        }
+    }
+
+    /**
+     * Sets the lore for the cleaning item the {@code sender} has the correct
+     * permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setItemLore(CommandTree.CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String[] args = tuple.args;
+
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_LORE.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_LORE);
+        } else {
+
+            String lore = args[1];
+            for (int i = 2; i < args.length; i++) {
+                lore = lore.concat(" ").concat(args[i]);
+            }
+
+            String[] lorearray = lore.split("/n");
+
+            ArrayList<String> lorelist = new ArrayList<>();
+
+            for (String obj : lorearray) {
+                obj = obj.replace("&", "\u00A7");
+                lorelist.add(obj);
+            }
+
+            ItemStack is = PluginConfigManager.getCleaningItem();
+            ItemMeta im = is.getItemMeta();
+            assert im != null;
+            im.setLore(lorelist);
+            is.setItemMeta(im);
+            PluginConfigManager.setCleaningItem(is);
+
+            MessageSystem.sendChangedValue(sender, loreProperty, lorelist.toString());
+        }
+    }
+
+    /**
+     * Sets the name of the cleaning item if the {@code sender} has the correct
+     * permission.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void setItemName(CommandTree.CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String[] args = tuple.args;
+
+        if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_RENAME.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_RENAME);
+        } else {
+
+            String newname = args[1];
+            for (int i = 2; i < args.length; i++) {
+                newname = newname.concat(" ").concat(args[i]);
+            }
+
+            newname = newname.replace("&", "\u00A7");
+
+            ItemStack is = PluginConfigManager.getCleaningItem();
+            ItemMeta im = is.getItemMeta();
+            assert im != null;
+            im.setDisplayName(newname);
+            is.setItemMeta(im);
+            PluginConfigManager.setCleaningItem(is);
+
+            MessageSystem.sendChangedValue(sender, nameProperty, newname);
+        }
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        final List<String> completions = new ArrayList<>();
+        final List<String> cleaningItemCommands = Arrays.asList(strCommandList);
+
+        switch (args.length) {
+            case 1:
+                StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
+                break;
+            case 2:
+                if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
+                        || args[0].equalsIgnoreCase(openEventSubCommand)) {
+
+                    StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
+                } else if (giveSubCommand.equalsIgnoreCase(args[0])) {
+                    StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
+                            .map(Player::getName).collect(Collectors.toList()), completions);
+                }
+        }
+
+        Collections.sort(completions);
+        return completions;
+    }
 }

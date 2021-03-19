@@ -1,6 +1,4 @@
-package chestcleaner.utils.datastructures;
-
-import org.omg.Messaging.SyncScopeHelper;
+package chestcleaner.commands.datastructures;
 
 import java.util.ArrayList;
 import java.util.Iterator;

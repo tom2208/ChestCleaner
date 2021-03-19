@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.utils.datastructures.CommandTree;
+import chestcleaner.commands.datastructures.CommandTree;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -46,27 +46,25 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
     private final String inventorySubCommand = "inventory";
     private final String autoRefillSubCommand = "autoRefill";
 
-    private final String listTypePlaceHolder = "listType";
-
     private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand};
     private final String[] strList = {stackingSubCommand, inventorySubCommand, autoRefillSubCommand};
 
     public BlacklistCommand() {
         cmdTree = new CommandTree(COMMAND_ALIAS);
         /* subcommands */
-        cmdTree.addPath("/blacklist blacklist", null, BlacklistType.class);
+        cmdTree.addPath("/blacklist blacklist", null, BlacklistType.class, false);
         // ADD
         Consumer<CommandTree.CommandTuple> addConsumer = this::addSubCommand;
-        cmdTree.addPath("/blacklist blacklist add", addConsumer, null);
-        cmdTree.addPath("/blacklist blacklist add materialId", addConsumer, Material.class);
+        cmdTree.addPath("/blacklist blacklist add", addConsumer, null, false);
+        cmdTree.addPath("/blacklist blacklist add materialId", addConsumer, Material.class, false);
         //REMOVE
         Consumer<CommandTree.CommandTuple> removeConsumer = this::removeSubCommand;
-        cmdTree.addPath("/blacklist blacklist remove", removeConsumer, null);
-        cmdTree.addPath("/blacklist blacklist remove materialId", removeConsumer, Material.class);
+        cmdTree.addPath("/blacklist blacklist remove", removeConsumer, null, false);
+        cmdTree.addPath("/blacklist blacklist remove materialId", removeConsumer, Material.class, false);
         //LIST
-        cmdTree.addPath("/blacklist blacklist list", this::listSubCommand, null);
+        cmdTree.addPath("/blacklist blacklist list", this::listSubCommand, null, false);
         //CLEAR
-        cmdTree.addPath("/blacklist blacklist clear", this::clearSubCommand, null);
+        cmdTree.addPath("/blacklist blacklist clear", this::clearSubCommand, null, false);
     }
 
     @Override

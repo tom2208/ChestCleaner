@@ -1,4 +1,4 @@
-package chestcleaner.utils.datastructures;
+package chestcleaner.commands.datastructures;
 
 import java.util.ArrayList;
 import java.util.List;

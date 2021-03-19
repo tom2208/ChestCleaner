@@ -1,9 +1,10 @@
-package chestcleaner.utils.datastructures;
+package chestcleaner.commands.datastructures;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -15,22 +16,22 @@ import java.util.function.Consumer;
  * A acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
  */
-public class CommandTree extends Tree<CommandTree.Triple> {
+public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     public CommandTree(String commandAlias) {
-        super(new Triple(commandAlias, null, null));
+        super(new Quadruple(commandAlias, null, null, false));
     }
 
 
     public void execute(CommandSender sender, Command command, String alias, String[] args) {
 
-        GraphNode<Triple> node = getRoot();
+        GraphNode<Quadruple> node = getRoot();
 
         for (int i = 0; i < args.length; i++) {
             boolean isLast = i == args.length - 1;
-            GraphNode<Triple> nextNode = getChildNodeByStr(node, args[i]);
+            GraphNode<Quadruple> nextNode = getChildNodeByStr(node, args[i]);
             if (nextNode == null) {
-                for (GraphNode<Triple> child : node.getChildren()) {
+                for (GraphNode<Quadruple> child : node.getChildren()) {
                     if (isTypeNode(child) && getInterpretedObjByNodeType(args[i], child) != null) {
                         node = child;
                         break;
@@ -39,7 +40,7 @@ public class CommandTree extends Tree<CommandTree.Triple> {
             } else {
                 node = nextNode;
             }
-            if (isLast) {
+            if (isLast || node.getValue().definiteExecute) {
                 executeNode(node, sender, command, alias, args);
                 return;
             }
@@ -47,7 +48,7 @@ public class CommandTree extends Tree<CommandTree.Triple> {
         MessageSystem.sendMessageToCS(MessageType.SYNTAX_ERROR, buildSyntax(node), sender);
     }
 
-    private void executeNode(GraphNode<Triple> node, CommandSender sender, Command command, String alias, String[] args) {
+    private void executeNode(GraphNode<Quadruple> node, CommandSender sender, Command command, String alias, String[] args) {
         if (node.getValue().consumer != null) {
             CommandTuple tuple = new CommandTuple(sender, command, alias, args);
             node.getValue().consumer.accept(tuple);
@@ -56,7 +57,7 @@ public class CommandTree extends Tree<CommandTree.Triple> {
         }
     }
 
-    private Object getInterpretedObjByNodeType(String str, GraphNode<Triple> node) {
+    private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
         //String
         if (node.getValue().type.equals(String.class)) {
@@ -64,63 +65,71 @@ public class CommandTree extends Tree<CommandTree.Triple> {
         }
 
         // Material
-        Material material = Material.getMaterial(str.toUpperCase());
         if (node.getValue().type.equals(Material.class)) {
-            return material;
+            return Material.getMaterial(str.toUpperCase());
         }
 
         //Blacklist
-        BlacklistCommand.BlacklistType blacklistType = BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
-        if (blacklistType != null && node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
-            return blacklistType;
+        if (node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
+            BlacklistCommand.BlacklistType blacklistType = BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
+            if (blacklistType != null) {
+                return blacklistType;
+            }
+        }
+        //Integer
+        if (node.getValue().type.equals(Integer.class)) {
+            try {
+                return Integer.parseInt(str);
+            } catch (NumberFormatException ignored) {
+            }
         }
 
-        //Integer
-        try {
-            return Integer.parseInt(str);
-        } catch (NumberFormatException ignored) {
+        //Boolean
+        if (node.getValue().type.equals(Boolean.class)) {
+            return Boolean.parseBoolean(str);
         }
 
         return null;
     }
 
-    private boolean isTypeNode(GraphNode<Triple> node) {
+    private boolean isTypeNode(GraphNode<Quadruple> node) {
         return node != null && node.getValue().type != null;
     }
-
 
     /**
      * Adds a node into the command tree.
      *
-     * @param path     like the ingame command. Example: "/cmd subCmd arg".
-     * @param consumer the consumer which gets get executed if this command gets executed.
-     *                 Use {@code null} if you dont want this to be an executable path.
-     * @param c        This is null if the path directs to a node which is not an argument
-     *                 otherwise it determines the type of the argument.
+     * @param path            like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer        the consumer which gets get executed if this command gets executed.
+     *                        Use {@code null} if you don't want this to be an executable path.
+     * @param type            This is null if the path directs to a node which is not an argument
+     *                        otherwise it determines the type of the argument.
+     * @param definiteExecute if true the the command will always execute on this node,
+     *                        otherwise they can but don't have to execute.
      */
-    public void addPath(String path, Consumer<CommandTree.CommandTuple> consumer, Class<?> c) {
+    public void addPath(String path, Consumer<CommandTree.CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
         String[] args = path.split(" ");
-        GraphNode<Triple> node = getRoot();
+        GraphNode<Quadruple> node = getRoot();
 
         for (int i = 1; i < args.length; i++) {
             final int finalI = i;
-            GraphNode<Triple> tempNode
+            GraphNode<Quadruple> tempNode
                     = getNodeFormChildren(node, t -> t.label.equalsIgnoreCase(args[finalI]));
 
-            boolean isLastElement = !(i + 1 < args.length);
+            boolean isLastElement = i + 1 >= args.length;
 
             if (tempNode == null) {
-                Triple tuple = new Triple(args[i], null, null);
+                Quadruple tuple = new Quadruple(args[i], null, null, false);
                 tempNode = new GraphNode<>(tuple);
                 node.addChild(tempNode);
             }
 
             if (isLastElement) {
                 tempNode.getValue().consumer = consumer;
-                tempNode.getValue().type = c;
+                tempNode.getValue().type = type;
+                tempNode.getValue().definiteExecute = definiteExecute;
             }
             node = tempNode;
-
         }
 
     }
@@ -131,17 +140,17 @@ public class CommandTree extends Tree<CommandTree.Triple> {
      * @param node the node which determines the subcommand and thus its syntax.
      * @return the syntax string.
      */
-    public String buildSyntax(GraphNode<Triple> node) {
+    public String buildSyntax(GraphNode<Quadruple> node) {
         StringBuilder syntax = new StringBuilder();
         if (node.hasChild()) {
             syntax = new StringBuilder("<");
-            for (GraphNode<Triple> child : node.getChildren()) {
+            for (GraphNode<Quadruple> child : node.getChildren()) {
                 syntax.append(child.getValue().label).append(", ");
             }
             syntax = new StringBuilder(syntax.substring(0, syntax.length() - 2).concat(">"));
         }
 
-        GraphNode<Triple> nextNode = node;
+        GraphNode<Quadruple> nextNode = node;
 
         do {
             if (nextNode.getValue().type == null) {
@@ -152,38 +161,13 @@ public class CommandTree extends Tree<CommandTree.Triple> {
             if (nextNode.hasParent()) nextNode = nextNode.getParents().get(0);
             else nextNode = null;
         } while (nextNode != null);
-        System.out.println(1);
 
         return "/" + syntax;
     }
 
-    private boolean hasArgumentAValidTypeOtherwiseSendMsg(String arg, GraphNode<Triple> node, CommandSender cs) {
-        if (node.getValue().type == null) {
-            return true;
+    private GraphNode<Quadruple> getChildNodeByStr(GraphNode<Quadruple> node, String string) {
 
-        } else if (node.getValue().type.toString().equals(BlacklistCommand.BlacklistType.class.toString())) {
-            for (BlacklistCommand.BlacklistType type : BlacklistCommand.BlacklistType.values()) {
-                if (type.toString().equalsIgnoreCase(arg)) {
-                    return true;
-                } else {
-                    MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_NOT_EXISTS, cs);
-                    return false;
-                }
-            }
-
-        } else if (node.getValue().type.toString().equals(Material.class.toString())) {
-            for (Material material : Material.values()) {
-                if (material.toString().equalsIgnoreCase(arg)) {
-                    return true;
-                }
-            }
-        }
-        return true;
-    }
-
-    private GraphNode<Triple> getChildNodeByStr(GraphNode<Triple> node, String string) {
-
-        for (GraphNode<Triple> n : node.getChildren()) {
+        for (GraphNode<Quadruple> n : node.getChildren()) {
 
             if (n.getValue().label.equals(string) && n.getValue().type == null) {
                 return n;
@@ -209,33 +193,31 @@ public class CommandTree extends Tree<CommandTree.Triple> {
 
     }
 
-    static class Triple {
+    static class Quadruple {
 
         String label;
         Consumer<CommandTuple> consumer;
         Class<?> type;
+        boolean definiteExecute;
 
-        public Triple(String label, Consumer<CommandTuple> consumer, Class<?> type) {
+        public Quadruple(String label, Consumer<CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
             this.label = label;
             this.consumer = consumer;
             this.type = type;
+            this.definiteExecute = definiteExecute;
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Triple triple = (Triple) o;
-            return Objects.equals(label, triple.label) && Objects.equals(consumer, triple.consumer) && Objects.equals(type, triple.type);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(label, consumer, type);
+            Quadruple quadruple = (Quadruple) o;
+            return definiteExecute == quadruple.definiteExecute && Objects.equals(label, quadruple.label) &&
+                    Objects.equals(consumer, quadruple.consumer) && Objects.equals(type, quadruple.type);
         }
 
         public String toString() {
-            return "(" + label + "," + consumer + "," + type + ")";
+            return "(" + label + "," + consumer + "," + type + "," + definiteExecute + ")";
         }
 
     }
