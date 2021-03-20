@@ -1,10 +1,9 @@
 package chestcleaner.commands.datastructures;
 
 import chestcleaner.commands.BlacklistCommand;
+import chestcleaner.commands.SortingAdminCommand;
 import chestcleaner.utils.messages.MessageSystem;
-import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -59,7 +58,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
-        //String
+        //TODO errorMessage
+
+        // String
         if (node.getValue().type.equals(String.class)) {
             return str;
         }
@@ -69,14 +70,16 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             return Material.getMaterial(str.toUpperCase());
         }
 
-        //Blacklist
-        if (node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
-            BlacklistCommand.BlacklistType blacklistType = BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
-            if (blacklistType != null) {
-                return blacklistType;
-            }
+        // RefillType
+        if(node.getValue().type.equals(SortingAdminCommand.RefillType.class)){
+            return SortingAdminCommand.RefillType.getByName(str);
         }
-        //Integer
+
+        // Blacklist
+        if (node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
+            return BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
+        }
+        // Integer
         if (node.getValue().type.equals(Integer.class)) {
             try {
                 return Integer.parseInt(str);
@@ -84,7 +87,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             }
         }
 
-        //Boolean
+        // Boolean
         if (node.getValue().type.equals(Boolean.class)) {
             return Boolean.parseBoolean(str);
         }
@@ -94,6 +97,30 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private boolean isTypeNode(GraphNode<Quadruple> node) {
         return node != null && node.getValue().type != null;
+    }
+
+    /**
+     * Adds a node into the command tree. This node has no definite execution.
+     *
+     * @param path            like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer        the consumer which gets get executed if this command gets executed.
+     *                        Use {@code null} if you don't want this to be an executable path.
+     * @param type            This is null if the path directs to a node which is not an argument
+     *                        otherwise it determines the type of the argument.
+     */
+    public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type) {
+        addPath(path, consumer, type, false);
+    }
+
+    /**
+     * Adds a node into the command tree. This node has no definite execution and no type.
+     *
+     * @param path            like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer        the consumer which gets get executed if this command gets executed.
+     *                        Use {@code null} if you don't want this to be an executable path.
+     */
+    public void addPath(String path, Consumer<CommandTuple> consumer) {
+        addPath(path, consumer, null, false);
     }
 
     /**
@@ -107,7 +134,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
      * @param definiteExecute if true the the command will always execute on this node,
      *                        otherwise they can but don't have to execute.
      */
-    public void addPath(String path, Consumer<CommandTree.CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
+    public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
         String[] args = path.split(" ");
         GraphNode<Quadruple> node = getRoot();
 
@@ -175,22 +202,6 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         }
         return null;
-    }
-
-    public static class CommandTuple {
-
-        public CommandSender sender;
-        public Command cmd;
-        public String label;
-        public String[] args;
-
-        public CommandTuple(CommandSender sender, Command cmd, String label, String[] args) {
-            this.sender = sender;
-            this.cmd = cmd;
-            this.label = label;
-            this.args = args;
-        }
-
     }
 
     static class Quadruple {

@@ -1,5 +1,7 @@
 package chestcleaner.commands;
 
+import chestcleaner.commands.datastructures.CommandTree;
+import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.Category;
 import chestcleaner.sorting.SortingPattern;
@@ -22,8 +24,7 @@ import org.bukkit.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -54,95 +55,64 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     private final String getAsBookSubCommand = "getAsBook";
     private final String removeSubCommand = "remove";
 
-    /* refill sub-commands */
-    private final String blocksSubCommand = "blocks";
-    private final String consumablesSubCommand = "consumables";
-    private final String breakablesSubCommand = "breakables";
-
     private final String autosortProperty = "default autosort";
     private final String categoriesProperty = "default categoryOrder";
     private final String cooldownProperty = "cooldown (in ms)";
     private final String patternProperty = "default sortingpattern";
     private final String activeProperty = "cooldownActive";
     private final String chatNotificationProperty = "chat sorting notification";
-    private final String soundProperty = "sorting sound";
-    private final String allRefillsProperty = "all refills";
     private final String clickSortProperty = "default clicksort";
 
     private final String[] strCommandList = {autosortSubCommand, categoriesSubCommand, cooldownSubCommand,
             patternSubCommand, chatNotificationSubCommand, sortingSoundSubCommand, refillSubCommand, clickSortSubCommand};
     private final String[] categoriesSubCommandList = {setSubCommand, addFromBookSubCommand, getAsBookSubCommand, removeSubCommand};
     private final String[] cooldownSubCommandList = {setSubCommand, activeSubCommand};
-    private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand, "true", "false"};
+    private final String[] refillSubCommandList =
+            {RefillType.BLOCKS.toString(), RefillType.CONSUMABLES.toString(), RefillType.BREAKABLES.toString(),
+                    "true", "false"};
+
+    private final CommandTree cmdTree;
+    private final String alias = "sortingadmin";
+
+    public SortingAdminCommand() {
+        cmdTree = new CommandTree(alias);
+        cmdTree.addPath("/sortingadmin autosort", this::getConfig);
+        cmdTree.addPath("/sortingadmin autosort true/false", this::setDefaultAutoSort, Boolean.class);
+
+        cmdTree.addPath("/sortingadmin pattern", this::getConfig);
+        cmdTree.addPath("/sortingadmin pattern pattern", this::setDefaultPattern, String.class);
+
+        cmdTree.addPath("/sortingadmin categories", this::getConfig);
+        cmdTree.addPath("/sortingadmin categories addFromBook", this::addFromBook);
+        cmdTree.addPath("/sortingadmin categories remove name", this::removeCategory, String.class);
+        cmdTree.addPath("/sortingadmin categories set names", this::setDefaultCategories, String.class);
+        cmdTree.addPath("/sortingadmin categories getAsBook name", this::getBook, String.class);
+
+        cmdTree.addPath("/sortingadmin cooldown", this::getConfig);
+        cmdTree.addPath("/sortingadmin cooldown active", this::getConfig);
+        cmdTree.addPath("/sortingadmin cooldown active true/false", this::setCooldownActive, Boolean.class);
+        cmdTree.addPath("/sortingadmin cooldown timeInMilliseconds", this::setCooldownTime, Integer.class);
+
+        cmdTree.addPath("/sortingadmin chatNotification", this::getConfig);
+        cmdTree.addPath("/sortingadmin chatNotification true/false", this::setChatNotification, Boolean.class);
+
+        cmdTree.addPath("/sortingadmin sortingSound", this::getConfig);
+        cmdTree.addPath("/sortingadmin sortingSound true/false", this::setSound, Boolean.class);
+
+        cmdTree.addPath("/sortingadmin clickSort", this::getConfig);
+        cmdTree.addPath("/sortingadmin clickSort true/false", this::setClickSort, Boolean.class);
+
+        cmdTree.addPath("/sortingadmin refill", null, null);
+        cmdTree.addPath("/sortingadmin refill type", null, RefillType.class);
+        cmdTree.addPath("/sortingadmin refill true/false", this::setAllRefills, Boolean.class);
+        cmdTree.addPath("/sortingadmin refill type true/false", this::setRefill, Boolean.class);
+        System.out.println(cmdTree);
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-
-        Player player = null;
-        if (sender instanceof Player) {
-            player = (Player) sender;
-        }
-
-        if (args.length == 1) {
-            return getConfig(sender, args[0]);
-
-        } else if (args.length == 2) {
-            if (autosortSubCommand.equalsIgnoreCase(args[0])) {
-                setDefaultAutoSort(sender, args[1]);
-                return true;
-            } else if (categoriesSubCommand.equalsIgnoreCase(args[0])
-                    && addFromBookSubCommand.equalsIgnoreCase(args[1])) {
-                addFromBook(sender, player);
-                return true;
-            } else if (cooldownSubCommand.equalsIgnoreCase(args[0]) && activeSubCommand.equalsIgnoreCase(args[1])) {
-                getConfig(sender, activeSubCommand);
-                return true;
-            } else if (patternSubCommand.equalsIgnoreCase(args[0])) {
-                setDefaultPattern(sender, args[1]);
-                return true;
-            } else if (chatNotificationSubCommand.equalsIgnoreCase(args[0])) {
-                setChatNotification(sender, args[1]);
-                return true;
-            } else if (sortingSoundSubCommand.equalsIgnoreCase(args[0])) {
-                setSound(sender, args[1]);
-                return true;
-            } else if (refillSubCommand.equalsIgnoreCase(args[0])) {
-                setAllRefills(sender, args[1]);
-                return true;
-            } else if (clickSortSubCommand.equalsIgnoreCase(args[0])) {
-                setClickSort(sender, args[1]);
-                return true;
-            }
-
-        } else if (args.length == 3) {
-
-            if (categoriesSubCommand.equalsIgnoreCase(args[0])) {
-                if (setSubCommand.equalsIgnoreCase(args[1])) {
-                    setDefaultCategories(sender, args[2]);
-                    return true;
-
-                } else if (getAsBookSubCommand.equalsIgnoreCase(args[1])) {
-                    getBook(sender, player, args[2]);
-                    return true;
-
-                } else if (removeSubCommand.equalsIgnoreCase(args[1])) {
-                    removeCategory(sender, args[2]);
-                    return true;
-                }
-
-            } else if (cooldownSubCommand.equalsIgnoreCase(args[0])) {
-                if (activeSubCommand.equalsIgnoreCase(args[1])) {
-                    setCooldownActive(sender, args[2]);
-                } else if (setSubCommand.equalsIgnoreCase(args[1])) {
-                    setCooldownTime(sender, args[2]);
-                }
-                return true;
-
-            } else if (refillSubCommand.equalsIgnoreCase(args[0])) {
-                return setRefill(sender, args[1], args[2]);
-            }
-        }
-        return false;
+        cmdTree.execute(sender, cmd, label, args);
+        return true;
     }
 
     @Override
@@ -180,7 +150,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
                 StringUtil.copyPartialMatches(args[2], StringUtils.getBooleanValueStringList(), completions);
 
             } else if (refillSubCommand.equalsIgnoreCase(args[0])) {
-                if (args[1].equalsIgnoreCase(blocksSubCommand) || args[1].equalsIgnoreCase(consumablesSubCommand) || args[1].equalsIgnoreCase(breakablesSubCommand)) {
+                if (RefillType.getByName(args[1]) != null) {
                     StringUtil.copyPartialMatches(args[2], StringUtils.getBooleanValueStringList(), completions);
                 }
             }
@@ -188,7 +158,18 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         return completions;
     }
 
-    private boolean getConfig(CommandSender sender, String command) {
+    private Player getPlayer(CommandSender sender) {
+        if (sender instanceof Player) {
+            return (Player) sender;
+        }
+        return null;
+    }
+
+    private void getConfig(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String command = tuple.args[0];
+
         String key = "";
         String value = "";
 
@@ -201,12 +182,13 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
             value = PluginConfigManager.getCategoryOrder().toString();
 
         } else if (command.equalsIgnoreCase(cooldownSubCommand)) {
-            key = cooldownProperty;
-            value = String.valueOf(PluginConfigManager.getCooldown());
-
-        } else if (command.equalsIgnoreCase(activeSubCommand)) {
-            key = activeProperty;
-            value = String.valueOf(PluginConfigManager.isCooldownActive());
+            if (tuple.args.length >= 2 && tuple.args[1].equalsIgnoreCase(activeSubCommand)) {
+                key = activeProperty;
+                value = String.valueOf(PluginConfigManager.isCooldownActive());
+            } else {
+                key = cooldownProperty;
+                value = String.valueOf(PluginConfigManager.getCooldown());
+            }
 
         } else if (command.equalsIgnoreCase(patternSubCommand)) {
             key = patternProperty;
@@ -227,12 +209,14 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
         if (!key.equals("") && !value.equals("")) {
             MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, key, value);
-            return true;
         }
-        return false;
     }
 
-    private void setClickSort(CommandSender sender, String bool) {
+    private void setClickSort(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String bool = tuple.args[1];
+
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
             PluginConfigManager.setDefaultClickSort(b);
@@ -243,48 +227,57 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     /**
      * Sets the configuration for a refill option.
      *
-     * @param sender the sender who enters the command.
-     * @param arg    the subcommand string.
-     * @param bool   true: sets active, false: sets inactive
+     * @param tuple the tuple the sub-command should run on.
      * @return True if the command can get parsed, otherwise false.
      */
-    private boolean setRefill(CommandSender sender, String arg, String bool) {
+    private void setRefill(CommandTuple tuple) {
+        CommandSender sender = tuple.sender;
+        String arg = tuple.args[1];
+        String bool = tuple.args[2];
+        System.out.println(arg + " " + bool);
         if (StringUtils.isStringBoolean(sender, bool)) {
 
             boolean b = Boolean.parseBoolean(bool);
             String property;
 
-            if (arg.equalsIgnoreCase(blocksSubCommand)) {
-                PluginConfigManager.setDefaultBlockRefill(b);
-                property = blocksSubCommand;
-            } else if (arg.equalsIgnoreCase(consumablesSubCommand)) {
-                PluginConfigManager.setDefaultConsumablesRefill(b);
-                property = consumablesSubCommand;
-            } else if (arg.equalsIgnoreCase(breakablesSubCommand)) {
-                PluginConfigManager.setDefaultBreakableRefill(b);
-                property = breakablesSubCommand;
-            } else {
-                return false;
+            RefillType type = RefillType.getByName(arg);
+            System.out.println(type);
+            if (type != null) {
+                property = type.toString();
+                if (!Objects.equals(type, RefillType.BLOCKS)) {
+                    if (type.equals(RefillType.CONSUMABLES)) {
+                        PluginConfigManager.setDefaultConsumablesRefill(b);
+                    } else if (type.equals(RefillType.BREAKABLES)) {
+                        PluginConfigManager.setDefaultBreakableRefill(b);
+                    }
+                } else {
+                    PluginConfigManager.setDefaultBlockRefill(b);
+                }
+                MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, property, b);
             }
-
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CURRENT_VALUE, sender, property, b);
-
         }
 
-        return true;
     }
 
-    private void setAllRefills(CommandSender sender, String bool) {
+    private void setAllRefills(CommandTuple tuple) {
+        CommandSender sender = tuple.sender;
+        String bool = tuple.args[1];
+
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
             PluginConfigManager.setDefaultBlockRefill(b);
             PluginConfigManager.setDefaultConsumablesRefill(b);
             PluginConfigManager.setDefaultBreakableRefill(b);
+            String allRefillsProperty = "all refills";
             MessageSystem.sendChangedValue(sender, allRefillsProperty, String.valueOf(b));
         }
     }
 
-    private void setChatNotification(CommandSender sender, String bool) {
+    private void setChatNotification(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String bool = tuple.args[1];
+
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
             PluginConfigManager.setDefaultChatNotificationBoolean(b);
@@ -292,15 +285,23 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setSound(CommandSender sender, String bool) {
+    private void setSound(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String bool = tuple.args[1];
+
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
             PluginConfigManager.setDefaultSortingSoundBoolean(b);
+            String soundProperty = "sorting sound";
             MessageSystem.sendChangedValue(sender, soundProperty, String.valueOf(b));
         }
     }
 
-    private void setDefaultAutoSort(CommandSender sender, String bool) {
+    private void setDefaultAutoSort(CommandTuple tuple) {
+        CommandSender sender = tuple.sender;
+        String bool = tuple.args[1];
+
         if (!StringUtils.isStringTrueOrFalse(bool)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         } else {
@@ -311,7 +312,9 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setDefaultPattern(CommandSender sender, String patternName) {
+    private void setDefaultPattern(CommandTuple tuple) {
+        CommandSender sender = tuple.sender;
+        String patternName = tuple.args[1];
         SortingPattern pattern = SortingPattern.getSortingPatternByName(patternName);
 
         if (pattern == null) {
@@ -322,8 +325,12 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setDefaultCategories(CommandSender sender, String commaSeperatedCategories) {
-        List<String> categories = Arrays.asList(commaSeperatedCategories.split(","));
+    private void setDefaultCategories(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String commaSeparatedCategories = tuple.args[2];
+
+        List<String> categories = Arrays.asList(commaSeparatedCategories.split(","));
 
         if (!CategorizerManager.validateExists(categories)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_CATEGORY_NAME, sender);
@@ -333,20 +340,25 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void removeCategory(CommandSender sender, String category) {
-
-        CategorizerManager.removeCategoryAndSave(category, sender);
-
+    private void removeCategory(CommandTuple tuple) {
+        CategorizerManager.removeCategoryAndSave(tuple.args[2], tuple.sender);
     }
 
-    private void addFromBook(CommandSender sender, Player player) {
+    private void addFromBook(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        Player player = getPlayer(sender);
+
         if (player == null) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
         } else {
             ItemStack itemInHand = player.getInventory().getItemInMainHand();
             if (itemInHand.getType().equals(Material.WRITABLE_BOOK)
                     || itemInHand.getType().equals(Material.WRITTEN_BOOK)) {
-                String name = CategorizerManager.addFromBook(((BookMeta) itemInHand.getItemMeta()).getPages(), sender);
+
+                String name = CategorizerManager.addFromBook(
+                        ((BookMeta) Objects.requireNonNull(itemInHand.getItemMeta())).getPages(), sender);
+
                 MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS, MessageID.INFO_CATEGORY_NEW, sender,
                         name);
             } else {
@@ -355,7 +367,12 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void getBook(CommandSender sender, Player player, String categoryString) {
+    private void getBook(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        Player player = getPlayer(sender);
+        String categoryString = tuple.args[2];
+
         if (player == null) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_YOU_NOT_PLAYER, sender);
         } else {
@@ -369,7 +386,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setCooldownTime(CommandSender sender, String arg) {
+    private void setCooldownTime(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String arg = tuple.args[2];
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
@@ -387,17 +407,34 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setCooldownActive(CommandSender sender, String arg) {
+    private void setCooldownActive(CommandTuple tuple) {
+
+        CommandSender sender = tuple.sender;
+        String arg = tuple.args[2];
+
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
         } else if (!StringUtils.isStringTrueOrFalse(arg)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         } else {
-            boolean state = Boolean.getBoolean(arg);
+            boolean state = Boolean.parseBoolean(arg);
             PluginConfigManager.setCooldownActive(state);
             MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(state));
         }
 
+    }
+
+    public enum RefillType {
+        BLOCKS, CONSUMABLES, BREAKABLES;
+
+        public static RefillType getByName(String str) {
+            for (RefillType type : values()) {
+                if (str.equalsIgnoreCase(type.toString())) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
 }

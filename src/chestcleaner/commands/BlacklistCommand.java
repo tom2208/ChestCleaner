@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.commands.datastructures.CommandTree;
 import org.bukkit.Material;
@@ -54,13 +55,11 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         /* subcommands */
         cmdTree.addPath("/blacklist blacklist", null, BlacklistType.class, false);
         // ADD
-        Consumer<CommandTree.CommandTuple> addConsumer = this::addSubCommand;
-        cmdTree.addPath("/blacklist blacklist add", addConsumer, null, false);
-        cmdTree.addPath("/blacklist blacklist add materialId", addConsumer, Material.class, false);
+        cmdTree.addPath("/blacklist blacklist add", this::addSubCommand, null, false);
+        cmdTree.addPath("/blacklist blacklist add materialId", this::addSubCommand, Material.class, false);
         //REMOVE
-        Consumer<CommandTree.CommandTuple> removeConsumer = this::removeSubCommand;
-        cmdTree.addPath("/blacklist blacklist remove", removeConsumer, null, false);
-        cmdTree.addPath("/blacklist blacklist remove materialId", removeConsumer, Material.class, false);
+        cmdTree.addPath("/blacklist blacklist remove", this::removeSubCommand, null, false);
+        cmdTree.addPath("/blacklist blacklist remove materialId", this::removeSubCommand, Material.class, false);
         //LIST
         cmdTree.addPath("/blacklist blacklist list", this::listSubCommand, null, false);
         //CLEAR
@@ -112,7 +111,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    public void addSubCommand(CommandTree.CommandTuple tuple) {
+    public void addSubCommand(CommandTuple tuple) {
         Player player = checkForPlayer(tuple.sender);
         if (player != null && tuple.args.length == 2) {
             addMaterial(tuple.sender, getListType(tuple.args), getList(tuple.args), getMaterialFromPlayerHand(player));
@@ -127,7 +126,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    public void removeSubCommand(CommandTree.CommandTuple tuple) {
+    public void removeSubCommand(CommandTuple tuple) {
         Player player = checkForPlayer(tuple.sender);
         if (player != null && tuple.args.length == 2) {
             removeMaterial(tuple.sender, getListType(tuple.args),
@@ -143,7 +142,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    public void listSubCommand(CommandTree.CommandTuple tuple) {
+    public void listSubCommand(CommandTuple tuple) {
         if (tuple.args.length == 2) {
             printBlacklist(tuple.sender, "1", Objects.requireNonNull(getList(tuple.args)));
         } else if (tuple.args.length == 3) {
@@ -157,7 +156,7 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    public void clearSubCommand(CommandTree.CommandTuple tuple) {
+    public void clearSubCommand(CommandTuple tuple) {
         clearBlacklist(tuple.sender, getListType(tuple.args));
     }
 

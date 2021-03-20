@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import chestcleaner.commands.datastructures.CommandTree;
 import chestcleaner.cooldown.CMRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

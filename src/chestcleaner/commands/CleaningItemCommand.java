@@ -1,5 +1,6 @@
 package chestcleaner.commands;
 
+import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
@@ -57,37 +58,28 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
     public CleaningItemCommand() {
         cmdTree = new CommandTree(COMMAND_ALIAS);
 
-        Consumer<CommandTree.CommandTuple> getConsumer = this::getCleaningItem;
-        cmdTree.addPath("/cleaningitem get", getConsumer, null, false);
+        cmdTree.addPath("/cleaningitem get", this::getCleaningItem, null, false);
 
-        Consumer<CommandTree.CommandTuple> giveConsumer = this::giveCleaningItem;
-        cmdTree.addPath("/cleaningitem give @a", giveConsumer, null, false);
-        cmdTree.addPath("/cleaningitem give player", giveConsumer, String.class, false);
+        cmdTree.addPath("/cleaningitem give @a", this::giveCleaningItem, null, false);
+        cmdTree.addPath("/cleaningitem give player", this::giveCleaningItem, String.class, false);
 
-        Consumer<CommandTree.CommandTuple> setConsumer = this::setCleaningItem;
-        cmdTree.addPath("/cleaningitem set", setConsumer, null, false);
+        cmdTree.addPath("/cleaningitem set", this::setCleaningItem, null, false);
 
-        Consumer<CommandTree.CommandTuple> configConsumer = this::getConfig;
-        cmdTree.addPath("/cleaningitem name", configConsumer, null, false);
-        cmdTree.addPath("/cleaningitem lore", configConsumer, null, false);
-        cmdTree.addPath("/cleaningitem active", configConsumer, null, false);
-        cmdTree.addPath("/cleaningitem durabilityLoss", configConsumer, null, false);
-        cmdTree.addPath("/cleaningitem openEvent", configConsumer, null, false);
+        cmdTree.addPath("/cleaningitem name", this::getConfig, null, false);
+        cmdTree.addPath("/cleaningitem lore", this::getConfig, null, false);
+        cmdTree.addPath("/cleaningitem active", this::getConfig, null, false);
+        cmdTree.addPath("/cleaningitem durabilityLoss", this::getConfig, null, false);
+        cmdTree.addPath("/cleaningitem openEvent", this::getConfig, null, false);
 
-        Consumer<CommandTree.CommandTuple> nameConsumer = this::setItemName;
-        cmdTree.addPath("/cleaningitem name name", nameConsumer, String.class, true);
+        cmdTree.addPath("/cleaningitem name name", this::setItemName, String.class, true);
 
-        Consumer<CommandTree.CommandTuple> loreConsumer = this::setItemLore;
-        cmdTree.addPath("/cleaningitem lore lore", loreConsumer, String.class, true);
+        cmdTree.addPath("/cleaningitem lore lore", this::setItemLore, String.class, true);
 
-        Consumer<CommandTree.CommandTuple> activeConsumer = this::setCleaningItemActive;
-        cmdTree.addPath("/cleaningitem active true/false", loreConsumer, Boolean.class, false);
+        cmdTree.addPath("/cleaningitem active true/false", this::setCleaningItemActive, Boolean.class, false);
 
-        Consumer<CommandTree.CommandTuple> durabilityLossConsumer = this::setDurabilityLoss;
-        cmdTree.addPath("/cleaningitem durabilityLoss true/false", durabilityLossConsumer, Boolean.class, false);
+        cmdTree.addPath("/cleaningitem durabilityLoss true/false", this::setDurabilityLoss, Boolean.class, false);
 
-        Consumer<CommandTree.CommandTuple> openEventConsumer = this::setOpenEventMode;
-        cmdTree.addPath("/cleaningitem openEvent true/false", openEventConsumer, Boolean.class, false);
+        cmdTree.addPath("/cleaningitem openEvent true/false", this::setOpenEventMode, Boolean.class, false);
     }
 
     @Override
@@ -102,7 +94,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void getConfig(CommandTree.CommandTuple tuple) {
+    private void getConfig(CommandTuple tuple) {
         String command = tuple.args[0];
 
         String key = "";
@@ -147,7 +139,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void getCleaningItem(CommandTree.CommandTuple tuple) {
+    private void getCleaningItem(CommandTuple tuple) {
         if (checkPlayer(tuple.sender)) {
             Player player = (Player) tuple.sender;
             if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
@@ -166,7 +158,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setCleaningItem(CommandTree.CommandTuple tuple) {
+    private void setCleaningItem(CommandTuple tuple) {
 
         if (checkPlayer(tuple.sender)) {
 
@@ -201,7 +193,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void giveCleaningItem(CommandTree.CommandTuple tuple) {
+    private void giveCleaningItem(CommandTuple tuple) {
         CommandSender sender = tuple.sender;
         String playerName = tuple.args[1];
         if (!sender.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GIVE.getString())) {
@@ -239,7 +231,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setCleaningItemActive(CommandTree.CommandTuple tuple) {
+    private void setCleaningItemActive(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
         String value = tuple.args[1];
@@ -262,7 +254,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setDurabilityLoss(CommandTree.CommandTuple tuple) {
+    private void setDurabilityLoss(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
         String value = tuple.args[1];
@@ -285,7 +277,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setOpenEventMode(CommandTree.CommandTuple tuple) {
+    private void setOpenEventMode(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
         String value = tuple.args[1];
@@ -305,7 +297,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setItemLore(CommandTree.CommandTuple tuple) {
+    private void setItemLore(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
         String[] args = tuple.args;
@@ -345,7 +337,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
      *
      * @param tuple the tuple the sub-command should run on.
      */
-    private void setItemName(CommandTree.CommandTuple tuple) {
+    private void setItemName(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
         String[] args = tuple.args;
