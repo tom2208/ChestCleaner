@@ -1,10 +1,11 @@
 package chestcleaner.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import chestcleaner.commands.datastructures.CommandTree;
+import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.cooldown.CMRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,167 +36,167 @@ import chestcleaner.utils.messages.enums.MessageType;
  */
 public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 
-	private final String ownSubCommand = "own";
+    private final String ownSubCommand = "own";
+    private final CommandTree cmdTree;
 
-	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    public CleanInventoryCommand() {
+        String alias = "cleaninventory";
+        cmdTree = new CommandTree(alias);
 
-		Player player = null;
+        cmdTree.addPath("/cleaninventory x", null, Integer.class);
+        cmdTree.addPath("/cleaninventory x y", null, Integer.class);
+        cmdTree.addPath("/cleaninventory x y z", this::sortInvAtLocation, Integer.class);
+        cmdTree.addPath("/cleaninventory x y z world", this::sortInvInWorld, String.class);
 
-		if (sender instanceof Player) {
-			player = (Player) sender;
-		}
+        cmdTree.addPath("/cleaninventory", this::sortInvForPlayer);
+        cmdTree.addPath("/cleaninventory ".concat(ownSubCommand), this::sortPlayerInventory);
+        cmdTree.addPath("/cleaninventory player", this::sortPlayerInventory, String.class);
 
-		if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())) {
-			MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_INV_CLEAN);
-			return true;
-		}
+    }
 
-		if (args.length == 4) {
-			sortInvInWorld(args[0], args[1], args[2], args[3], player, sender);
+    @Override
+    public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 
-		} else if (player == null) {
-			return false;
-		} else if (args.length == 1) {
+        if (!sender.hasPermission(PluginPermissions.CMD_INV_CLEAN.getString())) {
+            MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_INV_CLEAN);
+            return true;
+        }
 
-			return sortPlayerInventory(player, args[0]);
+        cmdTree.execute(sender, cmd, label, args);
+        return true;
+    }
 
-		} else if (args.length == 0) {
+    /**
+     * The player {@code player} sorts the inventory of the player with the name
+     * {@code playerName}. He needs the correct permissions.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void sortPlayerInventory(CommandTuple tuple) {
+        Player player = getPlayer(tuple.sender);
+        if (player == null) return;
+        String playerName = tuple.args[0];
+        if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getDisplayName())) {
+            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.getString())) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
+            }
+            if (InventorySorter.sortPlayerInventory(player)) {
+                MessageSystem.sendSortedMessage(player);
+                InventorySorter.playSortingSound(player);
+            }
+        } else {
+            if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OTHERS.getString())) {
+                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OTHERS);
+            }
 
-			sortInvForPlayer(player);
-			return true;
-		} else if (args.length == 3) {
-			sortInvAtLocation(args[0], args[1], args[2], player.getWorld(), player, sender);
-			return true;
-		}
-		return false;
-	}
+            Player player2 = Bukkit.getPlayer(playerName);
 
-	/**
-	 * The player {@code player} sorts the inventory of the player with the name
-	 * {@code playerName}. He needs the correct permissions.
-	 * 
-	 * @param player     the player who sorts the inventory.
-	 * @param playerName the name of the player whose inventory will get sorted.
-	 * @return <b>true</b> if a inventory got sorted, <b>false</b> if not.
-	 */
-	private boolean sortPlayerInventory(Player player, String playerName) {
+            if (player2 == null) {
+                MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player);
+            } else {
+                if (InventorySorter.sortInventory(player2.getInventory(), player,
+                        InventoryDetector.getPlayerInventoryList(player2))) {
+                    System.out.println(5);
+                    MessageSystem.sendSortedMessage(player);
+                    MessageSystem.sendSortedMessage(player2);
+                    InventorySorter.playSortingSound(player);
+                    InventorySorter.playSortingSound(player2);
+                }
+            }
 
-		if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getDisplayName())) {
-			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.getString())) {
-				MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
-				return true;
-			}
-			if (InventorySorter.sortPlayerInventory(player)) {
-				MessageSystem.sendSortedMessage(player);
-				InventorySorter.playSortingSound(player);
-			}
-		} else {
+        }
+    }
 
-			if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OTHERS.getString())) {
-				MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OTHERS);
-				return true;
-			}
+    private Player getPlayer(CommandSender sender) {
+        if (sender instanceof Player) {
+            return (Player) sender;
+        }
+        return null;
+    }
 
-			Player player2 = Bukkit.getPlayer(playerName);
+    /**
+     * The player {@code p} sorts a blocks inventory.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void sortInvForPlayer(CommandTuple tuple) {
+        Player p = getPlayer(tuple.sender);
+        Block block = BlockDetector.getTargetBlock(p);
+        sortBlock(block, p, p);
+    }
 
-			if (player2 == null) {
-				MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_PLAYER_NOT_ONLINE, player);
-			} else {
-				if (InventorySorter.sortInventory(player2.getInventory(), player,
-						InventoryDetector.getPlayerInventoryList(player2))) {
-					MessageSystem.sendSortedMessage(player);
-					MessageSystem.sendSortedMessage(player2);
-					InventorySorter.playSortingSound(player);
-					InventorySorter.playSortingSound(player2);
-				}
-			}
+    /**
+     * Sorts an inventory of a block if it has one.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void sortInvInWorld(CommandTuple tuple) {
 
-		}
-		return true;
-	}
+        String worldStr = tuple.args[3];
+        CommandSender cs = tuple.sender;
 
-	/**
-	 * The player {@code p} sorts a blocks inventory.
-	 * 
-	 * @param p the player who sorts the inventory.
-	 */
-	private void sortInvForPlayer(Player p) {
-		Block block = BlockDetector.getTargetBlock(p);
-		sortBlock(block, p, p);
-	}
+        World world = Bukkit.getWorld(worldStr);
+        if (world == null) {
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_WORLD_NAME, cs, worldStr);
+        } else {
+            sortInvAtLocation(tuple);
+        }
+    }
 
-	/**
-	 * Sorts an inventory of a block if it has one.
-	 * 
-	 * @param xStr     the x coordinate as a String.
-	 * @param yStr     the y coordinate as a String.
-	 * @param zStr     the z coordinate as a String.
-	 * @param worldStr the name of the world of block whose inventory you want to
-	 *                 sort.
-	 * @param player   the player which executed the inventory (can be null).
-	 * @param cs       the sender which executed the command.
-	 */
-	private void sortInvInWorld(String xStr, String yStr, String zStr, String worldStr, Player player,
-			CommandSender cs) {
+    /**
+     * Sorts an inventory of a block if it has one.
+     *
+     * @param tuple the tuple the sub-command should run on.
+     */
+    private void sortInvAtLocation(CommandTuple tuple) {
+        String xStr = tuple.args[0];
+        String yStr = tuple.args[1];
+        String zStr = tuple.args[2];
+        CommandSender sender = tuple.sender;
+        Player player = getPlayer(sender);
+        World world;
+        if (tuple.args.length >= 4) {
+            world = Bukkit.getWorld(tuple.args[3]);
+        } else {
+            world = player.getWorld();
+        }
+        int x = (int) Double.parseDouble(xStr);
+        int y = (int) Double.parseDouble(yStr);
+        int z = (int) Double.parseDouble(zStr);
+        Block block = BlockDetector.getBlockByLocation(new Location(world, x, y, z));
+        sortBlock(block, player, sender);
+    }
 
-		World world = Bukkit.getWorld(worldStr);
-		if (world == null) {
-			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_WORLD_NAME, cs, worldStr);
-		} else {
-			sortInvAtLocation(xStr, yStr, zStr, world, player, cs);
-		}
-	}
+    /**
+     * Sorts the inventory of a block if it has one.
+     *
+     * @param block  the block which may have an inventory.
+     * @param p      the player who is sorting.
+     * @param sender the sender which executed the command.
+     */
+    private void sortBlock(Block block, Player p, CommandSender sender) {
+        if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
+            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_INVENTORY, sender);
+        } else if (CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
+            // isPlayerOnCooldown sends error message
+        } else if (InventorySorter.sortPlayerBlock(block, p)) {
+            MessageSystem.sendSortedMessage(sender);
+        } else {
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
+                    "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
+                            + ")");
+        }
+    }
 
-	/**
-	 * Sorts an inventory of a block if it has one.
-	 * 
-	 * @param xStr   the x coordinate as a String.
-	 * @param yStr   the y coordinate as a String.
-	 * @param zStr   the z coordinate as a String.
-	 * @param world  the world of block whose inventory you want to sort.
-	 * @param player the player which executed the inventory (can be null).
-	 * @param sender the sender which executed the command.
-	 */
-	private void sortInvAtLocation(String xStr, String yStr, String zStr, World world, Player player,
-			CommandSender sender) {
-		int x = (int) Double.parseDouble(xStr);
-		int y = (int) Double.parseDouble(yStr);
-		int z = (int) Double.parseDouble(zStr);
-		Block block = BlockDetector.getBlockByLocation(new Location(world, x, y, z));
-		sortBlock(block, player, sender);
-	}
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
 
-	/**
-	 * Sorts the inventory of a block if it has one.
-	 * 
-	 * @param block  the block which may have an inventory.
-	 * @param p      the player who is sorting.
-	 * @param sender the sender which executed the command.
-	 */
-	private void sortBlock(Block block, Player p, CommandSender sender) {
-		if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
-			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_INVENTORY, sender);
-		} else if (CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
-			// isPlayerOnCooldown sends error message
-		} else if (InventorySorter.sortPlayerBlock(block, p)) {
-			MessageSystem.sendSortedMessage(sender);
-		} else {
-			MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
-					"(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
-							+ ")");
-		}
-	}
+        final List<String> completions = new ArrayList<>();
 
-	@Override
-	public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        if (args.length == 1) {
+            StringUtil.copyPartialMatches(args[0], Collections.singletonList(ownSubCommand), completions);
+        }
 
-		final List<String> completions = new ArrayList<>();
-
-		if (args.length == 1) {
-			StringUtil.copyPartialMatches(args[0], Arrays.asList(ownSubCommand), completions);
-		}
-
-		return completions;
-	}
+        return completions;
+    }
 }

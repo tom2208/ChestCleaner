@@ -24,7 +24,14 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     public void execute(CommandSender sender, Command command, String alias, String[] args) {
 
+        //TODO reorder so int types etc comes before string
+
         GraphNode<Quadruple> node = getRoot();
+
+        if ((args.length == 0 && node.getValue().consumer != null) || node.getValue().definiteExecute) {
+            executeNode(node, sender, command, alias, args);
+            return;
+        }
 
         for (int i = 0; i < args.length; i++) {
             boolean isLast = i == args.length - 1;
@@ -71,7 +78,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         // RefillType
-        if(node.getValue().type.equals(SortingAdminCommand.RefillType.class)){
+        if (node.getValue().type.equals(SortingAdminCommand.RefillType.class)) {
             return SortingAdminCommand.RefillType.getByName(str);
         }
 
@@ -102,11 +109,11 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     /**
      * Adds a node into the command tree. This node has no definite execution.
      *
-     * @param path            like the ingame command. Example: "/cmd subCmd arg".
-     * @param consumer        the consumer which gets get executed if this command gets executed.
-     *                        Use {@code null} if you don't want this to be an executable path.
-     * @param type            This is null if the path directs to a node which is not an argument
-     *                        otherwise it determines the type of the argument.
+     * @param path     like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer the consumer which gets get executed if this command gets executed.
+     *                 Use {@code null} if you don't want this to be an executable path.
+     * @param type     This is null if the path directs to a node which is not an argument
+     *                 otherwise it determines the type of the argument.
      */
     public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type) {
         addPath(path, consumer, type, false);
@@ -115,9 +122,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     /**
      * Adds a node into the command tree. This node has no definite execution and no type.
      *
-     * @param path            like the ingame command. Example: "/cmd subCmd arg".
-     * @param consumer        the consumer which gets get executed if this command gets executed.
-     *                        Use {@code null} if you don't want this to be an executable path.
+     * @param path     like the ingame command. Example: "/cmd subCmd arg".
+     * @param consumer the consumer which gets get executed if this command gets executed.
+     *                 Use {@code null} if you don't want this to be an executable path.
      */
     public void addPath(String path, Consumer<CommandTuple> consumer) {
         addPath(path, consumer, null, false);
@@ -137,6 +144,12 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
         String[] args = path.split(" ");
         GraphNode<Quadruple> node = getRoot();
+        if(path.equalsIgnoreCase("/"+getRoot().getValue().label)){
+            getRoot().getValue().consumer = consumer;
+            getRoot().getValue().type = type;
+            getRoot().getValue().definiteExecute = definiteExecute;
+            return;
+        }
 
         for (int i = 1; i < args.length; i++) {
             final int finalI = i;
