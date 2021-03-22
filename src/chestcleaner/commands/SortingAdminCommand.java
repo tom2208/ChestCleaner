@@ -106,7 +106,6 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingadmin refill type", null, RefillType.class);
         cmdTree.addPath("/sortingadmin refill true/false", this::setAllRefills, Boolean.class);
         cmdTree.addPath("/sortingadmin refill type true/false", this::setRefill, Boolean.class);
-        System.out.println(cmdTree);
     }
 
     @Override
