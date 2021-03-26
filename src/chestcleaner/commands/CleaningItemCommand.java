@@ -88,6 +88,31 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+
+        final List<String> completions = new ArrayList<>();
+        final List<String> cleaningItemCommands = Arrays.asList(strCommandList);
+
+        switch (args.length) {
+            case 1:
+                StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
+                break;
+            case 2:
+                if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
+                        || args[0].equalsIgnoreCase(openEventSubCommand)) {
+
+                    StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
+                } else if (giveSubCommand.equalsIgnoreCase(args[0])) {
+                    StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
+                            .map(Player::getName).collect(Collectors.toList()), completions);
+                }
+        }
+
+        Collections.sort(completions);
+        return completions;
+    }
+
     /**
      * Sends a value change message of the state of the {@code command} form the
      * config to the {@code sender}.
@@ -364,28 +389,4 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        final List<String> completions = new ArrayList<>();
-        final List<String> cleaningItemCommands = Arrays.asList(strCommandList);
-
-        switch (args.length) {
-            case 1:
-                StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
-                break;
-            case 2:
-                if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
-                        || args[0].equalsIgnoreCase(openEventSubCommand)) {
-
-                    StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
-                } else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-                    StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
-                            .map(Player::getName).collect(Collectors.toList()), completions);
-                }
-        }
-
-        Collections.sort(completions);
-        return completions;
-    }
 }

@@ -72,6 +72,11 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return cmdTree.getListForTabCompletion(args);
+    }
+
     private BlacklistType getListType(String[] args) {
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase(stackingSubCommand)) {
@@ -158,24 +163,6 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
      */
     public void clearSubCommand(CommandTuple tuple) {
         clearBlacklist(tuple.sender, getListType(tuple.args));
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        final List<String> completions = new ArrayList<>();
-
-        if (args.length <= 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList(strList), completions);
-        } else if (args.length == 2) {
-            StringUtil.copyPartialMatches(args[1], Arrays.asList(subCommandList), completions);
-        } else if (args.length == 3) {
-            if (addSubCommand.equalsIgnoreCase(args[1]) || removeSubCommand.equalsIgnoreCase(args[1]))
-                StringUtil.copyPartialMatches(args[2], Arrays.stream(Material.values())
-                        .map(material -> material.name().toLowerCase()).collect(Collectors.toList()), completions);
-        }
-
-        return completions;
     }
 
     private void addMaterialName(CommandSender sender, BlacklistType type, List<Material> list, String name) {

@@ -50,7 +50,7 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 
         cmdTree.addPath("/cleaninventory", this::sortInvForPlayer);
         cmdTree.addPath("/cleaninventory ".concat(ownSubCommand), this::sortPlayerInventory);
-        cmdTree.addPath("/cleaninventory player", this::sortPlayerInventory, String.class);
+        cmdTree.addPath("/cleaninventory player", this::sortPlayerInventory, Player.class);
 
     }
 
@@ -64,6 +64,11 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
 
         cmdTree.execute(sender, cmd, label, args);
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        return cmdTree.getListForTabCompletion(args);
     }
 
     /**
@@ -96,7 +101,6 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
             } else {
                 if (InventorySorter.sortInventory(player2.getInventory(), player,
                         InventoryDetector.getPlayerInventoryList(player2))) {
-                    System.out.println(5);
                     MessageSystem.sendSortedMessage(player);
                     MessageSystem.sendSortedMessage(player2);
                     InventorySorter.playSortingSound(player);
@@ -186,17 +190,5 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
                     "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
                             + ")");
         }
-    }
-
-    @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        final List<String> completions = new ArrayList<>();
-
-        if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], Collections.singletonList(ownSubCommand), completions);
-        }
-
-        return completions;
     }
 }

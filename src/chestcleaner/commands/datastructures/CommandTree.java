@@ -4,12 +4,17 @@ import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.SortingAdminCommand;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageType;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
@@ -20,7 +25,6 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     public CommandTree(String commandAlias) {
         super(new Quadruple(commandAlias, null, null, false));
     }
-
 
     public void execute(CommandSender sender, Command command, String alias, String[] args) {
 
@@ -65,7 +69,18 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
-        //TODO errorMessage
+        if(node == null || node.getValue().type == null){
+            return null;
+        }
+
+        //Player
+        if(node.getValue().type.equals(Player.class)){
+            List<Player> list = Bukkit.getOnlinePlayers().stream().filter(
+                    e -> e.getDisplayName().equalsIgnoreCase(str)).collect(Collectors.toList());
+            if(list.size() == 1){
+                return list.get(0);
+            }
+        }
 
         // String
         if (node.getValue().type.equals(String.class)) {
@@ -144,7 +159,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
     public void addPath(String path, Consumer<CommandTuple> consumer, Class<?> type, boolean definiteExecute) {
         String[] args = path.split(" ");
         GraphNode<Quadruple> node = getRoot();
-        if(path.equalsIgnoreCase("/"+getRoot().getValue().label)){
+        if (path.equalsIgnoreCase("/" + getRoot().getValue().label)) {
             getRoot().getValue().consumer = consumer;
             getRoot().getValue().type = type;
             getRoot().getValue().definiteExecute = definiteExecute;
@@ -172,6 +187,50 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             node = tempNode;
         }
 
+    }
+
+    private List<String> getListOfCandidates (String[] args) {
+
+        List<String> list = new ArrayList<>();
+        List<GraphNode<Quadruple>> nodes = getPathNodeList(args);
+        if (nodes.size() == args.length) {
+            for (GraphNode<Quadruple> child : nodes.get(nodes.size() - 1).getChildren()) {
+                list.addAll(genNodeCompletions(child));
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Returns a sorted list of suggestions for TabCompletion with partial matches for the last argument.
+     * @param args the arguments of the command.
+     * @return the list.
+     */
+    public List<String> getListForTabCompletion(String[] args){
+        List<String> completions = new ArrayList<>();
+        StringUtil.copyPartialMatches(args[args.length-1], getListOfCandidates(args), completions);
+        Collections.sort(completions);
+        return completions;
+    }
+
+    private List<String> genNodeCompletions(GraphNode<Quadruple> node) {
+        List<String> list = new ArrayList<>();
+        Predicate<Class<?>> isType = c -> c.equals(node.getValue().type);
+        if (node.getValue().type == null) {
+            list.add(node.getValue().label);
+        } else if (isType.test(Player.class)) {
+            list = Bukkit.getOnlinePlayers().stream().map(Player::getDisplayName).collect(Collectors.toList());
+        } else if (isType.test(BlacklistCommand.BlacklistType.class)) {
+            list = Arrays.stream(BlacklistCommand.BlacklistType.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if (isType.test(Boolean.class)) {
+            list.add("true");
+            list.add("false");
+        } else if (isType.test(Material.class)) {
+            list = Arrays.stream(Material.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if (isType.test(SortingAdminCommand.RefillType.class)) {
+            list = Arrays.stream(SortingAdminCommand.RefillType.values()).map(Enum::toString).collect(Collectors.toList());
+        }
+        return list;
     }
 
     /**
@@ -215,6 +274,45 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         }
         return null;
+    }
+
+    /**
+     * Returns a List of all Nodes that exists in the continuous {@code path}. The root is included.
+     *
+     * @param args the arguments of which you want to get the Node-List from.
+     * @return the Iterator.
+     */
+    private List<GraphNode<Quadruple>> getPathNodeList(String[] args) {
+        List<GraphNode<Quadruple>> elements = new ArrayList<>();
+        GraphNode<Quadruple> node = getRoot();
+        elements.add(node);
+        for (String arg : args) {
+            boolean found = false;
+            for (GraphNode<Quadruple> child : node.getChildren()) {
+                if (child.getValue().label.equalsIgnoreCase(arg)) {
+                    found = true;
+                    elements.add(child);
+                    node = child;
+                    break;
+                }
+            }
+
+            if (!found) {
+                for (GraphNode<Quadruple> child : node.getChildren()) {
+                    if (getInterpretedObjByNodeType(arg, child) != null) {
+                        found = true;
+                        elements.add(child);
+                        node = child;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                break;
+            }
+        }
+        return elements;
     }
 
     static class Quadruple {
