@@ -39,9 +39,11 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
     private final String ownSubCommand = "own";
     private final CommandTree cmdTree;
 
+    public static final String COMMAND_ALIAS = "cleaninventory";
+
+
     public CleanInventoryCommand() {
-        String alias = "cleaninventory";
-        cmdTree = new CommandTree(alias);
+        cmdTree = new CommandTree(COMMAND_ALIAS);
 
         cmdTree.addPath("/cleaninventory x", null, Integer.class);
         cmdTree.addPath("/cleaninventory x y", null, Integer.class);

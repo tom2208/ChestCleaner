@@ -2,6 +2,8 @@ package chestcleaner.commands.datastructures;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.SortingAdminCommand;
+import chestcleaner.sorting.CategorizerManager;
+import chestcleaner.sorting.categorizer.Categorizer;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
@@ -21,6 +23,9 @@ import java.util.stream.Collectors;
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
  */
 public class CommandTree extends Tree<CommandTree.Quadruple> {
+
+    //TODO refill block true/false does not work, further there should be a syntax message printed if the last argument is wrong and it
+    // should not execute for the second last argument.
 
     public CommandTree(String commandAlias) {
         super(new Quadruple(commandAlias, null, null, false));
@@ -69,15 +74,15 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
-        if(node == null || node.getValue().type == null){
+        if (node == null || node.getValue().type == null) {
             return null;
         }
 
         //Player
-        if(node.getValue().type.equals(Player.class)){
+        if (node.getValue().type.equals(Player.class)) {
             List<Player> list = Bukkit.getOnlinePlayers().stream().filter(
                     e -> e.getDisplayName().equalsIgnoreCase(str)).collect(Collectors.toList());
-            if(list.size() == 1){
+            if (list.size() == 1) {
                 return list.get(0);
             }
         }
@@ -90,6 +95,11 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         // Material
         if (node.getValue().type.equals(Material.class)) {
             return Material.getMaterial(str.toUpperCase());
+        }
+
+        // Categorizer
+        if (node.getValue().type.equals(Categorizer.class)) {
+            return CategorizerManager.getByName(str);
         }
 
         // RefillType
@@ -111,7 +121,11 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         // Boolean
         if (node.getValue().type.equals(Boolean.class)) {
-            return Boolean.parseBoolean(str);
+            if (str.equalsIgnoreCase("true")) {
+                return true;
+            } else if (str.equalsIgnoreCase("false")) {
+                return false;
+            }
         }
 
         return null;
@@ -189,28 +203,72 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     }
 
-    private List<String> getListOfCandidates (String[] args) {
+    /**
+     * Returns a sorted list of suggestions for TabCompletion with partial matches for the last argument.
+     *
+     * @param args the arguments of the command.
+     * @return the list.
+     */
+    public List<String> getListForTabCompletion(String[] args) {
+        List<String> completions = new ArrayList<>();
+        StringUtil.copyPartialMatches(args[args.length - 1], getListOfCandidates(args), completions);
+        Collections.sort(completions);
+        return completions;
+    }
+
+    private List<String> getListOfCandidates(String[] args) {
 
         List<String> list = new ArrayList<>();
         List<GraphNode<Quadruple>> nodes = getPathNodeList(args);
+        GraphNode<Quadruple> lastNode = nodes.get(nodes.size() - 1);
         if (nodes.size() == args.length) {
-            for (GraphNode<Quadruple> child : nodes.get(nodes.size() - 1).getChildren()) {
+            for (GraphNode<Quadruple> child : lastNode.getChildren()) {
                 list.addAll(genNodeCompletions(child));
             }
+        }
+        if(lastNode.getValue().definiteExecute){
+            list.addAll(genNodeCompletions(lastNode));
         }
         return list;
     }
 
     /**
-     * Returns a sorted list of suggestions for TabCompletion with partial matches for the last argument.
-     * @param args the arguments of the command.
-     * @return the list.
+     * Returns a List of all Nodes that exists in the continuous {@code path}. The root is included.
+     *
+     * @param args the arguments of which you want to get the Node-List from.
+     * @return the Iterator.
      */
-    public List<String> getListForTabCompletion(String[] args){
-        List<String> completions = new ArrayList<>();
-        StringUtil.copyPartialMatches(args[args.length-1], getListOfCandidates(args), completions);
-        Collections.sort(completions);
-        return completions;
+    private List<GraphNode<Quadruple>> getPathNodeList(String[] args) {
+        List<GraphNode<Quadruple>> elements = new ArrayList<>();
+        GraphNode<Quadruple> node = getRoot();
+        elements.add(node);
+        for (String arg : args) {
+            boolean found = false;
+            for (GraphNode<Quadruple> child : node.getChildren()) {
+                if (child.getValue().label.equalsIgnoreCase(arg)) {
+                    found = true;
+                    elements.add(child);
+                    node = child;
+                    break;
+                }
+            }
+
+            if (!found) {
+                for (GraphNode<Quadruple> child : node.getChildren()) {
+                    if (getInterpretedObjByNodeType(arg, child) != null) {
+                        found = true;
+                        elements.add(child);
+                        node = child;
+                        break;
+                    }
+                }
+            }
+
+            if (!found) {
+                break;
+            }
+        }
+        return elements;
     }
 
     private List<String> genNodeCompletions(GraphNode<Quadruple> node) {
@@ -229,6 +287,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             list = Arrays.stream(Material.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(SortingAdminCommand.RefillType.class)) {
             list = Arrays.stream(SortingAdminCommand.RefillType.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if (isType.test(Categorizer.class)) {
+            list = CategorizerManager.getAllNames();
         }
         return list;
     }
@@ -274,45 +334,6 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         }
         return null;
-    }
-
-    /**
-     * Returns a List of all Nodes that exists in the continuous {@code path}. The root is included.
-     *
-     * @param args the arguments of which you want to get the Node-List from.
-     * @return the Iterator.
-     */
-    private List<GraphNode<Quadruple>> getPathNodeList(String[] args) {
-        List<GraphNode<Quadruple>> elements = new ArrayList<>();
-        GraphNode<Quadruple> node = getRoot();
-        elements.add(node);
-        for (String arg : args) {
-            boolean found = false;
-            for (GraphNode<Quadruple> child : node.getChildren()) {
-                if (child.getValue().label.equalsIgnoreCase(arg)) {
-                    found = true;
-                    elements.add(child);
-                    node = child;
-                    break;
-                }
-            }
-
-            if (!found) {
-                for (GraphNode<Quadruple> child : node.getChildren()) {
-                    if (getInterpretedObjByNodeType(arg, child) != null) {
-                        found = true;
-                        elements.add(child);
-                        node = child;
-                        break;
-                    }
-                }
-            }
-
-            if (!found) {
-                break;
-            }
-        }
-        return elements;
     }
 
     static class Quadruple {

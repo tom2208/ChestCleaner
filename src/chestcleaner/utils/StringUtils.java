@@ -1,6 +1,5 @@
 package chestcleaner.utils;
 
-import org.apache.commons.lang.Validate;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
@@ -11,82 +10,32 @@ import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class StringUtils {
 
-    /**
-     * Same basic functionality as org.bukkit.util.StringUtil copyPartialMatches
-     * but also works to complete comma seperated lists
-     * @param token what was already input
-     * @param originals all possibilities
-     * @param collection matching possibilities
-     * @param <T> Collection of Strings
-     */
-    public static <T extends Collection<? super String>> void copyPartialMatchesCommas(
-            String token, Iterable<String> originals, T collection) {
-
-        Validate.notNull(token, "Search token cannot be null");
-        Validate.notNull(collection, "Collection cannot be null");
-        Validate.notNull(originals, "Originals cannot be null");
-
-        List<String> list = Arrays.asList(token.split(",", -1));
-        token = list.get(list.size() - 1);
-        String prefix = list.size() > 1 ? String.join(",", list.subList(0, list.size() - 1)) + "," : "";
-
-        for (String string : originals) {
-            if(string.toLowerCase().startsWith(token.toLowerCase())) {
-                collection.add(prefix + string);
-            }
-        }
-    }
-
-    public static <T extends Collection<? super String>> void copyPartialMatchesCommasNoDuplicates(
-            String token, Iterable<String> originals, T collection) {
-
-        Validate.notNull(token, "Search token cannot be null");
-        Validate.notNull(collection, "Collection cannot be null");
-        Validate.notNull(originals, "Originals cannot be null");
-
-        List<String> list = Arrays.asList(token.split(",", -1));
-        token = list.get(list.size() - 1);
-        String prefix = list.size() > 1 ? String.join(",", list.subList(0, list.size() - 1)) + "," : "";
-
-        for (String string : originals) {
-            if(string.toLowerCase().startsWith(token.toLowerCase()) && !list.contains(string)) {
-                collection.add(prefix + string);
-            }
-        }
-    }
-
 	public static boolean isStringBoolean(CommandSender sender, String bool) {
-		if (!StringUtils.isStringTrueOrFalse(bool)) {
+		if (StringUtils.isStringNotTrueOrFalse(bool)) {
 			MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
 			return false;
 		}
 		return true;
 	}
     
-    public static boolean isStringTrueOrFalse(String str) {
-        return Boolean.parseBoolean(str) || str.equalsIgnoreCase(Boolean.FALSE.toString());
+    public static boolean isStringNotTrueOrFalse(String str) {
+        return !Boolean.parseBoolean(str) && !str.equalsIgnoreCase(Boolean.FALSE.toString());
     }
-
-    public static List<String> getBooleanValueStringList(){
-        return Arrays.asList(Boolean.TRUE.toString(), Boolean.FALSE.toString());
-    }
-
 
     public static ItemStack getAsBook(String string) {
         ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
         BookMeta bm = (BookMeta) book.getItemMeta();
-        bm.setPages(seperateIntoPages(string));
+        assert bm != null;
+        bm.setPages(separateIntoPages(string));
         book.setItemMeta(bm);
         return book;
     }
 
-    public static List<String> seperateIntoPages(String string) {
+    public static List<String> separateIntoPages(String string) {
         List<String> pages = new ArrayList<>();
         String curPage = "";
         int maxLines = 14;

@@ -5,6 +5,7 @@ import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.CategorizerManager;
+import chestcleaner.sorting.categorizer.Categorizer;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.StringUtils;
 import chestcleaner.utils.messages.MessageSystem;
@@ -15,10 +16,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -58,11 +56,11 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
     private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand,
             "true", "false"};
 
-    private final String alias = "sortingconfig";
+    public static final String COMMAND_ALIAS = "sortingconfig";
     private final CommandTree cmdTree;
 
     public SortingConfigCommand() {
-        cmdTree = new CommandTree(alias);
+        cmdTree = new CommandTree(COMMAND_ALIAS);
 
         // autoSort
         cmdTree.addPath("/sortingconfig autosort", this::getConfig);
@@ -72,7 +70,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingconfig categories list", this::getCategoryList);
         cmdTree.addPath("/sortingconfig categories list page", this::getCategoryList, Integer.class);
         cmdTree.addPath("/sortingconfig categories reset", this::resetCategories);
-        cmdTree.addPath("/sortingconfig categories set names", this::setCategories, String.class);
+        cmdTree.addPath("/sortingconfig categories set names", this::setCategories, Categorizer.class, true);
         // pattern
         cmdTree.addPath("/sortingconfig pattern", this::getConfig);
         cmdTree.addPath("/sortingconfig pattern pattern", this::setPattern, String.class);
@@ -113,36 +111,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender cs, Command cmd, String label, String[] args) {
-
-        final List<String> completions = new ArrayList<>();
-
-        if (args.length <= 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList(strCommandList), completions);
-
-        } else if (args.length == 2) {
-            if (args[0].equalsIgnoreCase(autosortSubCommand) || args[0].equalsIgnoreCase(chatNotificationSubCommand)
-                    || args[0].equalsIgnoreCase(sortingSoundSubCommand) || args[0].equalsIgnoreCase(clickSortSubCommand))
-                StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
-            else if (args[0].equalsIgnoreCase(categoriesSubCommand))
-                StringUtil.copyPartialMatches(args[1], Arrays.asList(categoriesSubCommandList), completions);
-            else if (args[0].equalsIgnoreCase(patternSubCommand))
-                StringUtil.copyPartialMatches(args[1], SortingPattern.getIDList(), completions);
-            else if (args[0].equalsIgnoreCase(refillSubCommand))
-                StringUtil.copyPartialMatches(args[1], Arrays.asList(refillSubCommandList), completions);
-
-        } else if (args.length == 3) {
-            if (categoriesSubCommand.equalsIgnoreCase(args[0]) && setSubCommand.equalsIgnoreCase(args[1])) {
-                StringUtils.copyPartialMatchesCommasNoDuplicates(args[2], CategorizerManager.getAllNames(),
-                        completions);
-            } else if (refillSubCommand.equalsIgnoreCase(args[0])) {
-                if (args[1].equalsIgnoreCase(blocksSubCommand) || args[1].equalsIgnoreCase(consumablesSubCommand)
-                        || args[1].equalsIgnoreCase(breakablesSubCommand)) {
-                    StringUtil.copyPartialMatches(args[2], StringUtils.getBooleanValueStringList(), completions);
-                }
-            }
-        }
-
-        return completions;
+        return cmdTree.getListForTabCompletion(args);
     }
 
     private void getConfig(CommandTuple tuple) {
@@ -202,7 +171,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         String bool = tuple.args[1];
 
         if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_CLICKSORT)) {
-            if (!StringUtils.isStringTrueOrFalse(bool)) {
+            if (StringUtils.isStringNotTrueOrFalse(bool)) {
                 MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
             } else {
                 boolean b = Boolean.parseBoolean(bool);
@@ -255,7 +224,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) tuple.sender;
         String bool = tuple.args[1];
 
-        if (!StringUtils.isStringTrueOrFalse(bool)) {
+        if (StringUtils.isStringNotTrueOrFalse(bool)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
         } else {
             boolean change = false;
@@ -299,7 +268,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         String bool = tuple.args[1];
 
         if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_NOTIFICATION_BOOL)) {
-            if (!StringUtils.isStringTrueOrFalse(bool)) {
+            if (StringUtils.isStringNotTrueOrFalse(bool)) {
                 MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
             } else {
                 boolean b = Boolean.parseBoolean(bool);
@@ -315,7 +284,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         String bool = tuple.args[1];
 
         if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_SOUND_BOOL)) {
-            if (!StringUtils.isStringTrueOrFalse(bool)) {
+            if (StringUtils.isStringNotTrueOrFalse(bool)) {
                 MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
             } else {
                 boolean b = Boolean.parseBoolean(bool);
@@ -358,7 +327,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         String bool = tuple.args[1];
 
         if (checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_SET_AUTOSORT)) {
-            if (!StringUtils.isStringTrueOrFalse(bool)) {
+            if (StringUtils.isStringNotTrueOrFalse(bool)) {
                 MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, player);
             } else {
 
@@ -385,7 +354,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         Player player = (Player) tuple.sender;
         String commaSeparatedCategories = tuple.args[2];
 
-        List<String> categories = Arrays.asList(commaSeparatedCategories.split(","));
+        List<String> categories = SortingAdminCommand.getCategoriesFromArguments(tuple.args);
 
         if (!player.hasPermission(PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES.getString())) {
             MessageSystem.sendPermissionError(player, PluginPermissions.CMD_SORTING_CONFIG_CATEGORIES);

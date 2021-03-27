@@ -2,7 +2,6 @@ package chestcleaner.commands;
 
 import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfigManager;
-import chestcleaner.main.ChestCleaner;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.StringUtils;
 import chestcleaner.commands.datastructures.CommandTree;
@@ -19,11 +18,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.util.StringUtil;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * A command class representing the CleaningItem command. CleaningItem Command
@@ -90,27 +86,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-
-        final List<String> completions = new ArrayList<>();
-        final List<String> cleaningItemCommands = Arrays.asList(strCommandList);
-
-        switch (args.length) {
-            case 1:
-                StringUtil.copyPartialMatches(args[0], cleaningItemCommands, completions);
-                break;
-            case 2:
-                if (args[0].equalsIgnoreCase(activeSubCommand) || args[0].equalsIgnoreCase(durabilityLossSubCommand)
-                        || args[0].equalsIgnoreCase(openEventSubCommand)) {
-
-                    StringUtil.copyPartialMatches(args[1], StringUtils.getBooleanValueStringList(), completions);
-                } else if (giveSubCommand.equalsIgnoreCase(args[0])) {
-                    StringUtil.copyPartialMatches(args[1], ChestCleaner.main.getServer().getOnlinePlayers().stream()
-                            .map(Player::getName).collect(Collectors.toList()), completions);
-                }
-        }
-
-        Collections.sort(completions);
-        return completions;
+        return cmdTree.getListForTabCompletion(args);
     }
 
     /**
@@ -264,7 +240,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_ACTIVE);
 
-        } else if (!StringUtils.isStringTrueOrFalse(value)) {
+        } else if (StringUtils.isStringNotTrueOrFalse(value)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         } else {
             boolean b = Boolean.parseBoolean(value);
@@ -286,7 +262,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_ITEM_SET_DURABILITYLOSS);
-        } else if (!StringUtils.isStringTrueOrFalse(value)) {
+        } else if (StringUtils.isStringNotTrueOrFalse(value)) {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         } else {
 
