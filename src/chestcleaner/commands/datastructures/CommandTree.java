@@ -24,9 +24,6 @@ import java.util.stream.Collectors;
  */
 public class CommandTree extends Tree<CommandTree.Quadruple> {
 
-    //TODO refill block true/false does not work, further there should be a syntax message printed if the last argument is wrong and it
-    // should not execute for the second last argument.
-
     public CommandTree(String commandAlias) {
         super(new Quadruple(commandAlias, null, null, false));
     }
@@ -48,6 +45,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             if (nextNode == null) {
                 for (GraphNode<Quadruple> child : node.getChildren()) {
                     if (isTypeNode(child) && getInterpretedObjByNodeType(args[i], child) != null) {
+                        nextNode = child;
                         node = child;
                         break;
                     }
@@ -55,7 +53,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             } else {
                 node = nextNode;
             }
-            if (isLast || node.getValue().definiteExecute) {
+            System.out.println(nextNode);
+            if ((isLast || node.getValue().definiteExecute) && nextNode != null) {
                 executeNode(node, sender, command, alias, args);
                 return;
             }
@@ -122,9 +121,9 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         // Boolean
         if (node.getValue().type.equals(Boolean.class)) {
             if (str.equalsIgnoreCase("true")) {
-                return true;
+                return Boolean.TRUE;
             } else if (str.equalsIgnoreCase("false")) {
-                return false;
+                return Boolean.FALSE;
             }
         }
 
