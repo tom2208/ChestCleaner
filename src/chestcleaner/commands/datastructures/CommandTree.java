@@ -190,16 +190,29 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
                 Quadruple tuple = new Quadruple(args[i], null, null, false);
                 tempNode = new GraphNode<>(tuple);
                 node.addChild(tempNode);
+                reorderChildren(node);
             }
 
             if (isLastElement) {
                 tempNode.getValue().consumer = consumer;
                 tempNode.getValue().type = type;
                 tempNode.getValue().definiteExecute = definiteExecute;
+                reorderChildren(tempNode.getParents().get(0));
             }
             node = tempNode;
         }
 
+    }
+
+    private void reorderChildren(GraphNode<Quadruple> node) {
+        List<GraphNode<Quadruple>> stringValueNodes = new ArrayList<>();
+        for (GraphNode<Quadruple> child : node.getChildren()) {
+            if (child.getValue().type != null && child.getValue().type.equals(String.class)) {
+                stringValueNodes.add(child);
+            }
+        }
+        node.getChildren().removeAll(stringValueNodes);
+        node.getChildren().addAll(stringValueNodes);
     }
 
     /**
@@ -225,7 +238,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
                 list.addAll(genNodeCompletions(child));
             }
         }
-        if(lastNode.getValue().definiteExecute){
+        if (lastNode.getValue().definiteExecute) {
             list.addAll(genNodeCompletions(lastNode));
         }
         return list;
