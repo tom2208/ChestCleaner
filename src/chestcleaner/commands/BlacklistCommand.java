@@ -1,10 +1,8 @@
 package chestcleaner.commands;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import chestcleaner.commands.datastructures.CommandTuple;
@@ -16,7 +14,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
 
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
@@ -37,18 +34,9 @@ public class BlacklistCommand implements CommandExecutor, TabCompleter {
 
     public static final String COMMAND_ALIAS = "blacklist";
 
-    /* sub-commands */
-    private final String addSubCommand = "add";
-    private final String removeSubCommand = "remove";
-    private final String listSubCommand = "list";
-    private final String clearSubCommand = "clear";
-
     private final String stackingSubCommand = "stacking";
     private final String inventorySubCommand = "inventory";
     private final String autoRefillSubCommand = "autoRefill";
-
-    private final String[] subCommandList = {addSubCommand, removeSubCommand, listSubCommand, clearSubCommand};
-    private final String[] strList = {stackingSubCommand, inventorySubCommand, autoRefillSubCommand};
 
     public BlacklistCommand() {
         cmdTree = new CommandTree(COMMAND_ALIAS);

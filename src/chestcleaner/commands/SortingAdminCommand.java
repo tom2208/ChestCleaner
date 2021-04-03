@@ -2,17 +2,20 @@ package chestcleaner.commands;
 
 import chestcleaner.commands.datastructures.CommandTree;
 import chestcleaner.commands.datastructures.CommandTuple;
+import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.Category;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.CategorizerManager;
 import chestcleaner.sorting.categorizer.Categorizer;
+import chestcleaner.utils.SortingAdminUtils;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.StringUtils;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -81,8 +84,12 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingadmin chatNotification", this::getConfig);
         cmdTree.addPath("/sortingadmin chatNotification true/false", this::setChatNotification, Boolean.class);
 
-        cmdTree.addPath("/sortingadmin sortingSound", this::getConfig);
-        cmdTree.addPath("/sortingadmin sortingSound true/false", this::setSound, Boolean.class);
+        cmdTree.addPath("/sortingadmin sortingSound active", this::getConfig);
+        cmdTree.addPath("/sortingadmin sortingSound set sound", this::setSound, Sound.class);
+        cmdTree.addPath("/sortingadmin sortingSound set sound volume", this::setSound, Float.class);
+        cmdTree.addPath("/sortingadmin sortingSound set sound volume pitch", this::setSound, Float.class);
+
+        cmdTree.addPath("/sortingadmin sortingSound active true/false", this::setSoundActive, Boolean.class);
 
         cmdTree.addPath("/sortingadmin clickSort", this::getConfig);
         cmdTree.addPath("/sortingadmin clickSort true/false", this::setClickSort, Boolean.class);
@@ -109,6 +116,27 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
             return (Player) sender;
         }
         return null;
+    }
+
+    private void setSound(CommandTuple tuple) {
+        String soundName = tuple.args[2];
+        float volume = 1F;
+        float pitch = 1F;
+        if(tuple.args.length > 3) volume = Float.parseFloat(tuple.args[3]);
+        if(tuple.args.length > 4) pitch = Float.parseFloat(tuple.args[4]);
+
+        Sound sound = SortingAdminUtils.getSoundByName(soundName);
+
+        if (sound == null) {
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR,
+                    MessageID.ERROR_SOUND_NOT_FOUND, tuple.sender, soundName);
+        } else {
+            MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
+                    MessageID.INFO_SORTING_SOUND_DEFAULT_SET, tuple.sender, sound.name());
+            PluginConfigManager.setDefaultSortingSound(sound);
+            PluginConfigManager.setDefaultVolume(volume);
+            PluginConfigManager.setDefaultPitch(pitch);
+        }
     }
 
     private void getConfig(CommandTuple tuple) {
@@ -230,10 +258,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    private void setSound(CommandTuple tuple) {
+    private void setSoundActive(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
-        String bool = tuple.args[1];
+        String bool = tuple.args[2];
 
         if (StringUtils.isStringBoolean(sender, bool)) {
             boolean b = Boolean.parseBoolean(bool);
@@ -283,7 +311,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         }
     }
 
-    public static List<String> getCategoriesFromArguments(String[] args){
+    public static List<String> getCategoriesFromArguments(String[] args) {
         return new ArrayList<>(Arrays.asList(args).subList(2, args.length));
     }
 

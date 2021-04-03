@@ -46,6 +46,7 @@ public class PluginConfig {
 		String variant = ChestCleaner.main.getDescription().getVersion().replace(".", "-");
 		ChestCleaner.main.setLocale(language, country, variant);
 		// Categorizers
+
 		CategoryLoader.loadCategorizers(
 				(List<WordCategory>) config.getList(ConfigPath.CATEGORIES_WORDS.getPath()),
 				(List<ListCategory>) config.getList(ConfigPath.CATEGORIES_LISTS.getPath()),
@@ -144,7 +145,10 @@ public class PluginConfig {
 		CATEGORIES_LISTS("categories.lists"),
 		CATEGORIES_MASTER("categories.master"),
 		CHAT_NOTIFICATION_BOOLEAN("default.sorting.notification"),
-		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound"),
+		DEFAULT_SORTING_SOUND_BOOLEAN("default.sorting.sound.active"),
+		DEFAULT_SORTING_SOUND("default.sorting.sound.name"),
+		DEFAULT_SORTING_SOUND_VOLUME("default.sorting.sound.volume"),
+		DEFAULT_SORTING_SOUND_PITCH("default.sorting.sound.pitch"),
 		DEFAULT_BREAKABLE_ITEMS_REFILL("default.refill.breakables");
 		
 		private String path;

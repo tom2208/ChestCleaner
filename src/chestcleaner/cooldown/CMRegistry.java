@@ -16,6 +16,7 @@ public class CMRegistry {
     protected CMRegistry() {
         cmMap = new HashMap<>();
         register(CMIdentifier.SORTING, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_SORTING));
+        register(CMIdentifier.CLEANING_ITEM_GET, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_GENERIC));
     }
 
     /**
@@ -61,7 +62,17 @@ public class CMRegistry {
     }
 
     public enum CMIdentifier {
-        SORTING
+        SORTING("sorting"), CLEANING_ITEM_GET("getCleaningItem");
+
+        private String name;
+        CMIdentifier(String name){
+            this.name = name;
+        }
+
+        public String getName(){
+            return name;
+        }
+
     }
 
 }

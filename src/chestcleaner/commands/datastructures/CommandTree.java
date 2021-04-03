@@ -2,12 +2,16 @@ package chestcleaner.commands.datastructures;
 
 import chestcleaner.commands.BlacklistCommand;
 import chestcleaner.commands.SortingAdminCommand;
+import chestcleaner.cooldown.CMRegistry;
+import chestcleaner.cooldown.CooldownManager;
 import chestcleaner.sorting.CategorizerManager;
 import chestcleaner.sorting.categorizer.Categorizer;
+import chestcleaner.utils.SortingAdminUtils;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -53,7 +57,6 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             } else {
                 node = nextNode;
             }
-            System.out.println(nextNode);
             if ((isLast || node.getValue().definiteExecute) && nextNode != null) {
                 executeNode(node, sender, command, alias, args);
                 return;
@@ -73,12 +76,14 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
     private Object getInterpretedObjByNodeType(String str, GraphNode<Quadruple> node) {
 
+        Predicate<Class<?>> isType = c -> node.getValue().type.equals(c);
+
         if (node == null || node.getValue().type == null) {
             return null;
         }
 
         //Player
-        if (node.getValue().type.equals(Player.class)) {
+        else if (isType.test(Player.class)) {
             List<Player> list = Bukkit.getOnlinePlayers().stream().filter(
                     e -> e.getDisplayName().equalsIgnoreCase(str)).collect(Collectors.toList());
             if (list.size() == 1) {
@@ -87,39 +92,63 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         // String
-        if (node.getValue().type.equals(String.class)) {
+        else if (isType.test(String.class)) {
             return str;
         }
 
+        // CooldownType
+        else if (isType.test(CooldownManager.class)) {
+            List<CMRegistry.CMIdentifier> ids = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
+                    (c -> c.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
+            if (ids.size() >= 1) {
+                return ids.get(0);
+            }
+
+        }
+
         // Material
-        if (node.getValue().type.equals(Material.class)) {
+        else if (isType.test(Material.class)) {
             return Material.getMaterial(str.toUpperCase());
         }
 
         // Categorizer
-        if (node.getValue().type.equals(Categorizer.class)) {
+        else if (isType.test(Categorizer.class)) {
             return CategorizerManager.getByName(str);
         }
 
         // RefillType
-        if (node.getValue().type.equals(SortingAdminCommand.RefillType.class)) {
+        else if (isType.test(SortingAdminCommand.RefillType.class)) {
             return SortingAdminCommand.RefillType.getByName(str);
         }
 
         // Blacklist
-        if (node.getValue().type.equals(BlacklistCommand.BlacklistType.class)) {
+        else if (isType.test(BlacklistCommand.BlacklistType.class)) {
             return BlacklistCommand.BlacklistType.getBlackListTypeByString(str);
         }
+
+        // Sound
+        else if(isType.test(Sound.class)){
+            return SortingAdminUtils.getSoundByName(str);
+        }
+
         // Integer
-        if (node.getValue().type.equals(Integer.class)) {
+        else if (isType.test(Integer.class)) {
             try {
                 return Integer.parseInt(str);
             } catch (NumberFormatException ignored) {
             }
         }
 
+        // Float
+        else if (isType.test(Float.class)) {
+            try {
+                return Float.parseFloat(str);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+
         // Boolean
-        if (node.getValue().type.equals(Boolean.class)) {
+        else if (node.getValue().type.equals(Boolean.class)) {
             if (str.equalsIgnoreCase("true")) {
                 return Boolean.TRUE;
             } else if (str.equalsIgnoreCase("false")) {
@@ -301,6 +330,10 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             list = Arrays.stream(SortingAdminCommand.RefillType.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(Categorizer.class)) {
             list = CategorizerManager.getAllNames();
+        } else if (isType.test(CooldownManager.class)) {
+            list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if (isType.test(Sound.class)){
+            list = Arrays.stream(Sound.values()).map(Enum::toString).collect(Collectors.toList());
         }
         return list;
     }

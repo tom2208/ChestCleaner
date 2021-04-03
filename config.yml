@@ -12,7 +12,11 @@ default:
     breakables: true
   sorting:
     notification: true
-    sound: true
+    sound:
+      active: true
+      name: ENTITY_PIG_SADDLE
+      volume: '2.0'
+      pitch: '2.0'
   refill:
     blocks: true
     consumables: true

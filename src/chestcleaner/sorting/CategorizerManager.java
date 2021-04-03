@@ -62,7 +62,7 @@ public class CategorizerManager {
 
 				if (!success) {
 					MessageSystem.sendMessageToCSWithReplacement(MessageType.SUCCESS,
-							MessageID.ERROR_CATEGORY_NOTINCONFIG, sender, categorizer.getName());
+							MessageID.ERROR_CATEGORY_NOT_IN_CONFIG, sender, categorizer.getName());
 				} else {
 
 					availableCategorizers.remove(categorizer);
@@ -115,6 +115,7 @@ public class CategorizerManager {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new StringReader(allPages));
 		Object category = yamlConfiguration.get("category");
 		addCategoryAndSave((Category<?>) category, sender);
+		assert ((Category<?>) category) != null;
 		return ((Category<?>) category).getName();
 	}
 

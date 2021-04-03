@@ -149,7 +149,7 @@ public class InventorySorter {
 	}
 
 	public static void playSortingSound(Player p) {
-		boolean flag = false;
+		boolean flag;
 		if(PlayerDataManager.containsSortingSound(p)) {
 			flag = PlayerDataManager.isSortingSound(p);
 		}else {
@@ -157,7 +157,8 @@ public class InventorySorter {
 		}
 		
 		if(flag) {
-			p.getWorld().playSound(p.getLocation(), Sound.ENTITY_PIG_SADDLE, 2F, 2F);
+			p.getWorld().playSound(p.getLocation(), PluginConfigManager.getDefaultSortingSound(),
+					PluginConfigManager.getDefaultVolume(), PluginConfigManager.getDefaultPitch());
 		}
 	}
 

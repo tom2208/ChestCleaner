@@ -10,7 +10,9 @@ import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
 import chestcleaner.sorting.categorizer.MasterCategorizer;
 import chestcleaner.sorting.categorizer.PredicateCategorizer;
 
+import chestcleaner.utils.SortingAdminUtils;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
@@ -41,7 +43,32 @@ public class PluginConfigManager {
 	public static void setDefaultBreakableRefill(boolean breakableRefill) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_BREAKABLE_ITEMS_REFILL, breakableRefill);
 	}
-	
+
+	public static void setDefaultSortingSound(Sound sound){
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND, sound.name());
+	}
+
+	public static Sound getDefaultSortingSound(){
+		String soundName = PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND.getPath());
+		return SortingAdminUtils.getSoundByName(soundName);
+	}
+
+	public static void setDefaultVolume(float volume){
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_VOLUME, String.valueOf(volume));
+	}
+
+	public static float getDefaultVolume(){
+		return Float.parseFloat(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_VOLUME.getPath()));
+	}
+
+	public static void setDefaultPitch(float pitch){
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_PITCH, String.valueOf(pitch));
+	}
+
+	public static float getDefaultPitch(){
+		return Float.parseFloat(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_PITCH.getPath()));
+	}
+
 	public static void setDefaultSortingSoundBoolean(boolean bool) {
 		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_BOOLEAN, bool);
 	}
@@ -204,6 +231,9 @@ public class PluginConfigManager {
 		
 		boolean removed = false;
 		List<Category<?>> list = (List<Category<?>>) PluginConfig.getConfig().getList(path);
+
+		assert list != null;
+
 		for(Category<?> cat : list) {
 			if(cat.getName().equalsIgnoreCase(categoryName)) {
 				list.remove(cat);

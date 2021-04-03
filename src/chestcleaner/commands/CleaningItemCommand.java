@@ -2,6 +2,7 @@ package chestcleaner.commands;
 
 import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfigManager;
+import chestcleaner.cooldown.CMRegistry;
 import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.StringUtils;
 import chestcleaner.commands.datastructures.CommandTree;
@@ -57,7 +58,7 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/cleaningitem get", this::getCleaningItem, null, false);
 
         cmdTree.addPath("/cleaningitem give @a", this::giveCleaningItem, null, false);
-        cmdTree.addPath("/cleaningitem give player", this::giveCleaningItem, String.class, false);
+        cmdTree.addPath("/cleaningitem give player", this::giveCleaningItem, Player.class, false);
 
         cmdTree.addPath("/cleaningitem set", this::setCleaningItem, null, false);
 
@@ -76,6 +77,8 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/cleaningitem durabilityLoss true/false", this::setDurabilityLoss, Boolean.class, false);
 
         cmdTree.addPath("/cleaningitem openEvent true/false", this::setOpenEventMode, Boolean.class, false);
+
+
     }
 
     @Override
@@ -143,12 +146,14 @@ public class CleaningItemCommand implements CommandExecutor, TabCompleter {
     private void getCleaningItem(CommandTuple tuple) {
         if (checkPlayer(tuple.sender)) {
             Player player = (Player) tuple.sender;
-            if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
-                MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
-            } else {
+            if(!CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.CLEANING_ITEM_GET, player)) {
+                if (!player.hasPermission(PluginPermissions.CMD_CLEANING_ITEM_GET.getString())) {
+                    MessageSystem.sendPermissionError(player, PluginPermissions.CMD_CLEANING_ITEM_GET);
+                } else {
 
-                player.getInventory().addItem(PluginConfigManager.getCleaningItem());
-                MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
+                    player.getInventory().addItem(PluginConfigManager.getCleaningItem());
+                    MessageSystem.sendMessageToCS(MessageType.SUCCESS, MessageID.INFO_CLEANITEM_YOU_GET, player);
+                }
             }
         }
     }
