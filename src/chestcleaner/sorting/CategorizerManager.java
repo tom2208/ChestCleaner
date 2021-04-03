@@ -115,7 +115,7 @@ public class CategorizerManager {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(new StringReader(allPages));
 		Object category = yamlConfiguration.get("category");
 		addCategoryAndSave((Category<?>) category, sender);
-		assert ((Category<?>) category) != null;
+		assert category != null;
 		return ((Category<?>) category).getName();
 	}
 

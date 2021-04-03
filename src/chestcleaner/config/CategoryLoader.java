@@ -48,7 +48,7 @@ public class CategoryLoader {
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsBlock", isBlock));
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsItem", isItem));
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsSolid", isSolid));
-        CategorizerManager.addCategorizer(new PredicateCategorizer("IsIntractable", isInteractive));
+        CategorizerManager.addCategorizer(new PredicateCategorizer("IsInteractable", isInteractive));
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsOccluding", isOccluding));
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsEdible", isEdible));
         CategorizerManager.addCategorizer(new PredicateCategorizer("IsFuel", isFuel));

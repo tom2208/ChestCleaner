@@ -50,11 +50,11 @@ public class ChestCleaner extends JavaPlugin {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		Objects.requireNonNull(getCommand("cleaninventory")).setExecutor(new CleanInventoryCommand());
-		Objects.requireNonNull(getCommand("cleaningitem")).setExecutor(new CleaningItemCommand());
+		Objects.requireNonNull(getCommand(CleanInventoryCommand.COMMAND_ALIAS)).setExecutor(new CleanInventoryCommand());
+		Objects.requireNonNull(getCommand(CleaningItemCommand.COMMAND_ALIAS)).setExecutor(new CleaningItemCommand());
 		Objects.requireNonNull(getCommand(BlacklistCommand.COMMAND_ALIAS)).setExecutor(new BlacklistCommand());
-		Objects.requireNonNull(getCommand("sortingconfig")).setExecutor(new SortingConfigCommand());
-		Objects.requireNonNull(getCommand("sortingadmin")).setExecutor(new SortingAdminCommand());
+		Objects.requireNonNull(getCommand(SortingConfigCommand.COMMAND_ALIAS)).setExecutor(new SortingConfigCommand());
+		Objects.requireNonNull(getCommand(SortingAdminCommand.COMMAND_ALIAS)).setExecutor(new SortingAdminCommand());
 
 		Bukkit.getPluginManager().registerEvents(new SortingListener(), this);
 		Bukkit.getPluginManager().registerEvents(new RefillListener(), this);
