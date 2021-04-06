@@ -3,3 +3,5 @@
 - Refactored the whole command structure: A new tree command structure got implemented
 
 - Added subcommands to change sorting sound: ``/sortingadmin sortingSound set <sound> <volume> <pitch>``
+
+- Fixed bug which caused older minecraft versions to produce an error on loading
