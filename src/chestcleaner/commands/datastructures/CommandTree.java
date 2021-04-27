@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 /**
  * A acyclic directed tree structure representing a command. A node holds an alias and a lambda Consumer.
  * It offers many useful methods that reduces the work which needs to be done creating new spigot command.
+ * @see <a href="https://github.com/tom2208/ChestCleaner/wiki/CommandTree">GitHub Wiki: CommandTree</a>
  */
 public class CommandTree extends Tree<CommandTree.Quadruple> {
 
@@ -80,6 +81,17 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         if (node == null || node.getValue().type == null) {
             return null;
+        }
+
+        // Cooldown
+        else if(isType.test(CMRegistry.CMIdentifier.class)){
+            List<CMRegistry.CMIdentifier> list =
+                    Arrays.stream(CMRegistry.CMIdentifier.values()).
+                            filter(c -> c.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
+
+            if (list.size() > 0) {
+                return list.get(0);
+            }
         }
 
         //Player
@@ -334,6 +346,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(Sound.class)){
             list = Arrays.stream(Sound.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if (isType.test(CMRegistry.CMIdentifier.class)){
+            list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
         }
         return list;
     }

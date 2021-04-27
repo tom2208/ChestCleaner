@@ -4,6 +4,7 @@ import chestcleaner.config.serializable.Category;
 import chestcleaner.config.serializable.ListCategory;
 import chestcleaner.config.serializable.MasterCategory;
 import chestcleaner.config.serializable.WordCategory;
+import chestcleaner.cooldown.CMRegistry;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.categorizer.Categorizer;
 import chestcleaner.sorting.categorizer.ListCategoryCategorizer;
@@ -137,24 +138,20 @@ public class PluginConfigManager {
 		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE.getPath());
 	}
 
-	public static void setUpdateCheckerActive(boolean updateCheckerActive) {
-	 	PluginConfig.setIntoConfig(PluginConfig.ConfigPath.UPDATE_CHECKER_ACTIVE, updateCheckerActive);
+	public static boolean isCooldownActive(CMRegistry.CMIdentifier id) {
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.getName()));
 	}
 
-	public static boolean isCooldownActive() {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath());
+	public static void setCooldownActive(boolean active, CMRegistry.CMIdentifier id) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.getName()), active);
 	}
 
-	public static void setCooldownActive(boolean active) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_ACTIVE, active);
+	public static int getCooldown(CMRegistry.CMIdentifier id) {
+		return PluginConfig.getConfig().getInt(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.getName()));
 	}
 
-	public static int getCooldown() {
-		return PluginConfig.getConfig().getInt(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath());
-	}
-
-	public static void setCooldown(int time) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME, time);
+	public static void setCooldown(int time, CMRegistry.CMIdentifier id) {
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.getName()), time);
 	}
 
 	public static List<String> getCategoryOrder() {

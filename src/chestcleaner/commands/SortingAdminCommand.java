@@ -5,6 +5,7 @@ import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.Category;
+import chestcleaner.cooldown.CMRegistry;
 import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.CategorizerManager;
 import chestcleaner.sorting.categorizer.Categorizer;
@@ -158,10 +159,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         } else if (command.equalsIgnoreCase(cooldownSubCommand)) {
             if (tuple.args.length >= 2 && tuple.args[1].equalsIgnoreCase(activeSubCommand)) {
                 key = activeProperty;
-                value = String.valueOf(PluginConfigManager.isCooldownActive());
+                value = String.valueOf(PluginConfigManager.isCooldownActive(CMRegistry.CMIdentifier.SORTING));
             } else {
                 key = cooldownProperty;
-                value = String.valueOf(PluginConfigManager.getCooldown());
+                value = String.valueOf(PluginConfigManager.getCooldown(CMRegistry.CMIdentifier.SORTING));
             }
 
         } else if (command.equalsIgnoreCase(patternSubCommand)) {
@@ -372,7 +373,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
             try {
                 int time = Integer.parseInt(arg);
-                PluginConfigManager.setCooldown(time);
+                PluginConfigManager.setCooldown(time, CMRegistry.CMIdentifier.SORTING);
                 MessageSystem.sendChangedValue(sender, cooldownProperty, String.valueOf(time));
 
             } catch (NumberFormatException ex) {
@@ -393,7 +394,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
             MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
         } else {
             boolean state = Boolean.parseBoolean(arg);
-            PluginConfigManager.setCooldownActive(state);
+            PluginConfigManager.setCooldownActive(state, CMRegistry.CMIdentifier.SORTING);
             MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(state));
         }
 

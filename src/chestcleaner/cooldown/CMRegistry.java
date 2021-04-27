@@ -15,8 +15,8 @@ public class CMRegistry {
 
     protected CMRegistry() {
         cmMap = new HashMap<>();
-        register(CMIdentifier.SORTING, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_SORTING));
-        register(CMIdentifier.CLEANING_ITEM_GET, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_GENERIC));
+        register(CMIdentifier.SORTING, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_SORTING, CMIdentifier.SORTING));
+        register(CMIdentifier.CLEANING_ITEM_GET, new PlayerCM(MessageID.ERROR_YOU_COOLDOWN_GENERIC, CMIdentifier.CLEANING_ITEM_GET));
     }
 
     /**

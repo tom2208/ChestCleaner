@@ -15,10 +15,12 @@ public class PlayerCM implements CooldownManager {
 
     private MessageID msgId;
     private Map<UUID, Long> map;
+    private CMRegistry.CMIdentifier id;
     private final long immuneTime = 100;
 
-    public PlayerCM(MessageID msgId) {
+    public PlayerCM(MessageID msgId, CMRegistry.CMIdentifier id) {
         this.msgId = msgId;
+        this.id = id;
         map = new HashMap<>();
     }
 
@@ -34,14 +36,14 @@ public class PlayerCM implements CooldownManager {
         Player player = (Player) obj;
 
         boolean immune = false;
-        if (!PluginConfigManager.isCooldownActive()
+        if (!PluginConfigManager.isCooldownActive(id)
                 || player.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
             immune = true;
         }
 
         if (map.containsKey(player.getUniqueId())) {
             long difference = System.currentTimeMillis() - map.get(player.getUniqueId());
-            int cooldown = PluginConfigManager.getCooldown();
+            int cooldown = PluginConfigManager.getCooldown(id);
 
             if (immune) {
                 if (difference >= immuneTime) {

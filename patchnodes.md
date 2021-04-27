@@ -5,3 +5,5 @@
 - Added subcommands to change sorting sound: ``/sortingadmin sortingSound set <sound> <volume> <pitch>``
 
 - Fixed bug which caused older minecraft versions to produce an error on loading
+
+- added cooldown to ``/cleaningitem get`` command

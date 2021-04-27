@@ -26,7 +26,7 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 	public RefillListener() {
 		specialBlockRefills = new HashMap<>();
-		try { 
+		try {
 			specialBlockRefills.put(Material.WHEAT, Material.WHEAT_SEEDS);
 			specialBlockRefills.put(Material.BEETROOTS, Material.BEETROOT_SEEDS);
 			specialBlockRefills.put(Material.MELON_STEM, Material.MELON_SEEDS);
