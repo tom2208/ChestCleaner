@@ -7,6 +7,7 @@ import java.util.List;
 import chestcleaner.commands.datastructures.CommandTree;
 import chestcleaner.commands.datastructures.CommandTuple;
 import chestcleaner.cooldown.CMRegistry;
+import chestcleaner.utils.SortingUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -181,16 +182,16 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
      * @param sender the sender which executed the command.
      */
     private void sortBlock(Block block, Player p, CommandSender sender) {
-        if (PluginConfigManager.getBlacklistInventory().contains(block.getType())) {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_BLACKLIST_INVENTORY, sender);
-        } else if (CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
-            // isPlayerOnCooldown sends error message
-        } else if (InventorySorter.sortPlayerBlock(block, p)) {
-            MessageSystem.sendSortedMessage(sender);
-        } else {
-            MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
-                    "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
-                            + ")");
+        if (SortingUtils.isOnInventoryBlacklist(block, sender)) {
+            if (CMRegistry.isOnCooldown(CMRegistry.CMIdentifier.SORTING, p)) {
+                // isPlayerOnCooldown sends error message
+            } else if (InventorySorter.sortPlayerBlock(block, p)) {
+                MessageSystem.sendSortedMessage(sender);
+            } else {
+                MessageSystem.sendMessageToCSWithReplacement(MessageType.ERROR, MessageID.ERROR_BLOCK_NO_INVENTORY, sender,
+                        "(" + block.getX() + " / " + block.getY() + " / " + block.getZ() + ", " + block.getType().name()
+                                + ")");
+            }
         }
     }
 }

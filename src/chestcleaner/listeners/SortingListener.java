@@ -53,9 +53,9 @@ public class SortingListener implements org.bukkit.event.Listener {
 
                     Block b = BlockDetector.getTargetBlock(player);
 
-                    if (!InventoryDetector.hasInventoryHolder(b)
+                    if ((!InventoryDetector.hasInventoryHolder(b))
                             || PluginConfigManager.getBlacklistInventory().contains(b.getType()))
-                        return;
+                    return;
 
                     if (InventorySorter.sortPlayerBlock(b, player)) {
                         damageItem(player);
