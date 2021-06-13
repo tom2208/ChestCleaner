@@ -146,7 +146,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         return isPlayerHoldingCleaningItemInMainHand(player) || isPlayerHoldingCleaningItemInOffHand(player);
     }
 
-    private ItemStack getCompairableItem(ItemStack item) {
+    private ItemStack getComparableItem(ItemStack item) {
         ItemStack compItem = item.clone();
         ItemMeta itemMeta = compItem.getItemMeta();
         Damageable damageable = ((Damageable) itemMeta);
@@ -162,7 +162,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         if (item.getType().equals(Material.AIR)) {
             return false;
         }
-        return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
+        return getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
     }
 
     private boolean isPlayerHoldingCleaningItemInOffHand(Player player) {
@@ -170,7 +170,7 @@ public class SortingListener implements org.bukkit.event.Listener {
         if (item.getType().equals(Material.AIR)) {
             return false;
         }
-        return getCompairableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
+        return getComparableItem(item).isSimilar(PluginConfigManager.getCleaningItem());
     }
 
     private boolean isPlayerAllowedToCleanOwnInv(Player player) {
