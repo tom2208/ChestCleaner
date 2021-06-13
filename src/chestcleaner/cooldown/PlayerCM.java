@@ -35,14 +35,12 @@ public class PlayerCM implements CooldownManager {
 
         Player player = (Player) obj;
 
-        boolean immune = false;
-        if (!PluginConfigManager.isCooldownActive(id)
-                || player.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString())) {
-            immune = true;
-        }
+        boolean immune = !PluginConfigManager.isCooldownActive(id)
+                || player.hasPermission(PluginPermissions.COOLDOWN_IMMUNE.getString());
 
         if (map.containsKey(player.getUniqueId())) {
             long difference = System.currentTimeMillis() - map.get(player.getUniqueId());
+            System.out.println(difference);
             int cooldown = PluginConfigManager.getCooldown(id);
 
             if (immune) {

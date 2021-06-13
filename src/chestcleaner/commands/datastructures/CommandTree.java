@@ -87,7 +87,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         else if(isType.test(CMRegistry.CMIdentifier.class)){
             List<CMRegistry.CMIdentifier> list =
                     Arrays.stream(CMRegistry.CMIdentifier.values()).
-                            filter(c -> c.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
+                            filter(c -> c.toString().equalsIgnoreCase(str)).collect(Collectors.toList());
 
             if (list.size() > 0) {
                 return list.get(0);
@@ -106,16 +106,6 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         // String
         else if (isType.test(String.class)) {
             return str;
-        }
-
-        // CooldownType
-        else if (isType.test(CooldownManager.class)) {
-            List<CMRegistry.CMIdentifier> ids = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
-                    (c -> c.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
-            if (ids.size() >= 1) {
-                return ids.get(0);
-            }
-
         }
 
         // Material

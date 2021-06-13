@@ -19,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PluginConfigManager {
@@ -59,7 +60,7 @@ public class PluginConfigManager {
 	}
 
 	public static float getDefaultVolume(){
-		return Float.parseFloat(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_VOLUME.getPath()));
+		return Float.parseFloat(Objects.requireNonNull(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_VOLUME.getPath())));
 	}
 
 	public static void setDefaultPitch(float pitch){
@@ -67,7 +68,7 @@ public class PluginConfigManager {
 	}
 
 	public static float getDefaultPitch(){
-		return Float.parseFloat(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_PITCH.getPath()));
+		return Float.parseFloat(Objects.requireNonNull(PluginConfig.getConfig().getString(PluginConfig.ConfigPath.DEFAULT_SORTING_SOUND_PITCH.getPath())));
 	}
 
 	public static void setDefaultSortingSoundBoolean(boolean bool) {
@@ -139,19 +140,19 @@ public class PluginConfigManager {
 	}
 
 	public static boolean isCooldownActive(CMRegistry.CMIdentifier id) {
-		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.getName()));
+		return PluginConfig.getConfig().getBoolean(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.toString()));
 	}
 
 	public static void setCooldownActive(boolean active, CMRegistry.CMIdentifier id) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.getName()), active);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_ACTIVE.getPath().concat(".").concat(id.toString()), active);
 	}
 
 	public static int getCooldown(CMRegistry.CMIdentifier id) {
-		return PluginConfig.getConfig().getInt(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.getName()));
+		return PluginConfig.getConfig().getInt(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.toString()));
 	}
 
 	public static void setCooldown(int time, CMRegistry.CMIdentifier id) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.getName()), time);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.COOLDOWN_TIME.getPath().concat(".").concat(id.toString()), time);
 	}
 
 	public static List<String> getCategoryOrder() {

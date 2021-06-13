@@ -375,6 +375,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
         CommandSender sender = tuple.sender;
         String arg = tuple.args[3];
+        CMRegistry.CMIdentifier identifier = getIDByString(tuple.args[1]);
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
@@ -382,7 +383,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
 
             try {
                 int time = Integer.parseInt(arg);
-                PluginConfigManager.setCooldown(time, CMRegistry.CMIdentifier.SORTING);
+                PluginConfigManager.setCooldown(time, identifier);
                 MessageSystem.sendChangedValue(sender, cooldownProperty, String.valueOf(time));
 
             } catch (NumberFormatException ex) {
@@ -395,14 +396,20 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     private void setCooldownActive(CommandTuple tuple) {
         CommandSender sender = tuple.sender;
         String arg = tuple.args[3];
+        CMRegistry.CMIdentifier identifier = getIDByString(tuple.args[1]);
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
         } else if (StringUtils.isStringBoolean(tuple.sender, arg)) {
             boolean state = Boolean.parseBoolean(arg);
-            PluginConfigManager.setCooldownActive(state, CMRegistry.CMIdentifier.SORTING);
+            PluginConfigManager.setCooldownActive(state, identifier);
             MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(state));
         }
+    }
+
+    private CMRegistry.CMIdentifier getIDByString(String str){
+        return Arrays.stream(CMRegistry.CMIdentifier.values()).
+                filter(i -> i.toString().equalsIgnoreCase(str)).collect(Collectors.toList()).get(0);
     }
 
     public enum RefillType {

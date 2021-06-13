@@ -62,17 +62,7 @@ public class CMRegistry {
     }
 
     public enum CMIdentifier {
-        SORTING("sorting"), CLEANING_ITEM_GET("getCleaningItem");
-
-        private String name;
-        CMIdentifier(String name){
-            this.name = name;
-        }
-
-        public String getName(){
-            return name;
-        }
-
+        SORTING, CLEANING_ITEM_GET
     }
 
 }
