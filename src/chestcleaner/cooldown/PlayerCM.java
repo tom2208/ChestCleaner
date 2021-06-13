@@ -40,7 +40,6 @@ public class PlayerCM implements CooldownManager {
 
         if (map.containsKey(player.getUniqueId())) {
             long difference = System.currentTimeMillis() - map.get(player.getUniqueId());
-            System.out.println(difference);
             int cooldown = PluginConfigManager.getCooldown(id);
 
             if (immune) {

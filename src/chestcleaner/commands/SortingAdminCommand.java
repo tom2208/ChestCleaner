@@ -217,14 +217,12 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         CommandSender sender = tuple.sender;
         String arg = tuple.args[1];
         String bool = tuple.args[2];
-        System.out.println(arg + " " + bool);
         if (StringUtils.isStringBoolean(sender, bool)) {
 
             boolean b = Boolean.parseBoolean(bool);
             String property;
 
             RefillType type = RefillType.getByName(arg);
-            System.out.println(type);
             if (type != null) {
                 property = type.toString();
                 if (!Objects.equals(type, RefillType.BLOCKS)) {
