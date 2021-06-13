@@ -5,6 +5,7 @@ import chestcleaner.commands.SortingAdminCommand;
 import chestcleaner.cooldown.CMRegistry;
 import chestcleaner.cooldown.CooldownManager;
 import chestcleaner.sorting.CategorizerManager;
+import chestcleaner.sorting.SortingPattern;
 import chestcleaner.sorting.categorizer.Categorizer;
 import chestcleaner.utils.SortingAdminUtils;
 import chestcleaner.utils.messages.MessageSystem;
@@ -155,6 +156,15 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
                 return Boolean.TRUE;
             } else if (str.equalsIgnoreCase("false")) {
                 return Boolean.FALSE;
+            }
+        }
+
+        // SortingPattern
+        else if(isType.test(SortingPattern.class)){
+            List<?> list = Arrays.stream(SortingPattern.values()).
+                    filter(p -> p.toString().equalsIgnoreCase(str)).collect(Collectors.toList());
+            if(list.size() > 0){
+                return list.get(0);
             }
         }
 
@@ -338,6 +348,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             list = Arrays.stream(Sound.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(CMRegistry.CMIdentifier.class)){
             list = Arrays.stream(CMRegistry.CMIdentifier.values()).map(Enum::toString).collect(Collectors.toList());
+        } else if(isType.test(SortingPattern.class)){
+            list = Arrays.stream(SortingPattern.values()).map(Enum::toString).collect(Collectors.toList());
         }
         return list;
     }

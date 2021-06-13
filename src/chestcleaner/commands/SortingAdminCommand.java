@@ -70,7 +70,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingadmin autosort true/false", this::setDefaultAutoSort, Boolean.class);
 
         cmdTree.addPath("/sortingadmin pattern", this::getConfig);
-        cmdTree.addPath("/sortingadmin pattern pattern", this::setDefaultPattern, String.class);
+        cmdTree.addPath("/sortingadmin pattern pattern", this::setDefaultPattern, SortingPattern.class);
 
         cmdTree.addPath("/sortingadmin categories", this::getConfig);
         cmdTree.addPath("/sortingadmin categories addFromBook", this::addFromBook);

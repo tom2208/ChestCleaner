@@ -73,7 +73,7 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingconfig categories set names", this::setCategories, Categorizer.class, true);
         // pattern
         cmdTree.addPath("/sortingconfig pattern", this::getConfig);
-        cmdTree.addPath("/sortingconfig pattern pattern", this::setPattern, String.class);
+        cmdTree.addPath("/sortingconfig pattern pattern", this::setPattern, SortingPattern.class);
         // chatNotification
         cmdTree.addPath("/sortingconfig chatNotification", this::getConfig);
         cmdTree.addPath("/sortingconfig chatNotification true/false", this::setChatNotificationBool, Boolean.class);
