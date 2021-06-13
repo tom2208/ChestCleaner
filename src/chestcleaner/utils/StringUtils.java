@@ -23,7 +23,7 @@ public class StringUtils {
 	}
     
     public static boolean isStringNotTrueOrFalse(String str) {
-        return !Boolean.parseBoolean(str) && !str.equalsIgnoreCase(Boolean.FALSE.toString());
+        return !str.equalsIgnoreCase(Boolean.TRUE.toString()) && !str.equalsIgnoreCase(Boolean.FALSE.toString());
     }
 
     public static ItemStack getAsBook(String string) {

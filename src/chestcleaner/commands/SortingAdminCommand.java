@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A command class representing the SortingConfig command. SortingConfig Command
@@ -77,10 +78,10 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
         cmdTree.addPath("/sortingadmin categories set names", this::setDefaultCategories, Categorizer.class, true);
         cmdTree.addPath("/sortingadmin categories getAsBook name", this::getBook, Categorizer.class);
 
-        cmdTree.addPath("/sortingadmin cooldown", this::getConfig);
-        cmdTree.addPath("/sortingadmin cooldown active", this::getConfig);
-        cmdTree.addPath("/sortingadmin cooldown active true/false", this::setCooldownActive, Boolean.class);
-        cmdTree.addPath("/sortingadmin cooldown timeInMilliseconds", this::setCooldownTime, Integer.class);
+        cmdTree.addPath("/sortingadmin cooldown cooldown", this::getConfig, CMRegistry.CMIdentifier.class);
+        cmdTree.addPath("/sortingadmin cooldown cooldown active", this::getConfig);
+        cmdTree.addPath("/sortingadmin cooldown cooldown active true/false", this::setCooldownActive, Boolean.class);
+        cmdTree.addPath("/sortingadmin cooldown cooldown set timeInMilliseconds", this::setCooldownTime, Integer.class);
 
         cmdTree.addPath("/sortingadmin chatNotification", this::getConfig);
         cmdTree.addPath("/sortingadmin chatNotification true/false", this::setChatNotification, Boolean.class);
@@ -157,12 +158,20 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
             value = PluginConfigManager.getCategoryOrder().toString();
 
         } else if (command.equalsIgnoreCase(cooldownSubCommand)) {
-            if (tuple.args.length >= 2 && tuple.args[1].equalsIgnoreCase(activeSubCommand)) {
+            if (tuple.args.length >= 3 && tuple.args[2].equalsIgnoreCase(activeSubCommand)) {
                 key = activeProperty;
-                value = String.valueOf(PluginConfigManager.isCooldownActive(CMRegistry.CMIdentifier.SORTING));
+                List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
+                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).collect(Collectors.toList());
+                if(dmi.size() >= 1){
+                    value = String.valueOf(PluginConfigManager.isCooldownActive(dmi.get(0)));
+                }
             } else {
                 key = cooldownProperty;
-                value = String.valueOf(PluginConfigManager.getCooldown(CMRegistry.CMIdentifier.SORTING));
+                List<CMRegistry.CMIdentifier> dmi = Arrays.stream(CMRegistry.CMIdentifier.values()).filter
+                        (c -> tuple.args[1].equalsIgnoreCase(c.toString())).collect(Collectors.toList());
+                if(dmi.size() >= 1){
+                    value = String.valueOf(PluginConfigManager.getCooldown(dmi.get(0)));
+                }
             }
 
         } else if (command.equalsIgnoreCase(patternSubCommand)) {
@@ -365,7 +374,7 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     private void setCooldownTime(CommandTuple tuple) {
 
         CommandSender sender = tuple.sender;
-        String arg = tuple.args[2];
+        String arg = tuple.args[3];
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
@@ -384,20 +393,16 @@ public class SortingAdminCommand implements CommandExecutor, TabCompleter {
     }
 
     private void setCooldownActive(CommandTuple tuple) {
-
         CommandSender sender = tuple.sender;
-        String arg = tuple.args[2];
+        String arg = tuple.args[3];
 
         if (!sender.hasPermission(PluginPermissions.CMD_ADMIN_COOLDOWN.getString())) {
             MessageSystem.sendPermissionError(sender, PluginPermissions.CMD_ADMIN_COOLDOWN);
-        } else if (StringUtils.isStringNotTrueOrFalse(arg)) {
-            MessageSystem.sendMessageToCS(MessageType.ERROR, MessageID.ERROR_VALIDATION_BOOLEAN, sender);
-        } else {
+        } else if (StringUtils.isStringBoolean(tuple.sender, arg)) {
             boolean state = Boolean.parseBoolean(arg);
             PluginConfigManager.setCooldownActive(state, CMRegistry.CMIdentifier.SORTING);
             MessageSystem.sendChangedValue(sender, activeProperty, String.valueOf(state));
         }
-
     }
 
     public enum RefillType {

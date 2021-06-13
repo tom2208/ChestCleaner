@@ -83,7 +83,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
             return null;
         }
 
-        // Cooldown
+        // Cooldown CMDIdentifier
         else if(isType.test(CMRegistry.CMIdentifier.class)){
             List<CMRegistry.CMIdentifier> list =
                     Arrays.stream(CMRegistry.CMIdentifier.values()).

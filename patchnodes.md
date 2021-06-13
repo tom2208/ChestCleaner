@@ -1,4 +1,4 @@
-## Patchnodes for version 2.4
+## Patch Nodes for Version 2.4
 
 - Refactored the whole command structure: A new tree command structure got implemented
 
