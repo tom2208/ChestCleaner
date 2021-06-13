@@ -257,7 +257,7 @@ public class PluginConfigManager {
 	}
 
 	public static void setDefaultPattern(SortingPattern pattern) {
-		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_PATTERN, pattern);
+		PluginConfig.setIntoConfig(PluginConfig.ConfigPath.DEFAULT_PATTERN, pattern.toString());
 	}
 
 	public static SortingPattern getDefaultPattern() {
