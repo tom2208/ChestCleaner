@@ -1,5 +1,14 @@
 ## Blacklist Commands
 
+### Description
+There are two types of blacklists: **stacking** and **inventory**. 
+
+Both blacklists contain item names and are configured the same way, however they have different meanings.
+
+**The stacking blacklist** defines items which will not get stacked together if they get sorted. For instance, usually a 32 dirt stack and a 21 dirt stack would get stacked together to a 53 dirt stack. With dirt on the stacking blacklist you preserve the two original stacks. 
+
+**The inventory blacklist** defines blocks that get ignored if you want to try sorting an inventory of a block (only works for "openEvent = false" mode). For instance, if you don't want your player to sort hoppers, then you add hopper to the inventory blacklist.
+
 | Command                                        | Explanation                                                  | Permission                       |
 | ---------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
 | /blacklist \<blacklist\> add                   | Adds the material of the item you are holding in your main hand to the specified blacklist. | chestcleaner.cmd.admin.blacklist |
@@ -14,6 +23,19 @@ Permissions:
 | Permission                       | Explanation                                     |
 | -------------------------------- | ----------------------------------------------- |
 | chestcleaner.cmd.admin.blacklist | Allows the player to use all blacklist commands |
+
+### Config
+* the blacklists are saved/configured in config.yml
+```yaml
+blacklist:
+  stacking:
+    - air
+    - bed
+  inventory:
+    - furnace
+  autorefill:
+    - stone
+```
 
 ## CleanInventory Commands
 
@@ -35,7 +57,7 @@ Permissions:
 
 ## CleaningItem Commands
 
-## Description
+### Description
 You can configure an Item to be used as cleaning item. When you hold that item and: 
 * `right-click` on a block with an inventory, that blocks inventory will get sorted.
 * `shift + right-click`, your Inventory gets sorted.
