@@ -11,12 +11,6 @@
 
 Permissions:
 
-| Permission                       | Explanation                               |
-| -------------------------------- | ----------------------------------------- |
-| chestcleaner.cmd.admin.blacklist | Allows you to use all blacklist commands. |
-
-
-
 | Permission                       | Explanation                                     |
 | -------------------------------- | ----------------------------------------------- |
 | chestcleaner.cmd.admin.blacklist | Allows the player to use all blacklist commands |
