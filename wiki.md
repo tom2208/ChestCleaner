@@ -41,6 +41,11 @@ blacklist:
 
 # CleanInventory Commands
 
+## Description
+This commands sorts an inventory that is associated with a block (like a chest).
+
+**Be careful when using a protection plugin, as this command allows a player to sort any block in any world.**
+
 ## Commands
 
 | Command                                    | Explanation                                                  | Permission                             |
@@ -52,6 +57,7 @@ blacklist:
 | /cleaninventory \<player>                  | Sorts the inventory of a player.                             | chestcleaner.cmd.cleaninventory.others |
 
 ## Permissions
+Only Server OPs have this permission by default.
 
 | Permission                             | Explanation                                                  |
 | -------------------------------------- | ------------------------------------------------------------ |
