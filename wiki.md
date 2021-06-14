@@ -1,6 +1,6 @@
-## Blacklist Commands
+# Blacklist Commands
 
-### Description
+## Description
 There are two types of blacklists: **stacking** and **inventory**. 
 
 Both blacklists contain item names and are configured the same way, however they have different meanings.
@@ -8,6 +8,8 @@ Both blacklists contain item names and are configured the same way, however they
 **The stacking blacklist** defines items which will not get stacked together if they get sorted. For instance, usually a 32 dirt stack and a 21 dirt stack would get stacked together to a 53 dirt stack. With dirt on the stacking blacklist you preserve the two original stacks. 
 
 **The inventory blacklist** defines blocks that get ignored if you want to try sorting an inventory of a block (only works for "openEvent = false" mode). For instance, if you don't want your player to sort hoppers, then you add hopper to the inventory blacklist.
+
+## Commands
 
 | Command                                        | Explanation                                                  | Permission                       |
 | ---------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
@@ -18,13 +20,13 @@ Both blacklists contain item names and are configured the same way, however they
 | /blacklist \<blacklist\> list                  | Prints out the specified blacklist.                          | chestcleaner.cmd.admin.blacklist |
 | /blacklist \<blacklist\> clear                 | Removes every entry of the specified blacklist.              | chestcleaner.cmd.admin.blacklist |
 
-Permissions:
+## Permissions
 
 | Permission                       | Explanation                                     |
 | -------------------------------- | ----------------------------------------------- |
 | chestcleaner.cmd.admin.blacklist | Allows the player to use all blacklist commands |
 
-### Config
+## Config
 * the blacklists are saved/configured in config.yml
 ```yaml
 blacklist:
@@ -37,7 +39,9 @@ blacklist:
     - stone
 ```
 
-## CleanInventory Commands
+# CleanInventory Commands
+
+## Commands
 
 | Command                                    | Explanation                                                  | Permission                             |
 | ------------------------------------------ | ------------------------------------------------------------ | -------------------------------------- |
@@ -47,7 +51,7 @@ blacklist:
 | /cleaninventory own                        | Sorts your own inventory.                                    | chestcleaner.cmd.cleaninventory.own    |
 | /cleaninventory \<player>                  | Sorts the inventory of a player.                             | chestcleaner.cmd.cleaninventory.others |
 
-Permissions:
+## Permissions
 
 | Permission                             | Explanation                                                  |
 | -------------------------------------- | ------------------------------------------------------------ |
@@ -55,9 +59,9 @@ Permissions:
 | chestcleaner.cmd.cleaninventory.own    | Allows you to sort your own inventory with /cleaninventory.  |
 | chestcleaner.cmd.cleaninventory.others | Allows you to sort player inventory with /cleaninventory.    |
 
-## CleaningItem Commands
+# CleaningItem Commands
 
-### Description
+## Description
 You can configure an Item to be used as cleaning item. When you hold that item and: 
 * `right-click` on a block with an inventory, that blocks inventory will get sorted.
 * `shift + right-click`, your Inventory gets sorted.
@@ -100,6 +104,8 @@ Technically:
 * When openEvent is **false**, the sorting will take place in the PlayerInteractEvent.
 
  Permission for to change the toggle: `chestcleaner.cmd.admin.cleaningitem.setopenevent`
+ 
+ ## Commands
 
 | Command                                     | Explanation                                                  | Permission                                            |
 | ------------------------------------------- | ------------------------------------------------------------ | ----------------------------------------------------- |
@@ -112,7 +118,7 @@ Technically:
 | /cleaningitem durabilityLoss \<true/false\> | Activates or deactivates the durability loss of the cleaning item. Durability loss means: after using your cleaning item it will lose durability if possible, otherwise it gets removed form the inventory. | chestcleaner.cmd.admin.cleaningitem.setdurabilityloss |
 | /cleaningitem openEvent \<true/false\>      | Activates or deactivates the openEvent.                      | chestcleaner.cmd.admin.cleaningitem.setopenevent      |
 
-Permissions:
+## Permissions
 
 | Permission                                            | Explanation                                                  |
 | ----------------------------------------------------- | ------------------------------------------------------------ |
