@@ -78,7 +78,7 @@ If you pick a stackabale item for example a gold nugget, then the item gets remo
 
 **SHIFT + RIGHT CLICK to sort own inventory**
 
-![Sorting Own Inventory ](https://github.com/tom2208/ChestCleaner/blob/master/gifs/cleaningitem_sort_own_inventory.gif)
+![Sorting Own Inventory ](https://github.com/tom2208/ChestCleaner/blob/master/assets/gif/cleaningitem_sort_own_inventory.gif?raw=true)
 
 ### Properties
 When you change the item's name or lore, the previous cleaningitems will not work anymore. For example, first you have iron_hoe as cleaningitem. Every iron_hoe works as cleaningitem. Then you give it a name, like "mycleaningtool". Now all iron_hoes that don't have that name will not work anymore.
@@ -89,11 +89,11 @@ When it is active, using the cleaningItem will reduce its durability, if it has 
 
 **Sorting with an stackable item (durabilityLoss=true)**
 
-![Sorting With Item](https://github.com/tom2208/ChestCleaner/blob/master/gifs/cleaningitem_item_sorting.gif) 
+![Sorting With Item](https://github.com/tom2208/ChestCleaner/blob/master/assets/gif/cleaningitem_item_sorting.gif?raw=true) 
 
 **Sorting with a tool (durabilityLoss=true)**
 
-![Sorting With Tool](https://github.com/tom2208/ChestCleaner/blob/master/gifs/cleaningitem_tool_sorting.gif)
+![Sorting With Tool](https://github.com/tom2208/ChestCleaner/blob/master/assets/gif/cleaningitem_tool_sorting.gif?raw=true)
 
 ### Disable
 You can disable the cleaningitem by setting the cleaningitem active toggle (in config.yml or with command). Then only [Autosorting](Autosort) and the [/cleaninventory](#CleanInventory-Commands) command work for sorting.
