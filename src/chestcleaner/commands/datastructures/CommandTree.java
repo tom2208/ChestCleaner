@@ -435,7 +435,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         private Function<Pair<GraphNode<Quadruple>, String>, Object> interpretString;
 
 
-        public DataType(Class<?> c, Function<GraphNode<Quadruple>, List<String>> genNodeCompletions, Function<Pair<GraphNode<Quadruple>, String>, Object> interpretString) {
+        public DataType(Class<?> c, Function<GraphNode<Quadruple>, List<String>> genNodeCompletions,
+                        Function<Pair<GraphNode<Quadruple>, String>, Object> interpretString) {
             this.c = c;
             this.genNodeCompletions = genNodeCompletions;
             this.interpretString = interpretString;
