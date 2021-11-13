@@ -110,7 +110,7 @@ Technically:
 * When openEvent is **false**, the sorting will take place in the PlayerInteractEvent.
 
  Permission for to change the toggle: `chestcleaner.cmd.admin.cleaningitem.setopenevent`
- 
+
  ## Commands
 
 | Command                                     | Explanation                                                  | Permission                                            |
@@ -156,3 +156,27 @@ cleaningItem:
       lore:
       - example lore
 ```
+
+# CleanInventory commands
+
+## Description
+This commands sorts an inventory that is associated with a block (like a chest).
+
+**Be careful when using a protection plugin, as this command allows a player to sort any block in any world.**
+
+## Commands
+
+| Command                                     | Explanation                                                  | Permission                             |
+| ------------------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| /cleaninventory                             | Sorts the inventory of the block you're look at, if it has one. Has a range of 12 blocks, thus if you are too far away from a block with an inventory, it won't sort it. | chestcleaner.cmd.cleaninventory.sort   |
+| /cleaninventory \<x> \<y> \<z>              | Sorts the inventory of the block in the location x/y/z (x,y,z are integers) in the world you currently are (nether for example) if that block has an inventory. _Example: `/cleaninventory 234 34 -34`_ | chestcleaner.cmd.cleaninventory.sort   |
+| /cleaninventory \<x> \<y> \<z> \<worldname> | Sorts the inventory of the block in the location x/y/z (x,y,z are integers) in the world with the name \<worldname\> if that block has an inventory. _Example: `/cleaninventory 234 34 -34 world_nether`_ | chestcleaner.cmd.cleaninventory.sort   |
+| /cleaninventory own                         | Sorts your own inventory (but not the hotbar).               | chestcleaner.cmd.cleaninventory.own    |
+| /cleaninventory \<playername>               | Sorts the inventory of the player with the name \<playername>. | chestcleaner.cmd.cleaninventory.others |
+
+## Permissions
+| Permission                             | Explanation                                                  |
+| -------------------------------------- | ------------------------------------------------------------ |
+| chestcleaner.cmd.cleaninventory.sort   | Allows you to sort every block with an inventory using /cleaninventory. |
+| chestcleaner.cmd.cleaninventory.own    | Allows you to sort your own inventory using `/cleaninventory own` |
+| chestcleaner.cmd.cleaninventory.others | Allows you to sort the inventory of every player using /cleaninventory. |

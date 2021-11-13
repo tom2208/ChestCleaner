@@ -8,8 +8,6 @@ default:
   categories:
     - AlphaBackAsc
     - IsBlock
-  autorefill:
-    breakables: true
   sorting:
     notification: true
     sound:
