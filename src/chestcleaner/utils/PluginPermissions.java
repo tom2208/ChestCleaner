@@ -29,10 +29,7 @@ public enum PluginPermissions {
     CMD_INV_CLEAN_OWN("chestcleaner.cmd.cleaninventory.own"),
     CMD_INV_CLEAN_OTHERS("chestcleaner.cmd.cleaninventory.others"),
     
-    CMD_ADMIN_CONFIG("chestcleaner.cmd.admin.config"),
     CMD_ADMIN_COOLDOWN("chestcleaner.cmd.admin.cooldown"),
-    CMD_ADMIN_BLACKLIST("chestcleaner.cmd.admin.blacklist"),
-
     CMD_ADMIN_ITEM_SET("chestcleaner.cmd.admin.cleaningitem.setitem"),
     CMD_ADMIN_ITEM_RENAME("chestcleaner.cmd.admin.cleaningitem.rename"),
     CMD_ADMIN_ITEM_SET_LORE("chestcleaner.cmd.admin.cleaningitem.setlore"),

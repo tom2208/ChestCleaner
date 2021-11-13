@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d248cc67-6b9c-4994-8363-d69ef6b6436a" name="Default Changelist" comment="Started optimizing CommandTree structure to make it more usable">
-      <change beforePath="$PROJECT_DIR$/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/chestcleaner/commands/SortingAdminCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/chestcleaner/commands/SortingAdminCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/chestcleaner/utils/PluginPermissions.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/chestcleaner/utils/PluginPermissions.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wiki.md" beforeDir="false" afterPath="$PROJECT_DIR$/wiki.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -157,7 +157,7 @@ cleaningItem:
       - example lore
 ```
 
-# CleanInventory commands
+# CleanInventory Commands
 
 ## Description
 This commands sorts an inventory that is associated with a block (like a chest).
@@ -180,3 +180,48 @@ This commands sorts an inventory that is associated with a block (like a chest).
 | chestcleaner.cmd.cleaninventory.sort   | Allows you to sort every block with an inventory using /cleaninventory. |
 | chestcleaner.cmd.cleaninventory.own    | Allows you to sort your own inventory using `/cleaninventory own` |
 | chestcleaner.cmd.cleaninventory.others | Allows you to sort the inventory of every player using /cleaninventory. |
+
+# SortingAdmin Command
+
+## Description
+ChestCleaner has server defaults for all configuration options. 
+Players with certain permissions can overwrite some of these defaults for themself.
+These player settings will not affect the server defaults or other players.
+Following settings may be changed by players:
+
+Most of the default server settings can be changed using the `/sortingadmin` command, whereas the player settings can be changed using the `/sortingconfig` command.
+
+
+## Commands
+| Command                                                    | Explanation                                                  | Permission                                                   |
+| ---------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| /sortingadmin autosort                                     | Tells you the current configuration for autosort of the server. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin autosort \<true/false>                       | Sets the autosort toggle for the server. It will affect every player that hasn't overwritten the toggle for themself (using /sortingconfig). | chestcleaner.cmd.admin.config                                |
+| /sortingadmin pattern                                      | Tells you the current configuration for the default pattern of the server. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin pattern \<pattern>                           | Sets the default pattern for the server. This will affect every player that hasn't overwritten the pattern for themself (using /sortingconfig). | chestcleaner.cmd.admin.config                                |
+| /sortingadmin categories                                   | Tells the default category order.                            | chestcleaner.cmd.admin.config                                |
+| /sortingadmin categories set \<name0> \<name1> ...         | Set the default category order.                              | chestcleaner.cmd.admin.config                                |
+| /sortingadmin categories addFromBook                       | Adds the category from the book in hand.                     | chestcleaner.cmd.admin.config                                |
+| /sortingadmin categories getAsBook \<name>                 | Drops you the category with the name \<name> as a book.      | chestcleaner.cmd.admin.config                                |
+| /sortingadmin cooldown \<cooldown>                         | Gives you the current configuration of the cooldown with the id \<cooldown>. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin cooldown \<cooldown> active                  | Tells you if the configuration for the cooldown with the id \<cooldown> is active or not. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin cooldown \<cooldown> active \<true/false>    | Actrivates (true) or deactivates the cooldown with the id \<cooldown>. | chestcleaner.cmd.admin.config **and** chestcleaner.cmd.admin.cooldown |
+| /sortingadmin cooldown \<cooldown> set timeInMilliseconds  | Sets the cooldown with the id \<cooldown> in milliseconds (1second = 1000 milliseconds). | chestcleaner.cmd.admin.config                                |
+| /sortingadmin chatNotification                             | Tells you if the chat notifications are enabled.             | chestcleaner.cmd.admin.config                                |
+| /sortingadmin chatNotification \<true/false>               | Enables or disables the chat notifications.                  | chestcleaner.cmd.admin.config                                |
+| /sortingadmin sortingSound active                          | Tells you if the sorting sound is active.                    | chestcleaner.cmd.admin.config                                |
+| /sortingadmin sortingSound active <true/false>             | Activates or deactivates the sorting sound.                  | chestcleaner.cmd.admin.config                                |
+| /sortingadmin sortingSound set \<sound>                    | Sets the sorting sound to the sound with the name \<sound>   | chestcleaner.cmd.admin.config                                |
+| /sortingadmin sortingSound set \<sound> \<volume>          | Sets the sorting sound to the sound with the name \<sound> with the volume \<volume>. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin sortingSound set \<sound> \<volume> \<pitch> | Sets the sorting sound to the sound with the name \<sound> with the volume \<volume> and the pitch \<pitch>. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin clickSort                                    | Tells you if the click sort is active.                       | chestcleaner.cmd.admin.config                                |
+| /sortingadmin clickSort \<true/false>                      | Activates or deactivates click sort.                         | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<type>                               | Tells you if a type of auto refill is active or not.         | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<type> \<true/false>                 | Activates or deactivates the auto refill with the type \<type>. | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<true/false>                         | Activates or deactivates the auto of all types.              | chestcleaner.cmd.admin.config                                |
+
+## Permissions
+| Permission                      | Explanation                                |
+| ------------------------------- | ------------------------------------------ |
+| chestcleaner.cmd.admin.config   | Allows you to configure nearly everything. |
+| chestcleaner.cmd.admin.cooldown | Allows you to to set the cooldowns         |

@@ -2,7 +2,6 @@ package chestcleaner.commands;
 
 import chestcleaner.commands.datastructures.CommandTree;
 import chestcleaner.commands.datastructures.CommandTuple;
-import chestcleaner.config.PluginConfig;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.config.serializable.Category;
 import chestcleaner.cooldown.CMRegistry;
