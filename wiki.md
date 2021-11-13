@@ -1,3 +1,31 @@
+Welcome to the ChestCleaner wiki! Here you can find tutorials and explanations for all (if the wiki is finished) features of the plugin.
+
+![Sorting Example](https://github.com/tom2208/ChestCleaner/blob/master/assets/gif/sorting.gif)
+
+# Installation
+* Download the **ChestCleaner.jar** from spigot: https://www.spigotmc.org/resources/chestcleaner-sorting-plugin-api.40313/
+* Move the **ChestCleaner.jar** from your download folder into the plugin folder of your spigot server.
+* Start the server. If everything works you will see "_[ChestCleaner] Enabling ChestCleaner_"  without an error message in your console. 
+
+# FAQ
+
+## My players can't use Click Sort, what can i do?
+There are a few thing that you may need to do:
+### 1. Players who want to use Click Sort need the permission to do so.
+Either you give the players op (`/op <playername>`) or
+you will need a permission plugin. One example for such a plugin is [LuckPerms](https://www.spigotmc.org/resources/luckperms.28140/). Just install it on your server. To add permissions to the default player group (every player who joins the server) use: `/lp group default permission set <permission> <true/false>` in our case of Click Sort use: `/lp group default permission set chestcleaner.clicksort true`. Now every player has the permission to use the click sort feature. To change their individual perferences your players will need the permission `chestcleaner.cmd.sortingconfig.clicksort` too.
+
+### 2. Plugin Configuration
+You could try setting the globale default perference with: `/sortingadmin ClickSort <true/false>` and the individual with `/sortingadmin ClickSort <true/false>`.
+
+### 3. Key Binding
+Click Sort uses the select block button of minecraft, the button which picks you a block you are looking at in creative mode or the button which creates a stack of an item in the creative inventory if you are clicking on it. The default is the middle mouse button. You may have changed it.
+
+***
+If your question isn't solved after reading this: read the wiki or join our discord server: [Discord](https://discord.gg/tyjVfDq)
+
+
+
 # Blacklist Commands
 
 ## Description
@@ -216,12 +244,40 @@ Most of the default server settings can be changed using the `/sortingadmin` com
 | /sortingadmin sortingSound set \<sound> \<volume> \<pitch> | Sets the sorting sound to the sound with the name \<sound> with the volume \<volume> and the pitch \<pitch>. | chestcleaner.cmd.admin.config                                |
 | /sortingadmin clickSort                                    | Tells you if the click sort is active.                       | chestcleaner.cmd.admin.config                                |
 | /sortingadmin clickSort \<true/false>                      | Activates or deactivates click sort.                         | chestcleaner.cmd.admin.config                                |
-| /sortingadmin refill \<type>                               | Tells you if a type of auto refill is active or not.         | chestcleaner.cmd.admin.config                                |
-| /sortingadmin refill \<type> \<true/false>                 | Activates or deactivates the auto refill with the type \<type>. | chestcleaner.cmd.admin.config                                |
-| /sortingadmin refill \<true/false>                         | Activates or deactivates the auto of all types.              | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<type>                               | Tells you if a type of auto refill is active or not (server default). | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<type> \<true/false>                 | Activates or deactivates the auto refill with the type \<type> (server default). | chestcleaner.cmd.admin.config                                |
+| /sortingadmin refill \<true/false>                         | Activates or deactivates the auto refill of all types (server default). | chestcleaner.cmd.admin.config                                |
 
 ## Permissions
 | Permission                      | Explanation                                |
 | ------------------------------- | ------------------------------------------ |
 | chestcleaner.cmd.admin.config   | Allows you to configure nearly everything. |
 | chestcleaner.cmd.admin.cooldown | Allows you to to set the cooldowns         |
+
+# SortingConfig Command
+
+## Description
+This command lets the user make his individual configurations. This configurations overrides the server defaults you can configure with the `/sortingconfig` command (for more read [administration](Administration)).
+
+## Commands
+| Command                                             |                         Explanation                          | Permission                                                   |
+| --------------------------------------------------- | :----------------------------------------------------------: | ------------------------------------------------------------ |
+| /sortingconfig autosort                             |      Tells you your current configuration for autosort.      |                                                              |
+| /sortingconfig autosort \<true/false>               |                  Sets your autosort toggle.                  | chestcleaner.cmd.sortingconfig.setautosort                   |
+| /sortingconfig pattern                              |                Tells you the current pattern.                |                                                              |
+| /sortingconfig pattern \<pattern>                   |                      Sets your pattern.                      | chestcleaner.cmd.sortingconfig.pattern                       |
+| /sortingconfig categories                           |                  Tells your category order.                  |                                                              |
+| /sortingconfig categories set \<name0> \<name1> ... |               Set your default category order.               | chestcleaner.cmd.sortingconfig.categories                    |
+| /sortingconfig categories reset                     | Restets your category configurations to the server default.  | chestcleaner.cmd.sortingconfig.categories.reset              |
+| /sortingconfig categories list                      |   Prints out the first page of the list of all categories.   |                                                              |
+| /sortingconfig categories list \<page>              | Prints out the \<page>. page of the list of all categories.  |                                                              |
+| /sortingconfig chatNotification                     |      Tells you if your chat notifications are disabled.      |                                                              |
+| /sortingconfig chatNotification \<true/false>       |       Activates or deactives your chat notifications.        | chestcleaner.cmd.sortingconfig.setchatnotification           |
+| /sortingconfig refill \<type>                       |     Tells you if a type of auto refill is active or not.     |                                                              |
+| /sortingconfig refill \<type> \<true/false>         | Activates or deactivates the auto refill with the type \<type>. | chestcleaner.cmd.sortingconfig.refill.blocks **or** chestcleaner.cmd.sortingconfig.refill.breakables **or** chestcleaner.cmd.sortingconfig.refill.consumables |
+| /sortingconfig refill \<true/false>                 |    Activates or deactivates the auto refill of all types.    | chestcleaner.cmd.sortingconfig.refill.blocks **and** chestcleaner.cmd.sortingconfig.refill.breakables **and** chestcleaner.cmd.sortingconfig.refill.consumables |
+| /sortingconfig sortingSound                         |          Tells you if the sorting sound is actived.          |                                                              |
+| /sortingconfig sortingSound \<true/false>           |     Activates or deactivates the sorting sound for you.      | chestcleaner.cmd.sortingconfig.setsortingsound               |
+| /sortingconfig clickSort                            |           Tells you if the click sort is actived.            |                                                              |
+| /sortingconfig clickSort \<true/false>              |         Activates or deactivates click sort for you.         | chestcleaner.cmd.sortingconfig.clicksort                     |
+| /sortingconfig reset                                |            Resets your individual configurations.            | chestcleaner.cmd.sortingconfig.reset                         |

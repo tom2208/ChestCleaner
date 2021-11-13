@@ -32,8 +32,6 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
     private final String patternSubCommand = "pattern";
     private final String chatNotificationSubCommand = "chatNotification";
     private final String sortingSoundSubCommand = "sortingSound";
-    private final String resetSubCommand = "reset";
-    private final String refillSubCommand = "refill";
     private final String clickSortSubCommand = "clickSort";
 
     private final String blocksSubCommand = "blocks";
@@ -45,16 +43,6 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
     private final String patternProperty = "sortingpattern";
     private final String chatNotificationProperty = "chat sorting notification";
     private final String sortingSoundProperty = "sorting sound";
-
-    private final String listSubCommand = "list";
-    private final String setSubCommand = "set";
-    private final String resetCategoriesSubCommand = "reset";
-
-    private final String[] strCommandList = {autosortSubCommand, categoriesSubCommand, patternSubCommand,
-            chatNotificationSubCommand, sortingSoundSubCommand, resetSubCommand, refillSubCommand, clickSortSubCommand};
-    private final String[] categoriesSubCommandList = {listSubCommand, setSubCommand, resetCategoriesSubCommand};
-    private final String[] refillSubCommandList = {blocksSubCommand, consumablesSubCommand, breakablesSubCommand,
-            "true", "false"};
 
     public static final String COMMAND_ALIAS = "sortingconfig";
     private final CommandTree cmdTree;
