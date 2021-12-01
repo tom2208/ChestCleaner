@@ -16,7 +16,7 @@ Either you give the players op (`/op <playername>`) or
 you will need a permission plugin. One example for such a plugin is [LuckPerms](https://www.spigotmc.org/resources/luckperms.28140/). Just install it on your server. To add permissions to the default player group (every player who joins the server) use: `/lp group default permission set <permission> <true/false>` in our case of Click Sort use: `/lp group default permission set chestcleaner.clicksort true`. Now every player has the permission to use the click sort feature. To change their individual perferences your players will need the permission `chestcleaner.cmd.sortingconfig.clicksort` too.
 
 ### 2. Plugin Configuration
-You could try setting the globale default perference with: `/sortingadmin ClickSort <true/false>` and the individual with `/sortingadmin ClickSort <true/false>`.
+You could try setting the globale default perference with: `/sortingadmin ClickSort <true/false>` and the individual with `/sortingconfig ClickSort <true/false>`.
 
 ### 3. Key Binding
 Click Sort uses the select block button of minecraft, the button which picks you a block you are looking at in creative mode or the button which creates a stack of an item in the creative inventory if you are clicking on it. The default is the middle mouse button. You may have changed it.
