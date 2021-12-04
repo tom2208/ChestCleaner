@@ -1,3 +1,5 @@
+Wiki for 2.4.0: [Wiki File](https://github.com/tom2208/ChestCleaner/blob/v2.4.0/wiki.md)
+
 # ATTENTION
 when migrating to version 2.x. A lot of things have changed, that is why it is a new major version. Read the [Migration Guide](https://github.com/tom2208/ChestCleaner/wiki/Migration-Guide-2.0) **BEFORE** upgrading. If you are not upgrading, but installing this plugin for the first time, you can disregard this.
 
