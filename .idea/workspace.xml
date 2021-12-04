@@ -6,8 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="d248cc67-6b9c-4994-8363-d69ef6b6436a" name="Default Changelist" comment="Started optimizing CommandTree structure to make it more usable">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/chestcleaner/commands/SortingConfigCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/chestcleaner/commands/SortingConfigCommand.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wiki.md" beforeDir="false" afterPath="$PROJECT_DIR$/wiki.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugin.yml" beforeDir="false" afterPath="$PROJECT_DIR$/plugin.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/chestcleaner/listeners/SortingListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/chestcleaner/listeners/SortingListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingAdminCommand$RefillType.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingAdminCommand$RefillType.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingAdminCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingAdminCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingConfigCommand.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/chestcleaner/commands/SortingConfigCommand.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/chestcleaner/listeners/SortingListener.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/chestcleaner/listeners/SortingListener.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/chestcleaner/utils/PluginPermissions.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/chestcleaner/utils/PluginPermissions.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" afterPath="$PROJECT_DIR$/target/maven-archiver/pom.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

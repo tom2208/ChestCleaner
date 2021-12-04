@@ -99,7 +99,7 @@ public class SortingListener implements org.bukkit.event.Listener {
 
     @EventHandler
     private void onClick(InventoryClickEvent e) {
-        if (e.getClick().equals(ClickType.MIDDLE)) {
+        if (e.getClick().equals(ClickType.MIDDLE) || isNewClick(e)) {
             if (e.getWhoClicked().hasPermission(PluginPermissions.CLICK_SORT.getString())) {
                 if (e.getSlot() == -999) {
                     if (e.getCurrentItem() == null) {
@@ -112,6 +112,10 @@ public class SortingListener implements org.bukkit.event.Listener {
                 }
             }
         }
+    }
+
+    private boolean isNewClick(InventoryClickEvent e){
+        return e.getClick().equals(ClickType.RIGHT) && e.getCurrentItem() == null;
     }
 
     private void sortInventoryOnClick(Player player, InventoryClickEvent e) {
