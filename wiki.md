@@ -20,11 +20,15 @@ You could try setting the globale default perference with: `/sortingadmin ClickS
 
 ### 3. Key Binding
 Click Sort uses the select block button of minecraft, the button which picks you a block you are looking at in creative mode or the button which creates a stack of an item in the creative inventory if you are clicking on it. The default is the middle mouse button. You may have changed it.
+Since 2.4.1 you have to use right-click next to the gui for click sort.
 
 ***
 If your question isn't solved after reading this: read the wiki or join our discord server: [Discord](https://discord.gg/tyjVfDq)
 
 
+# Clicksort
+
+Use right click outside the gui (inventory) you want to sort. Make sure you enabled clicksort for more information take a look at the FAQ.
 
 # Blacklist Commands
 
