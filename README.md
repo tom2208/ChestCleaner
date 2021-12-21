@@ -7,7 +7,7 @@ when migrating to version 2.x. A lot of things have changed, that is why it is a
 
 ChestCleaner is a Minecraft Spigot plugin that sorts your chests and inventories. Additionally it autorefills your items in the hotbar.
 
-The used Spigot API version `1.17-R0.1-SNAPSHOT`
+The used Spigot API version `1.18-R0.1-SNAPSHOT`
 
 For more detailed information have a look at the Spigot article of this plugin: https://www.spigotmc.org/resources/chestcleaner-sorting-plugin.40313/
 
