@@ -9,6 +9,7 @@ import chestcleaner.utils.PluginPermissions;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -90,6 +91,13 @@ public class InventorySorter {
 	 * @param inv the inventory you want to sort.
 	 */
 	public static boolean sortInventory(Inventory inv, Player p, List<ItemStack> items) {
+
+		SortingEvent event = new SortingEvent(p, inv, items);
+		Bukkit.getPluginManager().callEvent(event);
+		if(event.isCancelled()){
+			return false;
+		}
+
 		List<String> categoryNames = PluginConfigManager.getCategoryOrder();
 		SortingPattern pattern = PluginConfigManager.getDefaultPattern();
 
@@ -139,7 +147,7 @@ public class InventorySorter {
 			return sortInventory(inv, p);
 		}
 
-		if (p != null) {
+		if (p != null && b != null) {
 			if (b.getBlockData().getMaterial() == Material.ENDER_CHEST) {
 				return sortInventory(p.getEnderChest(), p);
 			}
