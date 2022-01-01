@@ -8,6 +8,10 @@
 
 	<packaging>jar</packaging>
 
+	<name>ChestCleaner</name>
+	<description>A plugin for minecraft spigot servers. It can sort inventories and refills items into the hotbar.</description>
+	<url>https://github.com/tom2208/ChestCleaner</url>
+
 	<properties>
 		<version.properties>2-0</version.properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,6 +31,14 @@
 			<url>http://www.gnu.org/copyleft/gpl.html</url>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<name>Tom Hauschild</name>
+			<email>tom-hauschild@outlook.de</email>
+			<organizationUrl>https://github.com/tom2208</organizationUrl>
+		</developer>
+	</developers>
 
 	<dependencies>
 		<!--This adds the Spigot API artifact to the build -->

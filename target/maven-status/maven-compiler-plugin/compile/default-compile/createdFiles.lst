@@ -14,6 +14,7 @@ chestcleaner\utils\messages\enums\MessageID.class
 chestcleaner\commands\datastructures\CommandTree.class
 chestcleaner\commands\datastructures\GraphNode.class
 chestcleaner\main\UpdateChecker$1$1.class
+chestcleaner\sorting\SortingEvent.class
 chestcleaner\cooldown\CMRegistry.class
 chestcleaner\commands\SortingConfigCommand.class
 chestcleaner\sorting\categorizer\Categorizer.class
