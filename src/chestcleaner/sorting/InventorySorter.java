@@ -3,6 +3,7 @@ package chestcleaner.sorting;
 import java.util.ArrayList;
 import java.util.List;
 
+import chestcleaner.api.sorting.SortingEvent;
 import chestcleaner.config.PlayerDataManager;
 import chestcleaner.config.PluginConfigManager;
 import chestcleaner.utils.PluginPermissions;
@@ -11,7 +12,6 @@ import chestcleaner.utils.messages.enums.MessageID;
 import chestcleaner.utils.messages.enums.MessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
