@@ -100,7 +100,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         //Player
         else if (isType.test(Player.class)) {
             List<Player> list = Bukkit.getOnlinePlayers().stream().filter(
-                    e -> e.getDisplayName().equalsIgnoreCase(str)).collect(Collectors.toList());
+                    e -> e.getName().equalsIgnoreCase(str)).collect(Collectors.toList());
             if (list.size() == 1) {
                 return list.get(0);
             }
@@ -332,7 +332,7 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         if (node.getValue().type == null) {
             list.add(node.getValue().label);
         } else if (isType.test(Player.class)) {
-            list = Bukkit.getOnlinePlayers().stream().map(Player::getDisplayName).collect(Collectors.toList());
+            list = Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         } else if (isType.test(BlacklistCommand.BlacklistType.class)) {
             list = Arrays.stream(BlacklistCommand.BlacklistType.values()).map(Enum::toString).collect(Collectors.toList());
         } else if (isType.test(Boolean.class)) {
