@@ -82,7 +82,7 @@ public class CleanInventoryCommand implements CommandExecutor, TabCompleter {
         Player player = getPlayer(tuple.sender);
         if (player == null) return;
         String playerName = tuple.args[0];
-        if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getDisplayName())) {
+        if (playerName.equalsIgnoreCase(ownSubCommand) || playerName.equalsIgnoreCase(player.getName())) {
             if (!player.hasPermission(PluginPermissions.CMD_INV_CLEAN_OWN.getString())) {
                 MessageSystem.sendPermissionError(player, PluginPermissions.CMD_INV_CLEAN_OWN);
             }
