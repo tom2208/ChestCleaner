@@ -10,7 +10,6 @@ import chestcleaner.sorting.categorizer.Categorizer;
 import chestcleaner.utils.SortingAdminUtils;
 import chestcleaner.utils.messages.MessageSystem;
 import chestcleaner.utils.messages.enums.MessageType;
-import javafx.util.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -432,11 +431,11 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
 
         private Class<?> c;
         private Function<GraphNode<Quadruple>, List<String>> genNodeCompletions;
-        private Function<Pair<GraphNode<Quadruple>, String>, Object> interpretString;
+        private Function<Map.Entry<GraphNode<Quadruple>, String>, Object> interpretString;
 
 
         public DataType(Class<?> c, Function<GraphNode<Quadruple>, List<String>> genNodeCompletions,
-                        Function<Pair<GraphNode<Quadruple>, String>, Object> interpretString) {
+                        Function<Map.Entry<GraphNode<Quadruple>, String>, Object> interpretString) {
             this.c = c;
             this.genNodeCompletions = genNodeCompletions;
             this.interpretString = interpretString;
@@ -447,7 +446,8 @@ public class CommandTree extends Tree<CommandTree.Quadruple> {
         }
 
         public Object getInterpretedObjByNodeType(GraphNode<Quadruple> node, String str) {
-            return interpretString.apply(new Pair<>(node, str));
+            Map.Entry<GraphNode<Quadruple>, String> e = new AbstractMap.SimpleEntry<>(node, str);
+            return interpretString.apply(e);
         }
     }
 }
