@@ -8,6 +8,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.block.BlockEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.player.PlayerItemBreakEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -89,7 +90,6 @@ public class RefillListener implements org.bukkit.event.Listener {
 
 	@EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
 	private void onConsuming(PlayerItemConsumeEvent e) {
-
 		Player player = e.getPlayer();
 
 		if (isPlayerAllowedToRefillConsumables(player)) {
@@ -149,7 +149,6 @@ public class RefillListener implements org.bukkit.event.Listener {
 	private void onPlayerItemBreaks(PlayerItemBreakEvent e) {
 
 		Player player = e.getPlayer();
-
 		if (isPlayerAllowedToRefillBrokenItems(player)) {
 
 			boolean config = PluginConfigManager.isDefaultBreakableRefill();
@@ -175,10 +174,11 @@ public class RefillListener implements org.bukkit.event.Listener {
 									}, 1L);
 
 						} else if (player.getInventory().getItemInOffHand().equals(item)) {
-
-							player.getInventory().setItem(40, refillItem);
-							player.getInventory().setItem(refillSlot, null);
-
+							ChestCleaner.main.getServer().getScheduler().scheduleSyncDelayedTask(ChestCleaner.main,
+									() -> {
+										player.getInventory().setItem(40, refillItem);
+										player.getInventory().setItem(refillSlot, null);
+									}, 1L);
 						}
 					}
 				}
