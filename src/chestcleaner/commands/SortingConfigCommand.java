@@ -186,13 +186,13 @@ public class SortingConfigCommand implements CommandExecutor, TabCompleter {
             boolean b = Boolean.parseBoolean(bool);
             String property;
 
-            if (arg.equalsIgnoreCase(blocksSubCommand)) {
+            if (arg.equalsIgnoreCase(blocksSubCommand) && checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_BLOCKS)) {
                 PlayerDataManager.setRefillBlocks(player, b);
                 property = blocksSubCommand;
-            } else if (arg.equalsIgnoreCase(consumablesSubCommand)) {
+            } else if (arg.equalsIgnoreCase(consumablesSubCommand) && checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_CONSUMABLES)) {
                 PlayerDataManager.setRefillConumables(player, b);
                 property = consumablesSubCommand;
-            } else if (arg.equalsIgnoreCase(breakablesSubCommand)) {
+            } else if (arg.equalsIgnoreCase(breakablesSubCommand) && checkPermission(player, PluginPermissions.CMD_SORTING_CONFIG_REFILL_BREAKABLES)) {
                 PlayerDataManager.setRefillBreakables(player, b);
                 property = breakablesSubCommand;
             } else {

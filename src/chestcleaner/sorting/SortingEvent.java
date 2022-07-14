@@ -1,6 +1,5 @@
 package chestcleaner.sorting;
 
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -10,6 +9,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 
+/**
+ * This event gets triggered if an inventory is going to be sorted. It can be canceled.
+ */
 public class SortingEvent extends Event implements Cancellable {
 
     private static final HandlerList HANDLERS = new HandlerList();
@@ -20,6 +22,12 @@ public class SortingEvent extends Event implements Cancellable {
     private Inventory inventory;
     private List<ItemStack> list;
 
+    /**
+     * Constructor for the SortingEvent.
+     * @param player the player who sorts. Can be null.
+     * @param inventory the inventory that gets sorted.
+     * @param list the list of Items that gets sorted. This list will be sorted and inserted into inventory.
+     */
     public SortingEvent(Player player, Inventory inventory, List<ItemStack> list) {
         this.player = player;
         this.inventory = inventory;
