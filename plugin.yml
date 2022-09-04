@@ -1,5 +1,5 @@
 name: ChestCleaner
-version: "2.4.3"
+version: "2.4.4"
 author: Tom2208, leanNiki
 api-version: "1.13" # we need this otherwise new blocks e.g. mossy cobble slabs get deleted
 
