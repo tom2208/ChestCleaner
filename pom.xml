@@ -87,6 +87,7 @@
 					<include>plugin.yml</include>
 					<include>ChestCleaner_${project.version}_de_DE.properties</include>
 					<include>ChestCleaner_${project.version}_en_GB.properties</include>
+					<include>ChestCleaner_${project.version}_ja_JP.properties</include>
 					<include>ChestCleaner_${project.version}_zh_CN.properties</include>
 					<include>config.yml</include>
 				</includes>
