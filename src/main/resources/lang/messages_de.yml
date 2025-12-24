@@ -1,0 +1,4 @@
+prefix: "<gray>[<gradient:blue:aqua>ChestCleaner</gradient>] <gray>"
+error:
+  no-permission: "<red>Dazu hast du keine Rechte!"
+  player-only: "<red>Nur Spieler können das tun."

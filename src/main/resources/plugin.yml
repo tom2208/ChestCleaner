@@ -1,0 +1,9 @@
+name: ChestCleaner
+version: '3.0-SNAPSHOT'
+main: me.tom2208.chestCleaner.ChestCleaner
+api-version: '1.21'
+authors: [ tom2208 ]
+commands:
+  chestcleaner:
+    description: Main command.
+    usage: /chestcleaner
