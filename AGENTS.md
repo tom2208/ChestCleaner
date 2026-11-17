@@ -39,5 +39,5 @@ attribution and `LICENSE` intact.
   use; do not add wrappers or dependencies for their own sake.
 - This is a **public** repository: never add host paths, usernames, IPs, seeds, world coordinates,
   server or instance IDs, logs, config dumps, backups, or secrets.
-- Exact deploy pins (source commit + jar SHA-256) live in the private Awepeeps-Minecraft-Deployment
+- Exact deploy pins (source commit + jar SHA-256) live in the private awepeeps-minecraft-deployment
   repository, never here.
