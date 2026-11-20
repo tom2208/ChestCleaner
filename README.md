@@ -15,7 +15,7 @@ ChestCleaner sorts storage inventories and player inventories with the configure
 4. Start the server. On first load ChestCleaner creates `plugins/ChestCleaner/`, writes `playerdata.yml`, and copies the bundled `config.yml` there.
 5. Give a player the brush with `/cleaningitem get`, then sort with sneak-right-click (see [Cleaning item behavior](#cleaning-item-behavior)).
 
-The live Awepeeps instance does not install a hand-built jar: the private awepeeps-minecraft-deployment repository pins an exact reviewed source commit and verifies the jar SHA-256 before installing it. Do not copy a jar, a live server config, or any host detail back into this public repository.
+The live Awepeeps instance does not install a hand-built jar: the private minecraft-deployment repository pins an exact reviewed source commit and verifies the jar SHA-256 before installing it. Do not copy a jar, a live server config, or any host detail back into this public repository.
 
 ## Cleaning item behavior
 
@@ -92,7 +92,7 @@ The reproducible plugin artifact is `target/chestcleaner-2.4.5-awepeeps.3.jar`.
 2. Remove `plugins/chestcleaner-2.4.5-awepeeps.3.jar`.
 3. If the update changed `plugins/ChestCleaner/config.yml`, restore the previous copy, then start the server with the previous jar. Player preferences live in `plugins/ChestCleaner/playerdata.yml`; the plugin recreates a missing `config.yml` with the bundled defaults.
 
-The deployment's rollback transaction (in the private awepeeps-minecraft-deployment repository) backs up the current jar and the exact config, restores them if the new jar does not load cleanly, and records each of the four versioned locale resource files so only the copies it created are removed. Mirror that here: keep the previous jar and config until the new one has loaded cleanly.
+The deployment's rollback transaction (in the private minecraft-deployment repository) backs up the current jar and the exact config, restores them if the new jar does not load cleanly, and records each of the four versioned locale resource files so only the copies it created are removed. Mirror that here: keep the previous jar and config until the new one has loaded cleanly.
 
 ## Repository docs
 

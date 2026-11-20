@@ -10,7 +10,7 @@ The JUnit/Mockito and Maven plugin versions are fixed in `pom.xml`; the plugin c
 
 `pom.xml` packages only the current version's bundle, `ChestCleaner_${version.properties}_*.properties` (`version.properties` is `2-4-5-awepeeps-3`): `_de_DE`, `_en_GB`, `_ja_JP` and `_zh_CN`. At startup `ChestCleaner` derives the bundle name from the plugin version with dots replaced by dashes and `saveResource`s exactly those four files, so only they are shipped in the jar.
 
-The older root files `ChestCleaner_2-4-3_*.properties` and `ChestCleaner_2-4-5-awepeeps-1_*.properties` are **intentionally kept as history** and are **not** packaged: no `<include>` in `pom.xml` references them and no code loads them. Do not delete them as part of a documentation change; if they are ever removed, do it in a dedicated change that also records the reason. The deployment transaction still treats the four *current* locale files as part of the artifact (see `docs/chestcleaner.md` in the private awepeeps-minecraft-deployment repository).
+The older root files `ChestCleaner_2-4-3_*.properties` and `ChestCleaner_2-4-5-awepeeps-1_*.properties` are **intentionally kept as history** and are **not** packaged: no `<include>` in `pom.xml` references them and no code loads them. Do not delete them as part of a documentation change; if they are ever removed, do it in a dedicated change that also records the reason. The deployment transaction still treats the four *current* locale files as part of the artifact (see `docs/chestcleaner.md` in the private minecraft-deployment repository).
 
 ## Release identity
 
