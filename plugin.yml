@@ -142,4 +142,3 @@ permissions:
     description: whether the player can use the /cleaningitem set command
   chestcleaner.cmd.admin.cleaningitem.setlore:
     description: whether the player can use the /cleaningitem lore command
-

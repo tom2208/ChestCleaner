@@ -1,6 +1,6 @@
 # ChestCleaner
 
-ChestCleaner sorts storage inventories and player inventories with the configured cleaning item. This repository is a maintained standalone fork of [tom2208/ChestCleaner](https://github.com/tom2208/ChestCleaner), based on upstream tag `v2.4.4` (`131a11f7f64b3114218fb1141bceeb8197354c6e`).
+ChestCleaner sorts storage inventories and player inventories with the configured cleaning item. This repository is a maintained standalone fork of [tom2208/ChestCleaner](https://github.com/tom2208/ChestCleaner), based on upstream tag `v2.4.4` (`131a11f7f64b3114218fb1141bceeb8197354c6e`). Bug reports for upstream behaviour go to [tom2208/ChestCleaner issues](https://github.com/tom2208/ChestCleaner/issues); this fork keeps its own issues disabled.
 
 ## Requirements
 

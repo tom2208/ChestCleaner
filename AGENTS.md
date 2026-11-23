@@ -18,10 +18,13 @@ attribution and `LICENSE` intact.
 
 ## Build and test
 
-- Build and test: `mvn --batch-mode --no-transfer-progress clean verify` (JDK 25).
+- Requires JDK 25; `just install` installs Temurin 25, Maven and the pinned tools via mise.
+- `just check` — format, workflow lint, one clean `verify` (tests included).
+- `just reproducible` — two clean `verify` runs, `cmp`, and the SHA-256; runs on `main` and on
+  release pull requests (a PR that changes `CHANGELOG.md`).
 - Reproducible containerized build: `bash automation/build-chestcleaner.sh`.
 - Output jar: `target/chestcleaner-2.4.5-awepeeps.3.jar`.
-- Open changes as a pull request against `main`; CI runs `clean verify` twice and compares the jar bytes.
+- Open changes as a pull request against `main`.
 
 ## Interaction policy (must be preserved)
 
