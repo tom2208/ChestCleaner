@@ -1,0 +1,17 @@
+# Lefthook dispatcher (core.md C7.8). Policy lives in the `just` recipes from
+# the C7.10 contract; this file only loads the shared configs and adds
+# repository jobs. Repository job names must not start with `core-` or `owner-`.
+remotes:
+  - git_url: https://github.com/awepeeps/.github
+    ref: hooks-v2
+    configs:
+      - hooks/core.yml
+      - hooks/owner.yml
+
+pre-commit:
+  jobs:
+    # A Java change is compiled before it is committed; tests stay in CI.
+    - name: compile
+      glob: "**/*.{java,kts}"
+      run: just compile
+      fail_text: "The plugin does not compile; fix the error and stage again."

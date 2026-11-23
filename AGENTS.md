@@ -44,3 +44,9 @@ attribution and `LICENSE` intact.
   server or instance IDs, logs, config dumps, backups, or secrets.
 - Exact deploy pins (source commit + jar SHA-256) live in the private minecraft-deployment
   repository, never here.
+
+## Git hooks
+
+Hooks are installed once per checkout with `just hooks` and run through Lefthook, loading the
+shared jobs from `awepeeps/.github` at the `hooks-v2` tag. Agents never bypass them (C7.11):
+no `LEFTHOOK=0`, no `git commit --no-verify`, and no `lefthook-local.yml`.

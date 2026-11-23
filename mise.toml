@@ -1,8 +1,10 @@
 [tools]
 actionlint = "1.7.12"
+"aqua:evilmartians/lefthook" = "2.2.2"
 bun = "1.4.5"
 gitleaks = "8.30.1"
 java = "temurin-25.0.4+7.0.LTS"
 just = "1.59.0"
 maven = "3.10.2"
+shellcheck = "0.10.0"
 zizmor = "1.32.0"

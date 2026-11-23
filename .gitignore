@@ -15,3 +15,6 @@ buildNumber.properties
 .classpath
 .idea
 *.iml
+
+# Lefthook per-machine overrides. Never committed and never used by agents (C7.11).
+lefthook-local.yml
