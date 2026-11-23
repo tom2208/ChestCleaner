@@ -34,20 +34,23 @@ check: fmt-check lint build
 
 # Two clean builds, byte comparison, and the SHA-256 for a release.
 reproducible:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    out="${RUNNER_TEMP:-$(mktemp -d)}"
     mvn --batch-mode --no-transfer-progress clean verify
     artifact="$(find target -maxdepth 1 -type f -name 'chestcleaner-*.jar' -print -quit)"
     test -n "$artifact"
-    cp "$artifact" "$RUNNER_TEMP/first-build.jar"
+    cp "$artifact" "$out/first-build.jar"
     mvn --batch-mode --no-transfer-progress clean verify
-    cmp "$RUNNER_TEMP/first-build.jar" "$artifact"
-    sha256sum "$artifact" | tee "$RUNNER_TEMP/artifact-sha256.txt"
+    cmp "$out/first-build.jar" "$artifact"
+    sha256sum "$artifact" | tee "$out/artifact-sha256.txt"
     {
-    echo "## Build artifact"
-    echo
-    echo "- File: \`$(basename "$artifact")\`"
-    echo "- SHA-256: \`$(cut -d ' ' -f 1 "$RUNNER_TEMP/artifact-sha256.txt")\`"
-    echo "- Reproducibility: two clean builds produced identical bytes."
-    } >> "$GITHUB_STEP_SUMMARY"
+      echo "## Build artifact"
+      echo
+      echo "- File: \`$(basename "$artifact")\`"
+      echo "- SHA-256: \`$(cut -d ' ' -f 1 "$out/artifact-sha256.txt")\`"
+      echo "- Reproducibility: two clean builds produced identical bytes."
+    } >> "${GITHUB_STEP_SUMMARY:-/dev/stdout}"
 
 # Redacted secret scan: the pull request diff in CI, full history otherwise.
 secrets:

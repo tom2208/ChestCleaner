@@ -22,9 +22,24 @@ if (listing.status !== 0) {
   process.exit(1);
 }
 
+const files = listing.stdout.toString("utf8").split("\0").filter(Boolean);
+// .gitattributes can require CRLF (for example Windows batch files); those files
+// are checked out with CRLF and must not be rewritten to LF.
+const eol = spawnSync("git", ["check-attr", "--stdin", "-z", "eol"], {
+  input: files.join("\0"),
+});
+const crlf = new Set<string>();
+if (eol.status === 0) {
+  const parts = eol.stdout.toString("utf8").split("\0");
+  for (let index = 0; index + 2 < parts.length; index += 3) {
+    if (parts[index + 2] === "crlf") crlf.add(parts[index] as string);
+  }
+}
+
 let problems = 0;
-for (const file of listing.stdout.toString("utf8").split("\0").filter(Boolean)) {
+for (const file of files) {
   if (skipped.test(file) || binary.test(file) || lockfile.test(file) || ignored(file)) continue;
+  if (crlf.has(file)) continue;
   if (!existsSync(file)) continue;
   if (!lstatSync(file).isFile()) continue;
   const raw = readFileSync(file);
